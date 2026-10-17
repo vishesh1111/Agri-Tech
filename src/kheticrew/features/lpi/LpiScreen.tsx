@@ -45,11 +45,15 @@ export const LpiScreen: React.FC = () => {
     setFarmShift,
     selectedFarmId,
     setSelectedFarmId,
+    lang,
   } = useStore();
   const t = useTranslation();
 
   // Weather compression toggle
   const [enableWeatherCompression, setEnableWeatherCompression] = useState<boolean>(true);
+
+  // Farmer-friendly display mode: words (Free, Good, Busy, Short, Alert) vs ratio numbers
+  const [displayMode, setDisplayMode] = useState<'words' | 'numbers'>('words');
 
   // Selected cell for breakdown inspection
   const [selectedCell, setSelectedCell] = useState<VillageDayLPI | null>(null);
@@ -172,6 +176,26 @@ export const LpiScreen: React.FC = () => {
     }
   };
 
+  // Farmer-friendly cell text
+  const getCellLabel = (day: VillageDayLPI) => {
+    if (displayMode === 'numbers') {
+      return day.ratio.toFixed(1);
+    }
+    const isHi = lang === 'hi';
+    switch (day.band) {
+      case 'calm':
+        return isHi ? (day.demand === 0 ? 'खाली' : 'उपलब्ध') : (day.demand === 0 ? 'Free' : 'Good');
+      case 'moderate':
+        return isHi ? 'उपलब्ध' : 'Good';
+      case 'tight':
+        return isHi ? 'व्यस्त' : 'Busy';
+      case 'severe':
+        return isHi ? 'कमी' : 'Short';
+      case 'critical':
+        return isHi ? 'संकट' : 'Alert';
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Banner */}
@@ -277,7 +301,33 @@ export const LpiScreen: React.FC = () => {
               Click any cell to inspect local crop drivers, weather alerts and projected daily wage rates.
             </p>
           </div>
-          <span className="text-xs text-slate-400">Values = Demand / Supply Ratio</span>
+
+          {/* Toggle pill: Farmer Words vs Ratio Numbers */}
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-lg text-xs font-semibold">
+            <span className="text-[11px] text-slate-500 px-1">View:</span>
+            <button
+              type="button"
+              onClick={() => setDisplayMode('words')}
+              className={`px-2 py-0.5 rounded-md transition-colors ${
+                displayMode === 'words'
+                  ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Words (Free, Good, Busy, Short)
+            </button>
+            <button
+              type="button"
+              onClick={() => setDisplayMode('numbers')}
+              className={`px-2 py-0.5 rounded-md transition-colors ${
+                displayMode === 'numbers'
+                  ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Ratio Numbers
+            </button>
+          </div>
         </div>
 
         <div className="overflow-x-auto border border-slate-200 rounded-lg">
@@ -317,11 +367,11 @@ export const LpiScreen: React.FC = () => {
                           className={`w-full h-8 rounded border text-center flex flex-col items-center justify-center transition-all ${getHeatmapColor(
                             day.band
                           )} ${isSelected ? 'ring-2 ring-slate-900' : ''}`}
-                          title={`${day.villageName} on ${formatDateShort(day.date)}: Ratio ${day.ratio}, Projected Wage: ₹${day.projectedWage}`}
-                          aria-label={`${day.villageName} on ${formatDateShort(day.date)}: ratio ${day.ratio}`}
+                          title={`${day.villageName} on ${formatDateShort(day.date)}: Status ${getCellLabel(day)}, Ratio ${day.ratio.toFixed(1)}, Projected Wage: ₹${day.projectedWage}`}
+                          aria-label={`${day.villageName} on ${formatDateShort(day.date)}: ${getCellLabel(day)}`}
                         >
-                          <span className="text-[11px] leading-tight font-semibold">
-                            {day.ratio.toFixed(1)}
+                          <span className="text-[10px] leading-tight font-extrabold tracking-tight">
+                            {getCellLabel(day)}
                           </span>
                           {day.rainProb >= 0.6 && (
                             <CloudRain className="w-2.5 h-2.5 text-sky-700 -mt-0.5" />
