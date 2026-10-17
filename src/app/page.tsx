@@ -3,8 +3,10 @@
 import React, { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useKisanStore } from '@/stores/useKisanStore';
-import { TopAppBar } from '@/components/layout/TopAppBar';
+import { WebSidebar } from '@/components/layout/WebSidebar';
+import { WebHeader } from '@/components/layout/WebHeader';
 import { BottomNavBar } from '@/components/layout/BottomNavBar';
+import { mlService } from '@/lib/ml/mlService';
 
 // Core Tab Screens (Loaded dynamically to optimize bundle and SSR)
 const HomeScreen = dynamic(() => import('@/components/screens/HomeScreen'), { ssr: false });
@@ -45,6 +47,7 @@ export default function App() {
 
   useEffect(() => {
     initialize();
+    mlService.preloadModels();
   }, [initialize]);
 
   // Sync dark theme class on document element
@@ -129,20 +132,26 @@ export default function App() {
   const isSubScreenActive = currentSubScreen !== 'none';
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
-      {/* Top App Bar is shown unless specific full-screen views take precedence */}
-      <TopAppBar
-        showBackButton={isSubScreenActive}
-        onBackClick={navigateBack}
-      />
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 flex antialiased selection:bg-emerald-500 selection:text-white transition-colors">
+      {/* Desktop Left Navigation Sidebar (Hidden on mobile) */}
+      <WebSidebar />
 
-      {/* Main Screen Content Body */}
-      <main className="flex-1 max-w-lg w-full mx-auto pb-16">
-        {renderContent()}
-      </main>
+      {/* Main Content Area (Offset by sidebar width on desktop) */}
+      <div className="flex-1 md:pl-64 flex flex-col min-h-screen">
+        {/* Sticky Web Header */}
+        <WebHeader
+          showBackButton={isSubScreenActive}
+          onBackClick={navigateBack}
+        />
 
-      {/* Mobile-first Bottom Navigation Bar (Hidden when inside sub-screens) */}
-      {!isSubScreenActive && <BottomNavBar />}
+        {/* Content Body - Expanded for Web & Responsive Screens */}
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-12">
+          {renderContent()}
+        </main>
+
+        {/* Mobile Bottom Navigation Bar (Hidden on md+ desktop) */}
+        {!isSubScreenActive && <BottomNavBar />}
+      </div>
     </div>
   );
 }

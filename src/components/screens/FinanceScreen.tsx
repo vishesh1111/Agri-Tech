@@ -11,6 +11,11 @@ import {
   PieChart,
   ArrowUpRight,
   ArrowDownLeft,
+  Search,
+  Filter,
+  CheckCircle,
+  FileSpreadsheet,
+  Receipt,
 } from 'lucide-react';
 import { useKisanStore } from '@/stores/useKisanStore';
 import { Card } from '@/components/ui/Card';
@@ -21,14 +26,14 @@ export function FinanceScreen() {
     transactions,
     addFinancialTransaction,
     deleteFinancialTransaction,
-    navigateToSubScreen,
   } = useKisanStore();
 
-  const [showAddForm, setShowAddForm] = useState(false);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Fertilizer');
   const [amount, setAmount] = useState('');
   const [isIncome, setIsIncome] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFilterCategory, setSelectedFilterCategory] = useState('ALL');
 
   const totalIncome = transactions
     .filter((t) => t.isIncome)
@@ -51,7 +56,6 @@ export function FinanceScreen() {
     );
     setTitle('');
     setAmount('');
-    setShowAddForm(false);
   };
 
   const categories = [
@@ -66,211 +70,349 @@ export function FinanceScreen() {
     'Other',
   ];
 
+  const filteredTransactions = transactions.filter((tx) => {
+    const matchesSearch =
+      tx.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tx.category.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCat =
+      selectedFilterCategory === 'ALL' || tx.category === selectedFilterCategory;
+    return matchesSearch && matchesCat;
+  });
+
   return (
-    <div className="space-y-4 pb-20 pt-2">
-      {/* 1. Header with Add Transaction Button */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      {/* 1. Header with Export & Overview */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-zinc-100">
-            Farm Finance & Ledger
-          </h2>
-          <p className="text-xs text-gray-500 dark:text-zinc-400">
-            Dynamic profitability optimizer & cash ledger
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
+              <Receipt className="h-5 w-5" />
+            </span>
+            <h1 className="text-xl font-semibold text-zinc-900">
+              Farm Financial Ledger
+            </h1>
+          </div>
+          <p className="text-xs text-zinc-500 mt-1">
+            Track operational expenses, crop produce sales, inputs, and operating margins
           </p>
         </div>
 
         <button
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-emerald-700"
+          onClick={() => alert('Exporting financial ledger as CSV...')}
+          className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-xs"
         >
-          <Plus className="h-4 w-4" />
-          <span>{showAddForm ? 'Close' : 'Add Entry'}</span>
+          <FileSpreadsheet className="h-4 w-4 text-emerald-700" />
+          <span>Export Ledger</span>
         </button>
       </div>
 
-      {/* 2. Financial Overview Summary Cards */}
-      <div className="grid grid-cols-3 gap-2">
-        <Card className="p-3 text-center bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900">
-          <span className="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400">
-            Income
-          </span>
-          <p className="text-base font-extrabold text-emerald-700 dark:text-emerald-300 mt-1">
-            ₹{totalIncome.toLocaleString()}
-          </p>
-          <span className="text-[9px] text-emerald-600 block mt-0.5">Crop & Milk Sales</span>
+      {/* 2. Top Financial KPI Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+          <div className="flex items-start justify-between">
+            <div>
+              <span className="text-xs font-medium text-zinc-500">
+                Total Inflow (Revenue)
+              </span>
+              <p className="text-2xl font-semibold text-zinc-900 mt-1">
+                ₹{totalIncome.toLocaleString()}
+              </p>
+              <span className="text-[11px] text-zinc-400 mt-1 block">
+                Mandi sales, dairy & procurement
+              </span>
+            </div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
+              <ArrowDownLeft className="h-5 w-5" />
+            </div>
+          </div>
         </Card>
 
-        <Card className="p-3 text-center bg-rose-50/60 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900">
-          <span className="text-[10px] uppercase font-bold text-rose-700 dark:text-rose-400">
-            Expenses
-          </span>
-          <p className="text-base font-extrabold text-rose-700 dark:text-rose-300 mt-1">
-            ₹{totalExpense.toLocaleString()}
-          </p>
-          <span className="text-[9px] text-rose-600 block mt-0.5">Inputs & Labor</span>
+        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+          <div className="flex items-start justify-between">
+            <div>
+              <span className="text-xs font-medium text-zinc-500">
+                Total Outflow (Expenses)
+              </span>
+              <p className="text-2xl font-semibold text-zinc-900 mt-1">
+                ₹{totalExpense.toLocaleString()}
+              </p>
+              <span className="text-[11px] text-zinc-400 mt-1 block">
+                Inputs, labor, diesel & seeds
+              </span>
+            </div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700">
+              <ArrowUpRight className="h-5 w-5" />
+            </div>
+          </div>
         </Card>
 
-        <Card className="p-3 text-center bg-sky-50/60 dark:bg-sky-950/20 border-sky-200 dark:border-sky-900">
-          <span className="text-[10px] uppercase font-bold text-sky-700 dark:text-sky-400">
-            Net Margin
-          </span>
-          <p
-            className={`text-base font-extrabold mt-1 ${
-              netProfit >= 0 ? 'text-emerald-700 dark:text-emerald-300' : 'text-rose-700'
-            }`}
-          >
-            ₹{netProfit.toLocaleString()}
-          </p>
-          <span className="text-[9px] text-sky-600 block mt-0.5">Operating Profit</span>
+        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+          <div className="flex items-start justify-between">
+            <div>
+              <span className="text-xs font-medium text-zinc-500">
+                Net Operating Balance
+              </span>
+              <p
+                className={`text-2xl font-semibold mt-1 ${
+                  netProfit >= 0 ? 'text-emerald-700' : 'text-rose-700'
+                }`}
+              >
+                ₹{netProfit.toLocaleString()}
+              </p>
+              <span className="text-[11px] text-zinc-400 mt-1 block">
+                Season net surplus
+              </span>
+            </div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700">
+              <TrendingUp className="h-5 w-5" />
+            </div>
+          </div>
         </Card>
       </div>
 
-      {/* 3. Add Transaction Form (Collapsible) */}
-      {showAddForm && (
-        <Card className="border-emerald-300 bg-emerald-50/40 p-4 dark:bg-emerald-950/20">
-          <h3 className="text-xs font-bold text-emerald-900 dark:text-emerald-300 mb-2">
-            Record New Transaction
-          </h3>
-          <form onSubmit={handleAdd} className="space-y-3 text-xs">
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setIsIncome(false)}
-                className={`w-1/2 py-2 rounded-xl font-bold transition-all ${
-                  !isIncome
-                    ? 'bg-rose-600 text-white shadow-xs'
-                    : 'bg-white text-gray-700 border border-gray-200'
-                }`}
-              >
-                Expense (Outflow)
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsIncome(true)}
-                className={`w-1/2 py-2 rounded-xl font-bold transition-all ${
-                  isIncome
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-white text-gray-700 border border-gray-200'
-                }`}
-              >
-                Income (Inflow)
-              </button>
+      {/* 3. Main 12-Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column (7 Columns): Transactions Ledger Table */}
+        <div className="lg:col-span-7 space-y-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="relative w-full sm:w-64">
+              <Search className="h-3.5 w-3.5 absolute left-3 top-3 text-zinc-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search transactions..."
+                className="w-full rounded-lg border border-zinc-200 bg-white pl-8 pr-3 py-1.5 text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+              />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none w-full sm:w-auto">
+              {['ALL', 'Fertilizer', 'MandiSale', 'Labor', 'Seeds'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedFilterCategory(cat)}
+                  className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
+                    selectedFilterCategory === cat
+                      ? 'bg-zinc-900 text-white'
+                      : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <Card className="overflow-hidden border border-zinc-200/80 bg-white p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-zinc-50/70 border-b border-zinc-100 text-zinc-400 text-[11px]">
+                  <tr>
+                    <th className="py-2.5 px-4 font-medium">Transaction</th>
+                    <th className="py-2.5 px-4 font-medium">Category</th>
+                    <th className="py-2.5 px-4 font-medium">Date</th>
+                    <th className="py-2.5 px-4 font-medium text-right">Amount</th>
+                    <th className="py-2.5 px-4 font-medium text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100 font-normal">
+                  {filteredTransactions.map((tx) => (
+                    <tr
+                      key={tx.id}
+                      className="hover:bg-zinc-50 transition-colors"
+                    >
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
+                              tx.isIncome
+                                ? 'bg-emerald-50 text-emerald-700'
+                                : 'bg-zinc-100 text-zinc-600'
+                            }`}
+                          >
+                            {tx.isIncome ? (
+                              <ArrowDownLeft className="h-3.5 w-3.5" />
+                            ) : (
+                              <ArrowUpRight className="h-3.5 w-3.5" />
+                            )}
+                          </div>
+                          <span className="font-medium text-zinc-900">
+                            {tx.title}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-100 text-zinc-700">
+                          {tx.category}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-zinc-500">{tx.dateDisplay}</td>
+                      <td className="py-3 px-4 text-right">
+                        <span
+                          className={`font-semibold ${
+                            tx.isIncome ? 'text-emerald-700' : 'text-zinc-900'
+                          }`}
+                        >
+                          {tx.isIncome ? '+' : '-'}₹{tx.amount.toLocaleString()}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <button
+                          onClick={() => deleteFinancialTransaction(tx)}
+                          className="text-zinc-400 hover:text-rose-600 p-1 transition-colors"
+                          title="Delete entry"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredTransactions.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="py-8 text-center text-xs text-zinc-400">
+                        No transactions recorded matching your search.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+
+        {/* Right Column (5 Columns): Quick Add Form + Expense Breakdown */}
+        <div className="lg:col-span-5 space-y-6">
+          <Card className="p-5 border border-zinc-200/80 bg-white space-y-4">
+            <div>
+              <h3 className="font-semibold text-sm text-zinc-900">
+                Record New Transaction
+              </h3>
+              <p className="text-xs text-zinc-500">Record an operational expense or sale receipt</p>
+            </div>
+
+            <form onSubmit={handleAdd} className="space-y-3 text-xs">
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsIncome(false)}
+                  className={`w-1/2 py-2 rounded-lg font-medium text-xs transition-colors ${
+                    !isIncome
+                      ? 'bg-zinc-900 text-white'
+                      : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
+                  }`}
+                >
+                  Expense (Outflow)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsIncome(true)}
+                  className={`w-1/2 py-2 rounded-lg font-medium text-xs transition-colors ${
+                    isIncome
+                      ? 'bg-emerald-700 text-white'
+                      : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
+                  }`}
+                >
+                  Income (Inflow)
+                </button>
+              </div>
+
               <div>
-                <label className="text-[11px] font-semibold">Title / Description</label>
+                <label className="font-medium text-zinc-700">Description</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. 2 Bags DAP Fertilizer"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-800"
+                  className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-emerald-600"
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-medium text-zinc-700">Amount (₹)</label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="2700"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  />
+                </div>
+                <div>
+                  <label className="font-medium text-zinc-700">Category</label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  >
+                    {categories.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors mt-2"
+              >
+                Save Transaction
+              </button>
+            </form>
+          </Card>
+
+          {/* Category Expense Distribution breakdown */}
+          <Card className="p-5 border border-zinc-200/80 bg-white space-y-4">
+            <h4 className="font-semibold text-sm text-zinc-900">
+              Input Expense Breakdown
+            </h4>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <div className="flex items-center justify-between text-zinc-500 mb-1">
+                  <span>Fertilizer & Nutrition</span>
+                  <span className="font-medium text-zinc-900">38%</span>
+                </div>
+                <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-600 rounded-full" style={{ width: '38%' }}></div>
+                </div>
               </div>
 
               <div>
-                <label className="text-[11px] font-semibold">Amount (₹)</label>
-                <input
-                  type="number"
-                  required
-                  placeholder="e.g. 2700"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-800"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-[11px] font-semibold">Category</label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-300 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-800"
-              >
-                {categories.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowAddForm(false)}
-                className="px-3 py-1.5 text-gray-600 font-semibold"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="rounded-xl bg-emerald-600 px-4 py-1.5 font-bold text-white shadow-xs hover:bg-emerald-700"
-              >
-                Save Entry
-              </button>
-            </div>
-          </form>
-        </Card>
-      )}
-
-      {/* 4. Transactions List */}
-      <div>
-        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-          Transaction History ({transactions.length})
-        </h3>
-
-        <div className="space-y-2">
-          {transactions.map((tx) => (
-            <Card key={tx.id} className="flex items-center justify-between p-3.5">
-              <div className="flex items-center gap-3">
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-                    tx.isIncome
-                      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400'
-                      : 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400'
-                  }`}
-                >
-                  {tx.isIncome ? (
-                    <ArrowDownLeft className="h-5 w-5" />
-                  ) : (
-                    <ArrowUpRight className="h-5 w-5" />
-                  )}
+                <div className="flex items-center justify-between text-zinc-500 mb-1">
+                  <span>Farm Labor & Machinery</span>
+                  <span className="font-medium text-zinc-900">29%</span>
                 </div>
-
-                <div>
-                  <h4 className="font-bold text-sm text-gray-900 dark:text-zinc-100">{tx.title}</h4>
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <Badge variant="neutral">{tx.category}</Badge>
-                    <span>{tx.dateDisplay}</span>
-                  </div>
+                <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-zinc-600 rounded-full" style={{ width: '29%' }}></div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <span
-                  className={`font-black text-sm ${
-                    tx.isIncome
-                      ? 'text-emerald-600 dark:text-emerald-400'
-                      : 'text-gray-900 dark:text-zinc-100'
-                  }`}
-                >
-                  {tx.isIncome ? '+' : '-'}₹{tx.amount.toLocaleString()}
-                </span>
-
-                <button
-                  onClick={() => deleteFinancialTransaction(tx)}
-                  className="text-gray-400 hover:text-rose-600 p-1 transition-all"
-                  title="Delete Entry"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+              <div>
+                <div className="flex items-center justify-between text-zinc-500 mb-1">
+                  <span>Seeds & Cultivars</span>
+                  <span className="font-medium text-zinc-900">18%</span>
+                </div>
+                <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-amber-500 rounded-full" style={{ width: '18%' }}></div>
+                </div>
               </div>
-            </Card>
-          ))}
+
+              <div>
+                <div className="flex items-center justify-between text-zinc-500 mb-1">
+                  <span>Irrigation & Energy</span>
+                  <span className="font-medium text-zinc-900">15%</span>
+                </div>
+                <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-zinc-400 rounded-full" style={{ width: '15%' }}></div>
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>

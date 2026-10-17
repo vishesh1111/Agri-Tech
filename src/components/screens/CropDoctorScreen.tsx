@@ -4,25 +4,20 @@ import React, { useState } from 'react';
 import {
   Camera,
   Upload,
-  AlertTriangle,
-  CheckCircle2,
-  ShieldAlert,
-  Sparkles,
-  ArrowRight,
-  FlaskConical,
   Leaf,
+  Store,
+  FlaskConical,
+  Sparkles,
 } from 'lucide-react';
 import { useKisanStore } from '@/stores/useKisanStore';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import { Card, Badge } from '@/components/ui/Card';
 
 export function CropDoctorScreen() {
   const {
     isDoctorAnalyzing,
     doctorPathologyResult,
     runCropDoctorScan,
-    navigateBack,
-    navigateToSubScreen,
+    setTab,
   } = useKisanStore();
 
   const [selectedCrop, setSelectedCrop] = useState('Wheat');
@@ -43,206 +38,257 @@ export function CropDoctorScreen() {
   };
 
   return (
-    <div className="space-y-4 pb-20 pt-2">
-      {/* Header Info Banner */}
-      <Card className="border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-100/60 dark:from-emerald-950/40 dark:to-zinc-900 dark:border-emerald-900">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-sm">
-            <Sparkles className="h-6 w-6" />
+    <div className="space-y-6">
+      {/* 1. Header Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-zinc-200/80 shadow-xs">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-semibold text-zinc-900">
+              Crop Doctor (Leaf Diagnosis)
+            </h1>
+            <Badge variant="neutral">Vision AI</Badge>
           </div>
-          <div>
-            <h2 className="text-base font-bold text-emerald-950 dark:text-emerald-300">
-              Crop Doctor AI Pathology
-            </h2>
-            <p className="text-xs text-emerald-800 dark:text-emerald-400">
-              Take or upload a photo of infected leaves for instant diagnosis & treatment
-            </p>
-          </div>
-        </div>
-      </Card>
-
-      {/* 1. Crop Selector Dropdown */}
-      <div>
-        <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-          Target Crop Type
-        </label>
-        <div className="flex gap-2 overflow-x-auto pt-1 pb-1 scrollbar-none">
-          {cropsList.map((c) => (
-            <button
-              key={c}
-              onClick={() => setSelectedCrop(c)}
-              className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
-                selectedCrop === c
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
-              }`}
-            >
-              {c}
-            </button>
-          ))}
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Upload leaf or stem images for automated disease identification and treatment protocol
+          </p>
         </div>
       </div>
 
-      {/* 2. Photo Capture & Preview Area */}
-      <Card className="flex flex-col items-center justify-center border-dashed border-2 border-gray-300 p-6 text-center dark:border-zinc-700">
-        {previewImage ? (
-          <div className="space-y-3 w-full">
-            <div className="relative mx-auto h-56 w-full max-w-sm overflow-hidden rounded-2xl border border-gray-200 shadow-md">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={previewImage}
-                alt="Selected Leaf"
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <button
-              onClick={() => setPreviewImage(null)}
-              className="text-xs font-semibold text-rose-600 hover:underline"
-            >
-              Remove / Retake Photo
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">
-              <Camera className="h-7 w-7" />
-            </div>
+      {/* 2. Main 12-Column Diagnostic Studio Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column (5 Cols): Crop Selector & Image Dropzone */}
+        <div className="lg:col-span-5 space-y-4">
+          <Card className="p-5 space-y-4">
             <div>
-              <h3 className="text-sm font-bold text-gray-900 dark:text-zinc-100">
-                Capture Leaf Photo
-              </h3>
-              <p className="text-xs text-gray-500">
-                Hold phone 15-20cm from leaf ensuring good natural lighting
-              </p>
-            </div>
-
-            <div className="flex gap-2 justify-center pt-2">
-              {/* Camera Input */}
-              <label className="cursor-pointer flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 active:scale-95 transition-all">
-                <Camera className="h-4 w-4" />
-                <span>Open Camera</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-              </label>
-
-              {/* Gallery Input */}
-              <label className="cursor-pointer flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-gray-700 shadow-sm hover:bg-gray-50 active:scale-95 transition-all dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-                <Upload className="h-4 w-4" />
-                <span>Gallery</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-              </label>
-            </div>
-          </div>
-        )}
-      </Card>
-
-      {/* 3. Scan Action Button */}
-      <button
-        onClick={handleScan}
-        disabled={isDoctorAnalyzing}
-        className="w-full flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 py-3.5 text-sm font-bold text-white shadow-md hover:bg-emerald-700 disabled:opacity-50 active:scale-98 transition-all"
-      >
-        <Sparkles className="h-5 w-5" />
-        <span>
-          {isDoctorAnalyzing
-            ? 'Analyzing Leaf Pathology...'
-            : previewImage
-            ? `Run AI Diagnosis on ${selectedCrop}`
-            : `Run Sample Diagnosis for ${selectedCrop}`}
-        </span>
-      </button>
-
-      {/* 4. Diagnostic Results Card */}
-      {doctorPathologyResult && (
-        <div className="space-y-3 pt-2">
-          <Card className="border-rose-200 bg-rose-50/60 dark:bg-rose-950/20 dark:border-rose-900/40">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400">
-                  Detected Pathology
-                </span>
-                <h3 className="text-base font-extrabold text-gray-900 dark:text-zinc-100">
-                  {doctorPathologyResult.diseaseName}
-                </h3>
-                <p className="text-xs text-gray-600 dark:text-zinc-300 mt-0.5">
-                  Category: {doctorPathologyResult.category}
-                </p>
-              </div>
-              <Badge variant="danger">{doctorPathologyResult.confidence}</Badge>
-            </div>
-
-            <div className="mt-3 rounded-xl bg-white p-3 text-xs dark:bg-zinc-900 shadow-xs space-y-1.5">
-              <span className="font-bold text-gray-900 dark:text-zinc-100 block">
-                Visual Symptoms:
+              <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider block">
+                1. Select Crop
               </span>
-              <p className="text-gray-600 dark:text-zinc-300">
-                {doctorPathologyResult.symptomsSummary}
-              </p>
+              <div className="flex gap-1.5 overflow-x-auto pt-2 pb-1 scrollbar-none">
+                {cropsList.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setSelectedCrop(c)}
+                    className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                      selectedCrop === c
+                        ? 'bg-zinc-900 text-white font-semibold'
+                        : 'border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50'
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
             </div>
-          </Card>
 
-          {/* Action Steps */}
-          <Card className="space-y-3">
-            <h4 className="font-bold text-sm text-gray-900 dark:text-zinc-100 flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-              <span>Recommended Treatment Protocol</span>
-            </h4>
+            {/* Photo Capture & Upload Dropzone */}
+            <div>
+              <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider block mb-2">
+                2. Capture or Upload Leaf Photo
+              </span>
 
-            <ol className="space-y-2 text-xs text-gray-700 dark:text-zinc-300">
-              {doctorPathologyResult.treatmentSteps.map((step, idx) => (
-                <li key={idx} className="flex items-start gap-2 bg-gray-50 p-2.5 rounded-xl dark:bg-zinc-800">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 font-bold text-white text-[10px]">
-                    {idx + 1}
-                  </span>
-                  <span>{step}</span>
-                </li>
-              ))}
-            </ol>
+              <div className="flex flex-col items-center justify-center border border-dashed border-zinc-300 rounded-xl p-6 text-center bg-zinc-50/50">
+                {previewImage ? (
+                  <div className="space-y-3 w-full">
+                    <div className="relative mx-auto h-48 w-full max-w-xs overflow-hidden rounded-lg border border-zinc-200">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={previewImage}
+                        alt="Selected Leaf"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <button
+                      onClick={() => setPreviewImage(null)}
+                      className="text-xs text-rose-600 hover:underline"
+                    >
+                      Remove image
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500">
+                      <Leaf className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-zinc-800">
+                        Upload or take a photo of the affected leaf
+                      </p>
+                      <p className="text-[11px] text-zinc-400 mt-0.5">
+                        Ensure good daylight and sharp focus on symptoms
+                      </p>
+                    </div>
 
-            {/* Chemical & Organic Prescriptions */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-gray-100 dark:border-zinc-800">
-              <div className="rounded-xl bg-blue-50 p-3 text-xs dark:bg-blue-950/30">
-                <span className="font-bold text-blue-900 dark:text-blue-300 flex items-center gap-1">
+                    <div className="flex flex-wrap gap-2 justify-center pt-1">
+                      <label className="flex items-center gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 px-3.5 py-1.5 text-xs font-medium text-white cursor-pointer transition-colors">
+                        <Camera className="h-3.5 w-3.5" />
+                        <span>Camera</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          onChange={handleFileSelect}
+                          className="hidden"
+                        />
+                      </label>
+
+                      <label className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 px-3.5 py-1.5 text-xs font-medium text-zinc-700 cursor-pointer transition-colors">
+                        <Upload className="h-3.5 w-3.5 text-zinc-400" />
+                        <span>Browse File</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileSelect}
+                          className="hidden"
+                        />
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => setPreviewImage('/images/img_leaf_disease.jpg')}
+                        className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-1.5 text-xs font-semibold text-emerald-800 transition-colors"
+                      >
+                        <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+                        <span>Test Sample Leaf</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Run Diagnostic Button */}
+            <button
+              onClick={handleScan}
+              disabled={isDoctorAnalyzing}
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 py-2.5 text-xs font-medium text-white disabled:opacity-50 transition-colors"
+            >
+              {isDoctorAnalyzing ? (
+                <>
+                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <span>Analyzing leaf features...</span>
+                </>
+              ) : (
+                <>
                   <FlaskConical className="h-3.5 w-3.5" />
-                  <span>Chemical Fungicide Spray</span>
-                </span>
-                <p className="mt-1 text-blue-950 dark:text-blue-200">
-                  {doctorPathologyResult.recommendedChemical}
-                </p>
-              </div>
-
-              <div className="rounded-xl bg-emerald-50 p-3 text-xs dark:bg-emerald-950/30">
-                <span className="font-bold text-emerald-900 dark:text-emerald-300 flex items-center gap-1">
-                  <Leaf className="h-3.5 w-3.5" />
-                  <span>Organic & Biological Remedy</span>
-                </span>
-                <p className="mt-1 text-emerald-950 dark:text-emerald-200">
-                  {doctorPathologyResult.organicRemedy}
-                </p>
-              </div>
-            </div>
-
-            <div className="rounded-xl bg-amber-50 p-3 text-xs dark:bg-amber-950/30">
-              <span className="font-bold text-amber-900 dark:text-amber-300">
-                Soil & Nutrition Advice:
-              </span>
-              <p className="mt-1 text-amber-950 dark:text-amber-200">
-                {doctorPathologyResult.soilAndNutrientAdvice}
-              </p>
-            </div>
+                  <span>Diagnose {selectedCrop}</span>
+                </>
+              )}
+            </button>
           </Card>
         </div>
-      )}
+
+        {/* Right Column (7 Cols): Diagnostic Report & Remedies */}
+        <div className="lg:col-span-7 space-y-4">
+          {doctorPathologyResult ? (
+            <Card className="p-5 space-y-4">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-medium text-zinc-400 uppercase tracking-wider">
+                      Diagnosis Result
+                    </span>
+                    <Badge variant={doctorPathologyResult.severity === 'HIGH' ? 'danger' : 'warning'}>
+                      Severity: {doctorPathologyResult.severity}
+                    </Badge>
+                  </div>
+                  <h3 className="text-base font-semibold text-zinc-900 mt-1">
+                    {doctorPathologyResult.diseaseName}
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-0.5">
+                    Category: {doctorPathologyResult.category}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <span className="text-xl font-bold text-zinc-900">
+                    {doctorPathologyResult.confidencePercent ? `${doctorPathologyResult.confidencePercent}%` : doctorPathologyResult.confidence}
+                  </span>
+                  <span className="text-[10px] text-zinc-400 block">Match Confidence</span>
+                </div>
+              </div>
+
+              {/* Symptoms Description */}
+              <div className="rounded-lg bg-zinc-50 border border-zinc-100 p-3 text-xs text-zinc-700 space-y-0.5">
+                <span className="font-medium block text-zinc-900">
+                  Observed Symptoms:
+                </span>
+                <p className="text-zinc-600">{doctorPathologyResult.symptomsDescription || doctorPathologyResult.symptomsSummary}</p>
+              </div>
+
+              {/* Treatment Protocols */}
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-zinc-900 block">
+                  Recommended Treatment Protocol
+                </span>
+
+                <div className="space-y-1.5">
+                  {doctorPathologyResult.treatmentSteps.map((step, i) => (
+                    <div
+                      key={i}
+                      className="flex items-start gap-2.5 rounded-lg border border-zinc-100 p-2.5 text-xs bg-zinc-50/50"
+                    >
+                      <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-[10px] font-medium text-zinc-700">
+                        {i + 1}
+                      </span>
+                      <span className="text-zinc-700">{step}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Chemical vs Organic Remedy */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="rounded-lg bg-zinc-50 p-3 border border-zinc-200/80 space-y-1">
+                  <span className="text-[10px] font-medium text-zinc-500 uppercase block">
+                    Recommended Chemical Spray
+                  </span>
+                  <p className="font-semibold text-zinc-900">
+                    {doctorPathologyResult.recommendedChemical}
+                  </p>
+                  <p className="text-[11px] text-zinc-500">
+                    Dosage: {doctorPathologyResult.dosageRecommendation || '1.5 - 2 ml/L water'}
+                  </p>
+                </div>
+
+                <div className="rounded-lg bg-zinc-50 p-3 border border-zinc-200/80 space-y-1">
+                  <span className="text-[10px] font-medium text-zinc-500 uppercase block">
+                    Organic / Bio-Control Remedy
+                  </span>
+                  <p className="font-semibold text-zinc-900">
+                    {doctorPathologyResult.organicRemedy}
+                  </p>
+                  <p className="text-[11px] text-zinc-500">
+                    Eco-friendly botanical extract formulation
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-zinc-100">
+                <span className="text-xs text-zinc-500">Need chemical inputs delivered?</span>
+                <button
+                  onClick={() => setTab('market')}
+                  className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors"
+                >
+                  <Store className="h-3.5 w-3.5 text-zinc-500" />
+                  <span>Order on Mandi</span>
+                </button>
+              </div>
+            </Card>
+          ) : (
+            <Card className="flex flex-col items-center justify-center p-12 text-center space-y-2 min-h-[340px]">
+              <div className="w-12 h-12 rounded-xl bg-zinc-100 text-zinc-500 flex items-center justify-center text-xl">
+                🩺
+              </div>
+              <h3 className="font-semibold text-sm text-zinc-900">
+                Pathology Scanner Ready
+              </h3>
+              <p className="text-xs text-zinc-500 max-w-sm">
+                Select your crop on the left and upload an affected leaf image to receive disease identification and ICAR treatment plans.
+              </p>
+            </Card>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

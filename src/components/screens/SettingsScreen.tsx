@@ -4,7 +4,7 @@ import React from 'react';
 import { 
   Settings as SettingsIcon, Globe, Moon, Sun, Shield, 
   Smartphone, ArrowLeft, Check, Sparkles, User, Info, 
-  HelpCircle, Database
+  HelpCircle, Database, CheckCircle2
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { useKisanStore } from '@/stores/useKisanStore';
@@ -17,140 +17,147 @@ export const SettingsScreen: React.FC = () => {
     isDarkTheme, 
     toggleTheme, 
     userProfile,
-    navigateBack,
     navigateToSubScreen 
   } = useKisanStore();
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-20">
-      {/* Top Header */}
-      <div className="bg-gradient-to-r from-emerald-700 to-green-700 text-white px-4 pt-4 pb-5 shadow-md">
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={navigateBack}
-            className="p-1.5 rounded-full hover:bg-white/10 active:bg-white/20 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
+    <div className="space-y-6 max-w-4xl mx-auto">
+      {/* 1. Header Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
+        <div>
+          <h1 className="text-2xl font-black tracking-tight text-gray-900 dark:text-zinc-100 flex items-center gap-2">
+            <span>⚙️</span>
+            <span>Settings & Regional Preferences</span>
+          </h1>
+          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
+            Display language, voice accent, dark/light theme & offline IndexedDB database synchronization
+          </p>
+        </div>
+      </div>
+
+      {/* 2. Profile Card shortcut */}
+      <Card 
+        onClick={() => navigateToSubScreen('farmer_profile')}
+        className="p-5 cursor-pointer hover:border-emerald-300 hover:shadow-md transition-all flex items-center justify-between border border-gray-200 dark:border-zinc-800"
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-black text-lg flex items-center justify-center">
+            {userProfile?.name?.split(' ').map(n => n[0]).join('') || 'RK'}
+          </div>
           <div>
-            <h1 className="text-xl font-bold flex items-center gap-2">
-              <SettingsIcon className="w-5 h-5 text-emerald-300" />
-              Settings & Preferences
-            </h1>
-            <p className="text-xs text-emerald-100">Language, theme & offline synchronization</p>
+            <h3 className="font-extrabold text-base text-gray-900 dark:text-zinc-100">
+              {userProfile?.name || 'Ramesh Kumar'}
+            </h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {userProfile?.district || 'Ludhiana'}, {userProfile?.state || 'Punjab'} • {userProfile?.phone || '+91 98765 43210'}
+            </p>
+            <span className="text-[11px] text-emerald-600 font-bold block mt-1">
+              Farmer ID: {userProfile?.id || 'PB-LDH-8841'} • Verified Landholder
+            </span>
           </div>
         </div>
-      </div>
+        <span className="text-xs font-bold text-emerald-600 hover:underline">
+          View & Edit Profile →
+        </span>
+      </Card>
 
-      <div className="px-4 py-4 space-y-4 max-w-lg mx-auto">
-        {/* Profile Card shortcut */}
-        <Card 
-          onClick={() => navigateToSubScreen('farmer_profile')}
-          className="p-4 cursor-pointer hover:shadow-md transition-shadow flex items-center justify-between"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-extrabold text-base flex items-center justify-center">
-              {userProfile?.name?.split(' ').map(n => n[0]).join('') || 'RK'}
-            </div>
-            <div>
-              <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100">
-                {userProfile?.name || 'Ramesh Kumar'}
-              </h3>
-              <p className="text-xs text-slate-500">
-                {userProfile?.district || 'Ludhiana'}, {userProfile?.state || 'Punjab'} • {userProfile?.phone || '+91 98765 43210'}
-              </p>
-            </div>
-          </div>
-          <span className="text-xs font-semibold text-emerald-600">Edit</span>
-        </Card>
-
-        {/* Language Selection */}
-        <Card className="p-4 space-y-3">
-          <div className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold text-sm">
+      {/* 3. Language Selection (2-Column Grid) */}
+      <Card className="p-6 border border-gray-200 dark:border-zinc-800 space-y-4">
+        <div>
+          <h3 className="font-extrabold text-base text-gray-900 dark:text-zinc-100 flex items-center gap-2">
             <Globe className="w-4 h-4 text-emerald-600" />
-            Display Language
-          </div>
-
-          <p className="text-xs text-slate-500">
-            Select your preferred regional language for AI voice advice and farm reports.
+            <span>Regional Indian Language</span>
+          </h3>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Select your preferred language for autonomous AI voice guidance, mandi reports and disease prescriptions
           </p>
-
-          <div className="space-y-1.5 pt-1">
-            {LANGUAGES.map(lang => {
-              const isSelected = currentLanguage?.code === lang.code;
-              return (
-                <button
-                  key={lang.code}
-                  onClick={() => setLanguage(lang)}
-                  className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-semibold transition-all ${
-                    isSelected 
-                      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700' 
-                      : 'bg-slate-50 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300 hover:bg-slate-100'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold">{lang.nativeName}</span>
-                    <span className="text-slate-400 font-normal">({lang.displayName})</span>
-                  </div>
-                  {isSelected && <Check className="w-4 h-4 text-emerald-600" />}
-                </button>
-              );
-            })}
-          </div>
-        </Card>
-
-        {/* Dark Theme Switch */}
-        <Card className="p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-              {isDarkTheme ? <Moon className="w-5 h-5 text-amber-400" /> : <Sun className="w-5 h-5 text-amber-500" />}
-            </div>
-            <div>
-              <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100">
-                Dark Mode
-              </h3>
-              <p className="text-xs text-slate-500">
-                Easier reading in bright daylight or night field work
-              </p>
-            </div>
-          </div>
-
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input 
-              type="checkbox" 
-              checked={isDarkTheme}
-              onChange={toggleTheme}
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-          </label>
-        </Card>
-
-        {/* Offline-First Storage Status */}
-        <Card className="p-4 space-y-2">
-          <div className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold text-sm">
-            <Database className="w-4 h-4 text-emerald-600" />
-            Offline-First Local Storage
-          </div>
-
-          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-            All your farms, livestock health logs, soil telemetry, and market bids are indexed in your browser&apos;s IndexedDB database. Changes persist seamlessly without continuous internet.
-          </p>
-
-          <div className="flex items-center gap-2 pt-1 text-xs text-emerald-600 font-bold">
-            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            IndexedDB Database Synced (Dexie 4.0)
-          </div>
-        </Card>
-
-        {/* About App */}
-        <div className="text-center text-xs text-slate-400 pt-4 space-y-1">
-          <p className="font-semibold text-slate-500">KisanAI Autonomous Farm Operating System</p>
-          <p>Version 2.4.0 (Web Progressive Web App)</p>
-          <p>Designed for Indian Agriculture • ICAR & PAU Calibrated</p>
         </div>
-      </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          {LANGUAGES.map(lang => {
+            const isSelected = currentLanguage?.code === lang.code;
+            return (
+              <button
+                key={lang.code}
+                onClick={() => setLanguage(lang)}
+                className={`flex items-center justify-between p-4 rounded-xl text-xs font-bold transition-all border ${
+                  isSelected 
+                    ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-500 shadow-xs' 
+                    : 'bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border-gray-200 dark:border-zinc-700 hover:bg-gray-50'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="text-sm font-extrabold">{lang.nativeName}</span>
+                  <span className="text-gray-400 font-normal">({lang.displayName})</span>
+                </div>
+                {isSelected && <Check className="w-4 h-4 text-emerald-600" />}
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* 4. Display Appearance & Theme */}
+      <Card className="p-6 border border-gray-200 dark:border-zinc-800 space-y-4">
+        <div>
+          <h3 className="font-extrabold text-base text-gray-900 dark:text-zinc-100 flex items-center gap-2">
+            {isDarkTheme ? <Moon className="w-4 h-4 text-emerald-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
+            <span>Appearance & Theme</span>
+          </h3>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Switch between crisp daylight contrast and eye-comfort dark mode for nighttime farm monitoring
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between pt-1">
+          <span className="text-xs font-bold text-gray-700 dark:text-zinc-300">Dark Mode</span>
+          <button
+            onClick={toggleTheme}
+            className={`w-12 h-6 rounded-full transition-colors relative p-0.5 ${
+              isDarkTheme ? 'bg-emerald-600' : 'bg-gray-300'
+            }`}
+          >
+            <div
+              className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                isDarkTheme ? 'translate-x-6' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
+      </Card>
+
+      {/* 5. Database & Offline Storage Telemetry */}
+      <Card className="p-6 border border-gray-200 dark:border-zinc-800 space-y-4">
+        <div>
+          <h3 className="font-extrabold text-base text-gray-900 dark:text-zinc-100 flex items-center gap-2">
+            <Database className="w-4 h-4 text-emerald-600" />
+            <span>Offline-First Farm Storage (IndexedDB Dexie.js)</span>
+          </h3>
+          <p className="text-xs text-gray-500 mt-0.5">
+            All your farm records, crop lifecycles, and transactions are securely cached locally in your browser
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div className="p-3 bg-gray-50 dark:bg-zinc-800/60 rounded-xl">
+            <span className="text-gray-400 block text-[10px] font-bold uppercase">Database Engine</span>
+            <strong className="text-gray-800 dark:text-zinc-200 text-sm mt-0.5 block">Dexie.js 4.0</strong>
+          </div>
+          <div className="p-3 bg-gray-50 dark:bg-zinc-800/60 rounded-xl">
+            <span className="text-gray-400 block text-[10px] font-bold uppercase">Storage Status</span>
+            <strong className="text-emerald-600 text-sm mt-0.5 block flex items-center gap-1">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Fully Synchronized</span>
+            </strong>
+          </div>
+          <div className="p-3 bg-gray-50 dark:bg-zinc-800/60 rounded-xl">
+            <span className="text-gray-400 block text-[10px] font-bold uppercase">PWA Offline Mode</span>
+            <strong className="text-gray-800 dark:text-zinc-200 text-sm mt-0.5 block">Enabled</strong>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 };
+
 export default SettingsScreen;

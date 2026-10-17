@@ -109,6 +109,9 @@ export interface CropRecord {
   sowingDate: string;
   expectedHarvest: string;
   expectedYieldPerAcre: number;
+  expectedYield?: string | number;
+  daysRemaining?: number;
+  icon?: string;
   notes: string;
   isNewCrop: boolean;
   daysElapsed: number;
@@ -261,6 +264,7 @@ export interface AgriProduct {
   rating: number;
   reviewsCount: number;
   packSize: string;
+  packSizes?: string[];
   packSizesAvailable: string[];
   inStock: boolean;
   imageUrl: string;
@@ -274,13 +278,16 @@ export interface AgriProduct {
 export interface AgriShop {
   id: string;
   name: string;
+  shopName?: string;
   shopType: string;
   address: string;
   distanceKm: number;
   rating: number;
   phone: string;
+  phoneNumber?: string;
   isOpenNow: boolean;
   openingHours: string;
+  openHours?: string;
   availableStock: string[];
   directionsSummary: string;
 }
@@ -292,11 +299,13 @@ export interface CropSellListing {
   quantityQuintals: number;
   askingPricePerQuintal: number;
   moisturePercent: number;
+  moisturePercentage?: number;
   grade: string;
   pickupLocation: string;
   listedDate: string;
   status: string;
   activeBidsCount: number;
+  offersReceivedCount?: number;
   highestBidPrice: number;
 }
 
@@ -305,6 +314,8 @@ export interface CropBuyerBid {
   buyerName: string;
   buyerType: string;
   bidPricePerQuintal: number;
+  offeredPricePerQuintal?: number;
+  quantityDemandedQuintals?: number;
   totalAmount: number;
   pickupPromise: string;
   paymentTerms: string;
@@ -314,15 +325,19 @@ export interface CropBuyerBid {
 export interface PhysicalMandi {
   id: string;
   name: string;
+  mandiName?: string;
   district: string;
   state: string;
   distanceKm: number;
   todayArrivalsQuintals: number;
+  todayArrivalQuintals?: number;
   openHours: string;
   modalPriceToday: number;
+  currentModalPrice?: number;
   activeTradersCount: number;
   mspAssistanceCounter: boolean;
   helplinePhone: string;
+  helplineNumber?: string;
 }
 
 export interface SoilTestingPackage {
@@ -390,6 +405,7 @@ export interface FarmWeather {
   locationName: string;
   state: string;
   currentTempC: number;
+  currentTemp?: number;
   conditionText: string;
   conditionIcon: string;
   humidityPercent: number;
@@ -405,10 +421,12 @@ export interface FarmWeather {
   feelsLikeTempC: number;
   precipitationMm: number;
   dewPointC: number;
+  dewPointCelsius?: number;
   windGustsKm: number;
   windDirection: string;
   surfacePressureHpa: number;
   soilTemperatureC: number;
+  soilTemperature0to10cm?: number;
   et0EvapotranspirationMm: number;
   sprayingWindowStatus: string;
   sprayingReason: string;
@@ -417,7 +435,9 @@ export interface FarmWeather {
   diseaseRiskReason: string;
   fieldWorkabilityScore: number;
   livestockThiScore: number;
+  livestockThiIndex?: number;
   livestockStressLevel: string;
+  livestockStressCategory?: string;
   lastUpdatedTime: string;
 }
 
@@ -427,10 +447,13 @@ export interface CropPathologyResult {
   diseaseName: string;
   category: string;
   confidence: string;
+  confidencePercent?: number;
   severity: string;
   symptomsSummary: string;
+  symptomsDescription?: string;
   treatmentSteps: string[];
   recommendedChemical: string;
+  dosageRecommendation?: string;
   organicRemedy: string;
   soilAndNutrientAdvice: string;
   isGeminiVisionAnalyzed: boolean;

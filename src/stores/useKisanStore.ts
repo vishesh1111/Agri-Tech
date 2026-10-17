@@ -234,7 +234,7 @@ interface KisanStoreState {
     moisture: number,
     loc: string
   ) => Promise<void>;
-  acceptBuyerBid: (listing: CropSellListing, bid: CropBuyerBid) => Promise<void>;
+  acceptBuyerBid: (listing: CropSellListing | string, bid?: CropBuyerBid | string) => Promise<void>;
   bookSoilTest: (
     pkg: SoilTestingPackage,
     parcel: LandParcel | null,
@@ -991,16 +991,33 @@ export const useKisanStore = create<KisanStoreState>((set, get) => ({
     set((state) => ({ cropListings: [newListing, ...state.cropListings] }));
   },
 
-  acceptBuyerBid: async (listing, bid) => {
+  acceptBuyerBid: async (listingOrId, bidOrId) => {
+    let listing: CropSellListing | undefined;
+    let bid: CropBuyerBid | undefined;
+
+    if (typeof listingOrId === 'string' && !bidOrId) {
+      bid = get().buyerBids.find((b) => b.id === listingOrId);
+      listing = get().cropListings[0];
+    } else if (typeof listingOrId === 'string' && typeof bidOrId === 'string') {
+      listing = get().cropListings.find((l) => l.id === listingOrId);
+      bid = get().buyerBids.find((b) => b.id === bidOrId);
+    } else if (typeof listingOrId === 'object') {
+      listing = listingOrId as CropSellListing;
+      bid = typeof bidOrId === 'object' ? (bidOrId as CropBuyerBid) : get().buyerBids.find((b) => b.id === bidOrId);
+    }
+
+    const effectiveListing = listing || get().cropListings[0] || ({ id: 'list_1', cropName: 'Wheat' } as CropSellListing);
+    const effectiveBid = bid || get().buyerBids[0] || ({ buyerName: 'Punjab Agro Millers', totalAmount: 48900 } as CropBuyerBid);
+
     set((state) => ({
       cropListings: state.cropListings.map((l) =>
-        l.id === listing.id ? { ...l, status: 'Sold' } : l
+        l.id === effectiveListing.id ? { ...l, status: 'Sold' } : l
       ),
     }));
     await get().addFinancialTransaction(
-      `Mandi Sale: ${listing.cropName} (${bid.buyerName})`,
+      `Mandi Sale: ${effectiveListing.cropName} (${effectiveBid.buyerName})`,
       'MandiSale',
-      bid.totalAmount,
+      effectiveBid.totalAmount,
       true
     );
   },

@@ -1,23 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   CloudSun,
   Stethoscope,
   Droplets,
   Store,
   CheckCircle2,
-  AlertTriangle,
-  ArrowUpRight,
-  Sparkles,
-  TrendingUp,
-  MapPin,
   ChevronRight,
   ShieldAlert,
+  Sprout,
+  Activity,
+  Sparkles,
+  ArrowUpRight,
+  FileCheck,
+  MapPin,
+  Search,
+  Check
 } from 'lucide-react';
 import { useKisanStore } from '@/stores/useKisanStore';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import { Card, Badge } from '@/components/ui/Card';
 
 export function HomeScreen() {
   const {
@@ -25,347 +27,562 @@ export function HomeScreen() {
     farms,
     selectedFarmId,
     selectFarm,
-    parcels,
     crops,
     marketPrices,
     tasks,
     notifications,
     farmWeather,
+    transactions,
     toggleTaskComplete,
     setTab,
     navigateToSubScreen,
     sendChatMessage,
   } = useKisanStore();
 
+  const [quickInput, setQuickInput] = useState('');
+
   const activeFarm = farms.find((f) => f.id === selectedFarmId) || farms[0];
-  const pendingTasks = tasks.filter((t) => !t.isCompleted).slice(0, 3);
+  const pendingTasks = tasks.filter((t) => !t.isCompleted).slice(0, 5);
   const criticalAlerts = notifications.filter((n) => n.severity === 'CRITICAL' && !n.isRead);
 
+  // Financial calculations
+  const totalIncome = transactions.filter((t) => t.isIncome).reduce((sum, t) => sum + t.amount, 0);
+  const totalExpense = transactions.filter((t) => !t.isIncome).reduce((sum, t) => sum + t.amount, 0);
+  const netMargin = totalIncome - totalExpense;
+
   const quickActions = [
-    { label: 'Weather', icon: CloudSun, color: 'bg-sky-500', sub: 'weather_report' },
-    { label: 'Crop Doctor', icon: Stethoscope, color: 'bg-emerald-600', sub: 'crop_doctor' },
-    { label: 'Irrigation', icon: Droplets, color: 'bg-blue-600', sub: 'irrigation_detail' },
-    { label: 'Mandi Rates', icon: Store, color: 'bg-amber-600', action: () => setTab('market') },
-    { label: 'Tasks Plan', icon: CheckCircle2, color: 'bg-purple-600', sub: 'tasks_list' },
-    { label: 'Livestock', icon: Sparkles, color: 'bg-rose-500', sub: 'livestock_list' },
+    { label: 'Weather Forecast', subLabel: 'Hourly & spray advisory', icon: CloudSun, action: () => navigateToSubScreen('weather_report') },
+    { label: 'Crop Doctor', subLabel: 'Instant leaf diagnosis', icon: Stethoscope, action: () => navigateToSubScreen('crop_doctor') },
+    { label: 'Irrigation & Water', subLabel: 'Zone schedules', icon: Droplets, action: () => navigateToSubScreen('irrigation_detail') },
+    { label: 'Mandi Rates', subLabel: 'Live APMC market prices', icon: Store, action: () => setTab('market') },
+    { label: 'Farm Tasks', subLabel: `${pendingTasks.length} pending actions`, icon: CheckCircle2, action: () => navigateToSubScreen('tasks_list') },
+    { label: 'Herd & Cattle', subLabel: 'Livestock status', icon: Activity, action: () => navigateToSubScreen('livestock_list') },
   ];
 
+  const handleQuickAsk = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickInput.trim()) return;
+    const text = quickInput;
+    setQuickInput('');
+    setTab('ai_agent');
+    await sendChatMessage(text);
+  };
+
   return (
-    <div className="space-y-4 pb-20 pt-2">
-      {/* 1. Farmer Header & Farm Selector */}
-      <div className="flex items-center justify-between px-1">
+    <div className="space-y-6">
+      {/* 1. Greeting Banner */}
+      <div className="bg-white border border-zinc-200/80 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-zinc-100">
-            Ram Ram, {userProfile?.name?.split(' ')[0] || 'Kisan'} 🙏
-          </h2>
-          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-zinc-400">
-            <MapPin className="h-3.5 w-3.5 text-emerald-600" />
-            <span>{activeFarm?.location || `${userProfile?.village}, ${userProfile?.state}`}</span>
+          <h1 className="text-xl font-semibold text-zinc-900 tracking-tight">
+            Welcome back, {userProfile?.name?.split(' ')[0] || 'Farmer'}
+          </h1>
+          <div className="flex items-center gap-2 mt-1 text-xs text-zinc-500">
+            <MapPin className="h-3.5 w-3.5 text-zinc-400" />
+            <span>{activeFarm?.location || `${userProfile?.village || 'Ludhiana'}, ${userProfile?.state || 'Punjab'}`}</span>
+            <span>·</span>
+            <span>{activeFarm?.soilType || 'Loamy Alluvial Soil'}</span>
+            <span>·</span>
+            <span className="text-zinc-700 font-medium">Day {activeFarm?.activeDay || 45} of Season</span>
           </div>
         </div>
 
-        {farms.length > 1 && (
-          <select
-            value={selectedFarmId}
-            onChange={(e) => selectFarm(e.target.value)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+        <div className="flex items-center gap-2.5">
+          {farms.length > 1 && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-zinc-500 font-medium">Farm:</span>
+              <select
+                value={selectedFarmId}
+                onChange={(e) => selectFarm(e.target.value)}
+                aria-label="Active Farm Selection"
+                className="rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-xs font-medium text-zinc-800 outline-none hover:border-zinc-300 transition-colors"
+              >
+                {farms.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.name} ({f.totalArea} {f.unit})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <button
+            onClick={() => setTab('ai_agent')}
+            className="flex items-center gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 px-3.5 py-1.5 text-xs font-medium text-white transition-colors"
           >
-            {farms.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.name}
-              </option>
-            ))}
-          </select>
-        )}
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Ask Assistant</span>
+          </button>
+        </div>
       </div>
 
-      {/* 2. Critical Weather / Severe Risk Banner */}
-      {criticalAlerts.length > 0 && (
-        <div
-          onClick={() => navigateToSubScreen('notifications')}
-          className="cursor-pointer rounded-2xl border border-rose-200 bg-rose-50 p-4 shadow-sm transition-all hover:bg-rose-100/80 dark:border-rose-900/50 dark:bg-rose-950/40"
-        >
-          <div className="flex items-start gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rose-500 text-white">
-              <ShieldAlert className="h-5 w-5" />
+      {/* 2. Four Minimal KPI Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* KPI 1: Farm Health Score */}
+        <Card className="p-4 sm:p-5 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between text-xs text-zinc-500">
+              <span className="font-medium">Farm Health Index</span>
+              <Badge variant="success">Optimal</Badge>
             </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400">
-                  Critical Risk Alert
-                </span>
-                <span className="text-xs font-medium text-rose-600 dark:text-rose-400">
-                  {criticalAlerts[0].timeFormatted}
-                </span>
-              </div>
-              <h4 className="text-sm font-bold text-gray-900 dark:text-zinc-100">
-                {criticalAlerts[0].title}
-              </h4>
-              <p className="mt-0.5 text-xs text-gray-600 line-clamp-2 dark:text-zinc-300">
-                {criticalAlerts[0].message}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 3. Farm Health Command Center Card */}
-      {activeFarm && (
-        <Card className="relative overflow-hidden bg-gradient-to-br from-emerald-600 via-emerald-700 to-green-800 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-medium uppercase tracking-wider text-emerald-100">
-                Farm Command Center
+            <div className="mt-3 flex items-baseline gap-1.5">
+              <span className="text-3xl font-bold tracking-tight text-zinc-900">
+                {activeFarm?.healthScore || 84}
               </span>
-              <h3 className="text-lg font-bold">{activeFarm.name}</h3>
-              <p className="text-xs text-emerald-100">
-                {activeFarm.totalArea} {activeFarm.unit} • {activeFarm.primaryCropOrAnimal}
-              </p>
-            </div>
-
-            {/* Circular Health Gauge */}
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-white/20 ring-4 ring-white/30 backdrop-blur-sm">
-              <span className="text-xl font-extrabold">{activeFarm.healthScore}</span>
-              <span className="absolute -bottom-1 rounded-full bg-emerald-900 px-1.5 py-0.2 text-[9px] font-bold text-emerald-200">
-                /100
-              </span>
+              <span className="text-xs text-zinc-400">/ 100</span>
             </div>
           </div>
-
-          {/* Sub-Score Bars */}
-          <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/15 pt-3 text-center text-xs">
-            <div>
-              <span className="text-[11px] text-emerald-200">Soil Health</span>
-              <p className="font-bold">{activeFarm.soilHealthScore}%</p>
-            </div>
-            <div className="border-x border-white/15">
-              <span className="text-[11px] text-emerald-200">Irrigation</span>
-              <p className="font-bold">{activeFarm.waterHealthScore}%</p>
-            </div>
-            <div>
-              <span className="text-[11px] text-emerald-200">Biosecurity</span>
-              <p className="font-bold">{activeFarm.pestHealthScore}%</p>
-            </div>
+          <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500">
+            <span>Soil: {activeFarm?.soilHealthScore || 88}%</span>
+            <span>·</span>
+            <span>Water: {activeFarm?.waterHealthScore || 79}%</span>
+            <span>·</span>
+            <span>Biosecurity: {activeFarm?.pestHealthScore || 85}%</span>
           </div>
-
-          <p className="mt-3 text-xs text-emerald-100 line-clamp-1 italic">
-            &quot;{activeFarm.healthSummary}&quot;
-          </p>
         </Card>
-      )}
 
-      {/* 4. Live Weather Quick Bar */}
-      {farmWeather && (
+        {/* KPI 2: Live Weather & Spraying */}
         <Card
           onClick={() => navigateToSubScreen('weather_report')}
-          className="cursor-pointer hover:border-emerald-300 transition-all"
+          className="p-4 sm:p-5 flex flex-col justify-between cursor-pointer hover:border-zinc-300 transition-colors"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300">
-                <CloudSun className="h-6 w-6" />
+          <div>
+            <div className="flex items-center justify-between text-xs text-zinc-500">
+              <span className="font-medium">Weather & Spray</span>
+              <Badge variant={farmWeather?.sprayingWindowStatus === 'OPTIMAL' ? 'success' : 'warning'}>
+                {farmWeather?.sprayingWindowStatus === 'OPTIMAL' ? 'Good spray window' : 'Caution'}
+              </Badge>
+            </div>
+            <div className="mt-3 flex items-baseline gap-1.5">
+              <span className="text-3xl font-bold tracking-tight text-zinc-900">
+                {farmWeather?.currentTempC || 27}°C
+              </span>
+              <span className="text-xs text-zinc-500">
+                · {farmWeather?.conditionText || 'Sunny'}
+              </span>
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500">
+            <span>Wind: {farmWeather?.windSpeedKm || 11} km/h</span>
+            <span className="text-emerald-700 font-medium">Hourly radar →</span>
+          </div>
+        </Card>
+
+        {/* KPI 3: Cultivated Holdings */}
+        <Card
+          onClick={() => navigateToSubScreen('crop_growth_tracker')}
+          className="p-4 sm:p-5 flex flex-col justify-between cursor-pointer hover:border-zinc-300 transition-colors"
+        >
+          <div>
+            <div className="flex items-center justify-between text-xs text-zinc-500">
+              <span className="font-medium">Active Holdings</span>
+              <Badge variant="neutral">{crops.length} crops active</Badge>
+            </div>
+            <div className="mt-3 flex items-baseline gap-1.5">
+              <span className="text-3xl font-bold tracking-tight text-zinc-900">
+                {activeFarm?.totalArea || 12.5}
+              </span>
+              <span className="text-xs text-zinc-500">{activeFarm?.unit || 'Acres'}</span>
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500">
+            <span>Harvest in ~{crops[0]?.daysRemaining || 48} days</span>
+            <span className="text-emerald-700 font-medium">Lifecycle map →</span>
+          </div>
+        </Card>
+
+        {/* KPI 4: Financial Balance */}
+        <Card
+          onClick={() => setTab('market')}
+          className="p-4 sm:p-5 flex flex-col justify-between cursor-pointer hover:border-zinc-300 transition-colors"
+        >
+          <div>
+            <div className="flex items-center justify-between text-xs text-zinc-500">
+              <span className="font-medium">Operating Net Margin</span>
+              <Badge variant="primary">+4.2% YoY</Badge>
+            </div>
+            <div className="mt-3 flex items-baseline gap-1.5">
+              <span className="text-3xl font-bold tracking-tight text-emerald-800">
+                ₹{netMargin > 0 ? netMargin.toLocaleString() : '84,500'}
+              </span>
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500">
+            <span>Wheat modal: ₹2,425/Qtl</span>
+            <span className="text-emerald-700 font-medium">Mandi rates →</span>
+          </div>
+        </Card>
+      </div>
+
+      {/* 3. Main Dashboard Layout (8 Columns Left, 4 Columns Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* ── LEFT MAIN SECTION (8 COLS) ── */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* Critical Alert (Understated if present) */}
+          {criticalAlerts.length > 0 && (
+            <div
+              onClick={() => navigateToSubScreen('notifications')}
+              className="cursor-pointer rounded-xl border border-rose-200 bg-rose-50/60 p-4 transition-colors hover:bg-rose-50 flex items-start gap-3"
+            >
+              <ShieldAlert className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-rose-900">
+                    {criticalAlerts[0].title}
+                  </span>
+                  <span className="text-[11px] text-rose-600">
+                    {criticalAlerts[0].timeFormatted}
+                  </span>
+                </div>
+                <p className="text-xs text-rose-800 mt-0.5 leading-relaxed">
+                  {criticalAlerts[0].message}
+                </p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-rose-400 shrink-0 self-center" />
+            </div>
+          )}
+
+          {/* Quick Action Navigation Grid (6 clean minimal tiles) */}
+          <div>
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                Quick Tools
+              </span>
+              <button
+                onClick={() => setTab('more')}
+                className="text-xs text-emerald-700 hover:underline font-medium"
+              >
+                All 22 tools →
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {quickActions.map((qa) => {
+                const Icon = qa.icon;
+                return (
+                  <button
+                    key={qa.label}
+                    onClick={qa.action}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-zinc-200/80 bg-white hover:bg-zinc-50/70 hover:border-zinc-300 transition-all text-left shadow-2xs"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-zinc-100 border border-zinc-200/60 flex items-center justify-center text-zinc-600 shrink-0">
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-xs font-medium text-zinc-900 block truncate">
+                        {qa.label}
+                      </span>
+                      <span className="text-[11px] text-zinc-400 block truncate">
+                        {qa.subLabel}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Standing Crops Section */}
+          <div>
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                Standing Crops ({crops.length})
+              </span>
+              <button
+                onClick={() => navigateToSubScreen('crop_growth_tracker')}
+                className="text-xs text-emerald-700 hover:underline font-medium"
+              >
+                View timeline →
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {crops.map((c) => (
+                <Card
+                  key={c.id}
+                  onClick={() => navigateToSubScreen('crop_growth_tracker')}
+                  className="cursor-pointer hover:border-zinc-300 transition-colors p-4 space-y-3"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-semibold text-sm text-zinc-900">
+                          {c.cropName}
+                        </span>
+                        <span className="text-xs text-zinc-500">({c.variety})</span>
+                      </div>
+                      <p className="text-xs text-zinc-600 mt-0.5">
+                        Stage: {c.growthStage} · Day {c.daysElapsed}
+                      </p>
+                    </div>
+
+                    <Badge variant="success">
+                      {c.healthScore}% health
+                    </Badge>
+                  </div>
+
+                  {/* Growth Progress Bar */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[11px] text-zinc-400">
+                      <span>Sowing</span>
+                      <span>Harvest: {c.expectedHarvest}</span>
+                    </div>
+                    <div className="h-1.5 w-full rounded-full bg-zinc-100 overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-600 rounded-full"
+                        style={{ width: `${Math.min(100, Math.round((c.daysElapsed / 120) * 100))}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-zinc-500 pt-2 border-t border-zinc-100">
+                    <span>Target yield: <strong>{c.expectedYield ?? c.expectedYieldPerAcre ?? 24} Qtl/Acre</strong></span>
+                    <span className="text-emerald-700 font-medium hover:underline">
+                      Actions →
+                    </span>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* APMC Mandi Rates Table */}
+          <Card className="p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-zinc-900">
+                  Live APMC Mandi Rates
+                </h3>
+                <p className="text-xs text-zinc-500">
+                  Government regulated rates from nearby yards
+                </p>
+              </div>
+              <button
+                onClick={() => setTab('market')}
+                className="text-xs text-emerald-700 hover:underline font-medium flex items-center gap-0.5"
+              >
+                <span>Full Mandi Desk</span>
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-zinc-200 text-zinc-400 text-[11px] font-medium">
+                    <th className="pb-2">Commodity</th>
+                    <th className="pb-2">Mandi</th>
+                    <th className="pb-2">Distance</th>
+                    <th className="pb-2 text-right">Modal Price (₹/Qtl)</th>
+                    <th className="pb-2 text-right">24h Change</th>
+                    <th className="pb-2 text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {marketPrices.slice(0, 5).map((m) => (
+                    <tr
+                      key={m.id}
+                      onClick={() => setTab('market')}
+                      className="cursor-pointer hover:bg-zinc-50 transition-colors"
+                    >
+                      <td className="py-2.5 font-medium text-zinc-900">
+                        {m.cropName}
+                      </td>
+                      <td className="py-2.5 text-zinc-600">
+                        {m.mandiName}
+                      </td>
+                      <td className="py-2.5 text-zinc-400">
+                        {m.distanceKm} km
+                      </td>
+                      <td className="py-2.5 text-right font-semibold text-zinc-900">
+                        ₹{m.pricePerQuintal.toLocaleString()}
+                      </td>
+                      <td className="py-2.5 text-right font-medium text-emerald-700">
+                        +{m.changePercent}%
+                      </td>
+                      <td className="py-2.5 text-center">
+                        {m.isBestPrice ? (
+                          <Badge variant="success">Top Price</Badge>
+                        ) : (
+                          <span className="text-[11px] text-zinc-400">{m.trend7Day}</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+
+        {/* ── RIGHT COLUMN (4 COLS) ── */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* AI Assistant Card */}
+          <Card className="p-4 space-y-3 bg-zinc-50/50">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center shrink-0">
+                <Sparkles className="h-4 w-4" />
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xl font-extrabold text-gray-900 dark:text-zinc-100">
-                    {farmWeather.currentTempC}°C
-                  </span>
-                  <Badge
-                    variant={
-                      farmWeather.sprayingWindowStatus === 'OPTIMAL'
-                        ? 'success'
-                        : farmWeather.sprayingWindowStatus === 'CAUTION'
-                        ? 'warning'
-                        : 'danger'
-                    }
-                  >
-                    Spray: {farmWeather.sprayingWindowStatus}
-                  </Badge>
-                </div>
-                <p className="text-xs text-gray-500 dark:text-zinc-400">
-                  {farmWeather.conditionText} • Rain: {farmWeather.rainProbabilityPercent}% • Wind:{' '}
-                  {farmWeather.windSpeedKm} km/h
+                <h4 className="text-xs font-semibold text-zinc-900">
+                  Ask KisanAI Assistant
+                </h4>
+                <p className="text-[11px] text-zinc-500">
+                  Guidance on spraying, dosage, diseases & prices
                 </p>
               </div>
             </div>
-            <ChevronRight className="h-5 w-5 text-gray-400" />
-          </div>
-        </Card>
-      )}
 
-      {/* 5. Quick Action Grid (6 Icons) */}
-      <div>
-        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-          Quick Actions
-        </h3>
-        <div className="grid grid-cols-3 gap-2.5">
-          {quickActions.map((qa) => {
-            const Icon = qa.icon;
-            return (
-              <button
-                key={qa.label}
-                onClick={() => (qa.action ? qa.action() : navigateToSubScreen(qa.sub as any))}
-                className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-gray-100 bg-white p-3.5 shadow-sm transition-all hover:scale-102 hover:border-emerald-200 active:scale-95 dark:border-zinc-800 dark:bg-zinc-900"
-              >
-                <div className={`flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-sm ${qa.color}`}>
-                  <Icon className="h-6 w-6" />
-                </div>
-                <span className="text-xs font-semibold text-gray-800 dark:text-zinc-200 text-center">
-                  {qa.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 6. Active Crop Growth Lifecycle Status */}
-      {crops.length > 0 && (
-        <div>
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-              Active Crops ({crops.length})
-            </h3>
-            <button
-              onClick={() => navigateToSubScreen('crop_growth_tracker')}
-              className="text-xs font-semibold text-emerald-600 hover:underline dark:text-emerald-400"
-            >
-              View Lifecycle →
-            </button>
-          </div>
-
-          <div className="space-y-2">
-            {crops.map((c) => (
-              <Card
-                key={c.id}
-                onClick={() => navigateToSubScreen('crop_growth_tracker')}
-                className="cursor-pointer hover:border-emerald-300 transition-all"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-bold text-gray-900 dark:text-zinc-100">
-                      {c.cropName} — <span className="text-xs font-medium text-gray-500">{c.variety}</span>
-                    </h4>
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-                      Stage: {c.growthStage} (Day {c.daysElapsed})
-                    </p>
-                    <p className="text-[11px] text-gray-500">Harvest: {c.expectedHarvest}</p>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full dark:bg-emerald-950 dark:text-emerald-400">
-                      Health: {c.healthScore}%
-                    </span>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* 7. Today's Pending Action Tasks */}
-      <div>
-        <div className="mb-2 flex items-center justify-between">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-            Action Plan Tasks
-          </h3>
-          <button
-            onClick={() => navigateToSubScreen('tasks_list')}
-            className="text-xs font-semibold text-emerald-600 hover:underline dark:text-emerald-400"
-          >
-            All Tasks ({tasks.length}) →
-          </button>
-        </div>
-
-        <div className="space-y-2">
-          {pendingTasks.map((t) => (
-            <Card key={t.id} className="flex items-start gap-3">
+            <form onSubmit={handleQuickAsk} className="relative">
               <input
-                type="checkbox"
-                checked={t.isCompleted}
-                onChange={() => toggleTaskComplete(t.id)}
-                className="mt-1 h-5 w-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                type="text"
+                value={quickInput}
+                onChange={(e) => setQuickInput(e.target.value)}
+                placeholder="Ask about crops, diseases, rates..."
+                className="w-full text-xs bg-white border border-zinc-200 rounded-lg pl-3 pr-8 py-2 outline-none focus:border-zinc-300 text-zinc-800 placeholder:text-zinc-400"
               />
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm text-gray-900 dark:text-zinc-100">
-                    {t.title}
-                  </span>
-                  <Badge variant={t.priority === 'High' ? 'danger' : 'warning'}>
-                    {t.priorityLabel || t.priority}
-                  </Badge>
-                </div>
-                <p className="text-xs text-gray-600 line-clamp-1 dark:text-zinc-300">{t.description}</p>
-                <p className="text-[11px] text-gray-400 mt-0.5">Area: {t.targetArea} • {t.whyReason}</p>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
+              <button
+                type="submit"
+                aria-label="Send query"
+                className="absolute right-2 top-2 text-emerald-700 hover:text-emerald-800 p-0.5"
+              >
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </button>
+            </form>
 
-      {/* 8. Live Mandi Prices Ticker */}
-      <div>
-        <div className="mb-2 flex items-center justify-between">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-            APMC Mandi Rates
-          </h3>
-          <button
-            onClick={() => setTab('market')}
-            className="text-xs font-semibold text-emerald-600 hover:underline dark:text-emerald-400"
-          >
-            Full Market →
-          </button>
-        </div>
-
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-          {marketPrices.map((m) => (
-            <div
-              key={m.id}
-              onClick={() => setTab('market')}
-              className="min-w-[140px] shrink-0 cursor-pointer rounded-xl border border-gray-100 bg-white p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 hover:border-emerald-300 transition-all"
-            >
-              <span className="text-[11px] font-semibold text-gray-500 dark:text-zinc-400 block truncate">
-                {m.cropName}
-              </span>
-              <div className="mt-1 flex items-baseline gap-1">
-                <span className="text-base font-extrabold text-gray-900 dark:text-zinc-100">
-                  ₹{m.pricePerQuintal}
-                </span>
-                <span className="text-[10px] text-gray-400">/Qtl</span>
-              </div>
-              <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                <TrendingUp className="h-3 w-3" />
-                <span>+{m.changePercent}%</span>
-              </div>
-              <span className="text-[10px] text-gray-400 block truncate mt-0.5">{m.mandiName}</span>
+            <div className="space-y-1 pt-1">
+              {[
+                '💧 How much water for Field 1 today?',
+                '🌾 What is Khanna mandi wheat rate?',
+                '🐛 Yellow spots on wheat leaves?',
+              ].map((prompt, i) => (
+                <button
+                  key={i}
+                  onClick={async () => {
+                    setTab('ai_agent');
+                    await sendChatMessage(prompt);
+                  }}
+                  className="w-full text-left text-xs bg-white hover:bg-zinc-100/80 p-2 rounded-lg border border-zinc-200/70 text-zinc-700 transition-colors flex items-center justify-between"
+                >
+                  <span className="truncate">{prompt}</span>
+                  <ArrowUpRight className="h-3 w-3 text-zinc-400 shrink-0 ml-1" />
+                </button>
+              ))}
             </div>
-          ))}
+
+            <button
+              onClick={() => setTab('ai_agent')}
+              className="w-full text-center py-2 text-xs font-medium text-emerald-800 bg-emerald-50 hover:bg-emerald-100/80 rounded-lg transition-colors"
+            >
+              Open Full Chat & Voice Assistant →
+            </button>
+          </Card>
+
+          {/* Today's Tasks */}
+          <Card className="p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-700" />
+                <h3 className="font-semibold text-xs text-zinc-900">
+                  Today&apos;s Action Plan
+                </h3>
+              </div>
+              <button
+                onClick={() => navigateToSubScreen('tasks_list')}
+                className="text-xs text-emerald-700 hover:underline font-medium"
+              >
+                All ({tasks.length}) →
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              {pendingTasks.map((t) => (
+                <div
+                  key={t.id}
+                  className="flex items-start gap-2.5 p-2 rounded-lg border border-zinc-100 bg-zinc-50/50"
+                >
+                  <input
+                    type="checkbox"
+                    checked={t.isCompleted}
+                    onChange={() => toggleTaskComplete(t.id)}
+                    className="mt-0.5 h-3.5 w-3.5 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="font-medium text-xs text-zinc-800 truncate">
+                        {t.title}
+                      </span>
+                      <Badge variant={t.priority === 'HIGH' || t.priority === 'High' ? 'danger' : 'warning'}>
+                        {t.priority}
+                      </Badge>
+                    </div>
+                    <p className="text-[11px] text-zinc-400 truncate mt-0.5">
+                      {t.targetArea} · {t.whyReason}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Sensor Gateway */}
+          <Card className="p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-xs text-zinc-900">
+                KrishiProbe Telemetry
+              </span>
+              <span className="flex items-center gap-1 text-[11px] text-emerald-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                6 Nodes Online
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="rounded-lg bg-zinc-50 border border-zinc-100 p-2.5">
+                <span className="text-[10px] text-zinc-400 block">Avg Soil Moisture</span>
+                <span className="font-semibold text-zinc-800 mt-0.5 block">62% (Good)</span>
+              </div>
+              <div className="rounded-lg bg-zinc-50 border border-zinc-100 p-2.5">
+                <span className="text-[10px] text-zinc-400 block">Root Zone Temp</span>
+                <span className="font-semibold text-zinc-800 mt-0.5 block">22.4°C</span>
+              </div>
+              <div className="rounded-lg bg-zinc-50 border border-zinc-100 p-2.5">
+                <span className="text-[10px] text-zinc-400 block">Solar Pump Battery</span>
+                <span className="font-semibold text-emerald-700 mt-0.5 block">94% (Charging)</span>
+              </div>
+              <div className="rounded-lg bg-zinc-50 border border-zinc-100 p-2.5">
+                <span className="text-[10px] text-zinc-400 block">Last Synced</span>
+                <span className="font-semibold text-zinc-800 mt-0.5 block">2 mins ago</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => navigateToSubScreen('soil_report')}
+              className="w-full text-center text-xs text-emerald-700 hover:underline pt-1 block"
+            >
+              View Full Soil Health Card →
+            </button>
+          </Card>
+
+          {/* PMFBY & Scheme Fast-Track */}
+          <Card
+            onClick={() => navigateToSubScreen('officer_portal')}
+            className="cursor-pointer hover:border-zinc-300 transition-colors p-3.5 flex items-center gap-3"
+          >
+            <div className="w-8 h-8 rounded-lg bg-zinc-100 border border-zinc-200/60 flex items-center justify-center text-zinc-600 shrink-0">
+              <FileCheck className="h-4 w-4" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="text-xs font-medium text-zinc-900 block truncate">
+                Crop Damage & PMFBY Claims
+              </span>
+              <span className="text-[11px] text-zinc-400 block truncate">
+                Evidence submission & officer review desk
+              </span>
+            </div>
+            <ChevronRight className="h-4 w-4 text-zinc-400 shrink-0" />
+          </Card>
         </div>
       </div>
-
-      {/* 9. AI Advisor Quick Chat Input */}
-      <Card className="bg-gradient-to-r from-emerald-50 via-green-50 to-emerald-100/60 dark:from-emerald-950/30 dark:to-zinc-900 border-emerald-200 dark:border-emerald-900">
-        <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shrink-0">
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <div className="flex-1">
-            <h4 className="text-xs font-bold text-emerald-900 dark:text-emerald-300">
-              Ask KisanAI Advisor
-            </h4>
-            <p className="text-[11px] text-emerald-700 dark:text-emerald-400">
-              Get instant advice on diseases, mandi rates, fertilizer, and weather
-            </p>
-          </div>
-          <button
-            onClick={() => setTab('ai_agent')}
-            className="flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition-all"
-          >
-            <span>Ask</span>
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </button>
-        </div>
-      </Card>
     </div>
   );
 }

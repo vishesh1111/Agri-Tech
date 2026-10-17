@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { 
   CheckSquare, Plus, Trash2, ArrowLeft, Filter, AlertTriangle, 
   Droplets, Bug, Sprout, Wind, HelpCircle, Check, X, ShieldAlert,
-  ChevronDown
+  ChevronDown, CheckCircle2, ListTodo
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -27,13 +27,10 @@ export const FarmActionPlanScreen: React.FC = () => {
     toggleTaskComplete, 
     deleteTask, 
     addTask, 
-    navigateBack,
-    navigateToSubScreen 
   } = useKisanStore();
 
   const [selectedFarmFilter, setSelectedFarmFilter] = useState<string>('ALL');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('ALL');
-  const [showAddDialog, setShowAddDialog] = useState(false);
 
   // New task form state
   const [newTitle, setNewTitle] = useState('');
@@ -43,26 +40,6 @@ export const FarmActionPlanScreen: React.FC = () => {
   const [newTargetArea, setNewTargetArea] = useState('Plot A');
   const [newWhyReason, setNewWhyReason] = useState('');
   const [newFarmId, setNewFarmId] = useState(farms[0]?.id || 'farm_1');
-
-  if (farms.length === 0) {
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-6 flex flex-col items-center justify-center text-center">
-        <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950/60 rounded-full flex items-center justify-center mb-4">
-          <Sprout className="w-8 h-8 text-emerald-600" />
-        </div>
-        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">No Farms Registered</h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400 max-w-sm mb-6">
-          Please register or add a farm first to generate an autonomous AI Action Plan, daily irrigation schedules, and crop management tasks tailored to your location.
-        </p>
-        <button
-          onClick={() => navigateToSubScreen('farms_manager')}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md transition-colors"
-        >
-          Add Your First Farm
-        </button>
-      </div>
-    );
-  }
 
   const filteredTasks = farmTasks.filter((task: FarmTask) => {
     const matchesFarm = selectedFarmFilter === 'ALL' || task.farmId === selectedFarmFilter;
@@ -94,331 +71,262 @@ export const FarmActionPlanScreen: React.FC = () => {
     setNewTitle('');
     setNewDescription('');
     setNewWhyReason('');
-    setShowAddDialog(false);
-  };
-
-  const getPriorityColor = (p: string) => {
-    switch (p) {
-      case 'HIGH': return 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border-rose-300';
-      case 'MEDIUM': return 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-300';
-      default: return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-300';
-    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-24">
-      {/* Top Header */}
-      <div className="bg-gradient-to-r from-emerald-700 to-green-700 text-white px-4 pt-4 pb-5 shadow-md">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={navigateBack}
-              className="p-1.5 rounded-full hover:bg-white/10 active:bg-white/20 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-xl font-bold flex items-center gap-2">
-                <CheckSquare className="w-5 h-5 text-emerald-300" />
-                Today&apos;s Farm Action Plan
-              </h1>
-              <p className="text-xs text-emerald-100">
-                {pendingTasks.length} pending • {completedTasks.length} completed
-              </p>
-            </div>
+    <div className="space-y-6">
+      {/* 1. Header Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
+              <ListTodo className="h-5 w-5" />
+            </span>
+            <h1 className="text-xl font-semibold text-zinc-900">
+              Farm Action Plan
+            </h1>
           </div>
-
-          <button
-            onClick={() => setShowAddDialog(true)}
-            className="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 backdrop-blur-sm transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            New Task
-          </button>
+          <p className="text-xs text-zinc-500 mt-1">
+            Prioritized daily operational schedule based on weather forecasts, growth stages, and sensor alerts
+          </p>
         </div>
 
-        {/* Farm Selector Pill */}
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-          <button
-            onClick={() => setSelectedFarmFilter('ALL')}
-            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-              selectedFarmFilter === 'ALL'
-                ? 'bg-white text-emerald-800 font-bold shadow-sm'
-                : 'bg-emerald-800/60 text-emerald-100 hover:bg-emerald-800'
-            }`}
-          >
-            All Farms ({farms.length})
-          </button>
-          {farms.map(f => (
-            <button
-              key={f.id}
-              onClick={() => setSelectedFarmFilter(f.id)}
-              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-                selectedFarmFilter === f.id
-                  ? 'bg-white text-emerald-800 font-bold shadow-sm'
-                : 'bg-emerald-800/60 text-emerald-100 hover:bg-emerald-800'
-              }`}
+        {farms.length > 1 && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-zinc-500">Filter Farm:</span>
+            <select
+              value={selectedFarmFilter}
+              onChange={(e) => setSelectedFarmFilter(e.target.value)}
+              className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-800 shadow-xs focus:outline-none focus:ring-1 focus:ring-emerald-600"
             >
-              {f.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="px-4 py-3 space-y-4">
-        {/* Category Filters */}
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-          {CATEGORIES.map(cat => {
-            const Icon = cat.icon;
-            const isSelected = selectedCategoryFilter === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategoryFilter(cat.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${
-                  isSelected
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                {cat.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Pending Tasks */}
-        <div className="space-y-3">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Pending Recommendations ({pendingTasks.length})
-          </h2>
-
-          {pendingTasks.length === 0 ? (
-            <Card className="p-6 text-center text-slate-500">
-              <Check className="w-8 h-8 mx-auto text-emerald-500 mb-2" />
-              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">All tasks completed!</p>
-              <p className="text-xs text-slate-400">Your farm actions are fully up-to-date today.</p>
-            </Card>
-          ) : (
-            pendingTasks.map((task: FarmTask) => (
-              <Card 
-                key={task.id} 
-                className="p-4 border-l-4 border-l-emerald-600 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3 flex-1">
-                    <button
-                      onClick={() => toggleTaskComplete(task.id)}
-                      className="mt-0.5 w-5 h-5 rounded border border-slate-300 dark:border-slate-600 hover:border-emerald-600 flex items-center justify-center flex-shrink-0 transition-colors"
-                    >
-                      {task.isCompleted && <Check className="w-3.5 h-3.5 text-emerald-600" />}
-                    </button>
-
-                    <div className="space-y-1 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${getPriorityColor(task.priority)}`}>
-                          {task.priority} PRIORITY
-                        </span>
-                        <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
-                          {task.targetArea}
-                        </span>
-                      </div>
-
-                      <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100">
-                        {task.title}
-                      </h3>
-
-                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                        {task.description}
-                      </p>
-
-                      {task.whyReason && (
-                        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 p-2 rounded-lg text-[11px] text-amber-800 dark:text-amber-300 mt-2 flex items-start gap-1.5">
-                          <HelpCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-amber-600" />
-                          <span><strong>Why:</strong> {task.whyReason}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => deleteTask(task.id)}
-                    className="p-1 text-slate-400 hover:text-rose-500 transition-colors"
-                    title="Delete task"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </Card>
-            ))
-          )}
-        </div>
-
-        {/* Completed Tasks */}
-        {completedTasks.length > 0 && (
-          <div className="space-y-2 pt-3 border-t border-slate-200 dark:border-slate-800">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Completed Today ({completedTasks.length})
-            </h2>
-
-            {completedTasks.map((task: FarmTask) => (
-              <div 
-                key={task.id}
-                className="bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex items-center justify-between opacity-70"
-              >
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => toggleTaskComplete(task.id)}
-                    className="w-5 h-5 bg-emerald-600 rounded flex items-center justify-center text-white"
-                  >
-                    <Check className="w-3.5 h-3.5" />
-                  </button>
-                  <div>
-                    <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-300 line-through">
-                      {task.title}
-                    </h4>
-                    <span className="text-[10px] text-slate-400">{task.targetArea} • {task.category}</span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => deleteTask(task.id)}
-                  className="p-1 text-slate-400 hover:text-rose-500"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ))}
+              <option value="ALL">All Farms</option>
+              {farms.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.name}
+                </option>
+              ))}
+            </select>
           </div>
         )}
       </div>
 
-      {/* Add Task Modal */}
-      {showAddDialog && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-          <form 
-            onSubmit={handleCreateTask}
-            className="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 shadow-2xl space-y-3 max-h-[90vh] overflow-y-auto"
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-base text-slate-800 dark:text-slate-100">Add Farm Task</h3>
-              <button 
-                type="button" 
-                onClick={() => setShowAddDialog(false)}
-                className="p-1 text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
+      {/* 2. Main 12-Column Desktop Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column (4 Cols): Categories Filter & Quick Add Task Form */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Categories Nav */}
+          <Card className="p-4 border border-zinc-200/80 bg-white space-y-2 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+            <h3 className="text-xs font-semibold text-zinc-600 uppercase tracking-wider mb-2">
+              Categories
+            </h3>
+            <div className="space-y-1">
+              {CATEGORIES.map((cat) => {
+                const Icon = cat.icon;
+                const isSel = selectedCategoryFilter === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategoryFilter(cat.id)}
+                    className={`w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium transition-colors ${
+                      isSel
+                        ? 'bg-zinc-900 text-white'
+                        : 'text-zinc-700 hover:bg-zinc-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Icon className="h-4 w-4" />
+                      <span>{cat.label}</span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
+          </Card>
 
-            <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Assign To Farm</label>
-              <select
-                value={newFarmId}
-                onChange={(e) => setNewFarmId(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
-              >
-                {farms.map(f => (
-                  <option key={f.id} value={f.id}>{f.name}</option>
-                ))}
-              </select>
-            </div>
+          {/* Quick Add Form Card */}
+          <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+            <h3 className="font-semibold text-sm text-zinc-900">
+              Create New Task
+            </h3>
 
-            <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Task Title</label>
-              <input 
-                type="text"
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                placeholder="e.g., Spray fungicide in Plot A"
-                required
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Description</label>
-              <textarea 
-                value={newDescription}
-                onChange={(e) => setNewDescription(e.target.value)}
-                placeholder="Detailed instructions or quantities..."
-                rows={2}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
+            <form onSubmit={handleCreateTask} className="space-y-3 text-xs">
               <div>
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Category</label>
-                <select
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="w-full text-xs p-2 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
-                >
-                  <option value="IRRIGATION">Irrigation</option>
-                  <option value="NUTRITION">Nutrition</option>
-                  <option value="PEST_MANAGEMENT">Pest Management</option>
-                  <option value="WEATHER_ALERT">Weather Alert</option>
-                  <option value="GENERAL">General</option>
-                </select>
+                <label className="font-medium text-zinc-700">Task Title</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Inspect Flag Leaves for Rust"
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Priority</label>
-                <select
-                  value={newPriority}
-                  onChange={(e) => setNewPriority(e.target.value as any)}
-                  className="w-full text-xs p-2 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
-                >
-                  <option value="HIGH">High (Urgent)</option>
-                  <option value="MEDIUM">Medium</option>
-                  <option value="LOW">Low</option>
-                </select>
+                <label className="font-medium text-zinc-700">Description</label>
+                <textarea
+                  rows={2}
+                  placeholder="Specific instructions or tools needed"
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                />
               </div>
-            </div>
 
-            <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Target Area / Parcel</label>
-              <input 
-                type="text"
-                value={newTargetArea}
-                onChange={(e) => setNewTargetArea(e.target.value)}
-                placeholder="e.g. Saraswati North, Plot 2"
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
-              />
-            </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-medium text-zinc-700">Priority</label>
+                  <select
+                    value={newPriority}
+                    onChange={(e) => setNewPriority(e.target.value as any)}
+                    className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  >
+                    <option value="HIGH">High</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="LOW">Low</option>
+                  </select>
+                </div>
 
-            <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Reason / Why</label>
-              <input 
-                type="text"
-                value={newWhyReason}
-                onChange={(e) => setNewWhyReason(e.target.value)}
-                placeholder="e.g. Leaf spot detected during morning inspection"
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
-              />
-            </div>
+                <div>
+                  <label className="font-medium text-zinc-700">Target Plot</label>
+                  <input
+                    type="text"
+                    value={newTargetArea}
+                    onChange={(e) => setNewTargetArea(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  />
+                </div>
+              </div>
 
-            <div className="flex gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowAddDialog(false)}
-                className="flex-1 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 rounded-lg"
-              >
-                Cancel
-              </button>
+              <div>
+                <label className="font-medium text-zinc-700">Reason / Objective</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Prevent yield loss during booting"
+                  value={newWhyReason}
+                  onChange={(e) => setNewWhyReason(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                />
+              </div>
+
               <button
                 type="submit"
-                className="flex-1 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm"
+                className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors mt-2"
               >
-                Save Task
+                Schedule Task
               </button>
-            </div>
-          </form>
+            </form>
+          </Card>
         </div>
-      )}
+
+        {/* Right Column (8 Cols): Task Checklist Cards & Archive */}
+        <div className="lg:col-span-8 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-semibold text-zinc-600 uppercase tracking-wider">
+              Pending Actions ({pendingTasks.length})
+            </h3>
+            <span className="text-xs text-zinc-400 font-medium">
+              Completed: {completedTasks.length} of {filteredTasks.length}
+            </span>
+          </div>
+
+          <div className="space-y-2.5">
+            {pendingTasks.map((t) => (
+              <Card
+                key={t.id}
+                className="p-4 border border-zinc-200/80 bg-white hover:border-zinc-300 transition-colors flex items-start justify-between gap-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+              >
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={t.isCompleted}
+                    onChange={() => toggleTaskComplete(t.id)}
+                    className="mt-1 h-4 w-4 rounded border-zinc-300 text-emerald-700 focus:ring-emerald-600 cursor-pointer"
+                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-medium text-sm text-zinc-900">
+                        {t.title}
+                      </h4>
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium ${
+                          t.priority === 'HIGH'
+                            ? 'bg-rose-50 text-rose-700 border border-rose-200/60'
+                            : 'bg-zinc-100 text-zinc-700 border border-zinc-200'
+                        }`}
+                      >
+                        {t.priority}
+                      </span>
+                    </div>
+                    {t.description && (
+                      <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
+                        {t.description}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-3 text-[11px] text-zinc-400 mt-2 font-normal">
+                      <span>Plot: {t.targetArea}</span>
+                      <span>·</span>
+                      <span>{t.whyReason}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => deleteTask(t.id)}
+                  className="text-zinc-400 hover:text-rose-600 p-1 transition-colors"
+                  title="Delete task"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </Card>
+            ))}
+
+            {pendingTasks.length === 0 && (
+              <Card className="p-8 text-center border border-zinc-200/80 bg-white">
+                <CheckCircle2 className="h-8 w-8 text-emerald-600 mx-auto mb-2" />
+                <h4 className="text-sm font-medium text-zinc-900">All caught up!</h4>
+                <p className="text-xs text-zinc-500 mt-1">
+                  No pending tasks in this category. Your plots and livestock schedules are up to date.
+                </p>
+              </Card>
+            )}
+          </div>
+
+          {completedTasks.length > 0 && (
+            <div className="pt-4 border-t border-zinc-200/80 space-y-2">
+              <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                Completed Tasks ({completedTasks.length})
+              </h4>
+              <div className="space-y-2 opacity-60">
+                {completedTasks.map((t) => (
+                  <div
+                    key={t.id}
+                    className="p-3 rounded-lg border border-zinc-200 bg-zinc-50 flex items-center justify-between text-xs"
+                  >
+                    <div className="flex items-center gap-2.5 line-through text-zinc-500">
+                      <input
+                        type="checkbox"
+                        checked={t.isCompleted}
+                        onChange={() => toggleTaskComplete(t.id)}
+                        className="h-4 w-4 rounded border-zinc-300 text-emerald-700 cursor-pointer"
+                      />
+                      <span>{t.title}</span>
+                    </div>
+                    <button
+                      onClick={() => deleteTask(t.id)}
+                      className="text-zinc-400 hover:text-rose-600"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
+
 export default FarmActionPlanScreen;

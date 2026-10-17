@@ -11,10 +11,13 @@ import {
   Bot,
   AlertCircle,
   CheckCircle,
-  Image as ImageIcon,
+  Sprout,
+  Droplets,
+  CloudSun,
+  ArrowUpRight,
 } from 'lucide-react';
 import { useKisanStore } from '@/stores/useKisanStore';
-import { Card } from '@/components/ui/Card';
+import { Card, Badge } from '@/components/ui/Card';
 
 export function AIAgentScreen() {
   const {
@@ -23,11 +26,18 @@ export function AIAgentScreen() {
     sendChatMessage,
     navigateToSubScreen,
     currentLanguage,
+    farms,
+    selectedFarmId,
+    crops,
+    farmWeather,
   } = useKisanStore();
 
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const activeFarm = farms.find((f) => f.id === selectedFarmId) || farms[0];
+  const activeCrop = crops[0];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -96,181 +106,226 @@ export function AIAgentScreen() {
   };
 
   const quickPrompts = [
-    '🌾 Wheat mandi price today?',
-    '💧 How much water for Field 1?',
-    '🐛 Brown leaf spots on my wheat?',
-    '🧪 Fertilizer dosage for 5 acres?',
-    '🐄 Cattle vaccination reminder?',
+    'Wheat mandi price comparison today?',
+    'How much water does Field 1 require?',
+    'Brown spots on wheat leaves remedy?',
+    'Fertilizer dosage for 5 acres of wheat?',
+    'Vaccination reminder for dairy cattle?',
+    'Best spraying window before rainfall?',
   ];
 
   return (
-    <div className="flex h-[calc(100vh-8.5rem)] flex-col pb-2">
-      {/* 1. Header Banner */}
-      <div className="flex items-center justify-between border-b border-gray-100 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900 rounded-2xl shadow-xs">
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white">
-            <Sparkles className="h-5 w-5" />
+    <div className="space-y-5">
+      {/* 1. Header Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-xl border border-zinc-200/80 shadow-xs">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-semibold text-zinc-900">
+              AI Farm Assistant
+            </h1>
+            <Badge variant="neutral">
+              {currentLanguage.displayName}
+            </Badge>
           </div>
-          <div>
-            <h2 className="text-sm font-bold text-gray-900 dark:text-zinc-100">
-              Autonomous Farm Agent
-            </h2>
-            <p className="text-[11px] text-gray-500">
-              Voice & Text Multilingual Assistant ({currentLanguage.displayName})
-            </p>
-          </div>
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Ask questions about crop diseases, weather advisory, fertilizer doses, and mandi prices
+          </p>
         </div>
 
         <button
           onClick={() => navigateToSubScreen('crop_doctor')}
-          className="flex items-center gap-1 rounded-xl bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+          className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors"
         >
-          <Stethoscope className="h-3.5 w-3.5" />
-          <span>Crop Doctor</span>
+          <Stethoscope className="h-3.5 w-3.5 text-zinc-500" />
+          <span>Crop Doctor (Vision)</span>
         </button>
       </div>
 
-      {/* 2. Message History */}
-      <div className="flex-1 space-y-3 overflow-y-auto p-2 scrollbar-thin">
-        {chatMessages.map((msg, i) => (
-          <div
-            key={msg.id || i}
-            className={`flex items-start gap-2 ${msg.isFromUser ? 'justify-end' : 'justify-start'}`}
-          >
-            {!msg.isFromUser && (
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white shadow-xs">
-                <Bot className="h-4 w-4" />
-              </div>
-            )}
-
-            <div
-              className={`max-w-[85%] sm:max-w-md rounded-2xl px-4 py-2.5 text-xs shadow-xs ${
-                msg.isFromUser
-                  ? 'bg-emerald-600 text-white rounded-br-xs'
-                  : 'bg-white text-gray-800 border border-gray-100 dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-800 rounded-bl-xs'
-              }`}
-            >
-              <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
-
-              {/* Diagnosis Card Attachment if present */}
-              {msg.isDiagnosis && (
-                <div className="mt-2.5 rounded-xl border border-emerald-200 bg-emerald-50/80 p-2.5 text-gray-800 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-zinc-200 space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-[11px] text-emerald-800 dark:text-emerald-300">
-                      {msg.diagnosisTitle || 'Pathology Report'}
-                    </span>
-                    {msg.diagnosisConfidence && (
-                      <span className="rounded-full bg-emerald-200/80 px-2 py-0.2 text-[9px] font-bold text-emerald-900">
-                        {msg.diagnosisConfidence}% Match
-                      </span>
-                    )}
-                  </div>
-
-                  {msg.actionDoToday && (
-                    <div className="flex items-start gap-1 text-[11px] text-emerald-900 dark:text-emerald-200">
-                      <CheckCircle className="h-3.5 w-3.5 shrink-0 text-emerald-600 mt-0.5" />
-                      <span>{msg.actionDoToday}</span>
-                    </div>
-                  )}
-
-                  {msg.actionAvoid && (
-                    <div className="flex items-start gap-1 text-[11px] text-rose-900 dark:text-rose-300">
-                      <AlertCircle className="h-3.5 w-3.5 shrink-0 text-rose-600 mt-0.5" />
-                      <span>{msg.actionAvoid}</span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <span
-                className={`mt-1 block text-[10px] ${
-                  msg.isFromUser ? 'text-emerald-100 text-right' : 'text-gray-400'
-                }`}
+      {/* 2. Main 12-Column Desktop Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 h-[calc(100vh-14rem)]">
+        {/* Left Column (8 Cols): Chat Feed & Input */}
+        <div className="lg:col-span-8 flex flex-col h-full bg-white rounded-xl border border-zinc-200/80 shadow-xs overflow-hidden">
+          {/* Scrollable Messages Area */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3.5">
+            {chatMessages.map((msg, i) => (
+              <div
+                key={msg.id || i}
+                className={`flex items-start gap-2.5 ${msg.isFromUser ? 'justify-end' : 'justify-start'}`}
               >
-                {msg.timeFormatted}
-              </span>
-            </div>
+                {!msg.isFromUser && (
+                  <div className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center shrink-0 text-xs">
+                    <Bot className="h-4 w-4" />
+                  </div>
+                )}
 
-            {msg.isFromUser && (
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200 text-gray-700 dark:bg-zinc-800 dark:text-zinc-300 shadow-xs">
-                <User className="h-4 w-4" />
+                <div
+                  className={`max-w-[85%] sm:max-w-xl rounded-xl px-3.5 py-2.5 text-xs leading-relaxed ${
+                    msg.isFromUser
+                      ? 'bg-zinc-900 text-white'
+                      : 'bg-zinc-50 text-zinc-800 border border-zinc-200/70'
+                  }`}
+                >
+                  <p className="whitespace-pre-wrap">{msg.text}</p>
+
+                  {/* Diagnosis Card if present */}
+                  {msg.isDiagnosis && (
+                    <div className="mt-2.5 rounded-lg border border-zinc-200 bg-white p-3 text-zinc-800 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-xs text-zinc-900">
+                          {msg.diagnosisTitle || 'Pathology Report'}
+                        </span>
+                        {msg.diagnosisConfidence && (
+                          <Badge variant="primary">
+                            {msg.diagnosisConfidence}% Match
+                          </Badge>
+                        )}
+                      </div>
+
+                      {msg.actionDoToday && (
+                        <div className="flex items-start gap-2 text-xs text-emerald-900 bg-emerald-50/70 p-2 rounded-md">
+                          <CheckCircle className="h-3.5 w-3.5 shrink-0 text-emerald-600 mt-0.5" />
+                          <span><strong>Recommended:</strong> {msg.actionDoToday}</span>
+                        </div>
+                      )}
+
+                      {msg.actionAvoid && (
+                        <div className="flex items-start gap-2 text-xs text-rose-900 bg-rose-50/70 p-2 rounded-md">
+                          <AlertCircle className="h-3.5 w-3.5 shrink-0 text-rose-600 mt-0.5" />
+                          <span><strong>Avoid:</strong> {msg.actionAvoid}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <span
+                    className={`mt-1 block text-[10px] ${
+                      msg.isFromUser ? 'text-zinc-400 text-right' : 'text-zinc-400'
+                    }`}
+                  >
+                    {msg.timeFormatted}
+                  </span>
+                </div>
+
+                {msg.isFromUser && (
+                  <div className="w-7 h-7 rounded-full bg-zinc-200 text-zinc-700 flex items-center justify-center shrink-0 text-xs font-medium">
+                    <User className="h-4 w-4" />
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {isAgentThinking && (
+              <div className="flex items-center gap-2.5 text-xs text-zinc-500">
+                <div className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center shrink-0">
+                  <Bot className="h-4 w-4" />
+                </div>
+                <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200/80 px-3 py-1.5 rounded-lg">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                  <span className="text-xs text-zinc-600">
+                    Consulting farm database...
+                  </span>
+                </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
-        ))}
 
-        {isAgentThinking && (
-          <div className="flex items-center gap-2 text-xs text-gray-500 italic p-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-600 text-white animate-pulse">
-              <Bot className="h-3.5 w-3.5" />
-            </div>
-            <span>KisanAI is consulting farm data and agronomy models...</span>
-          </div>
-        )}
-
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* 3. Quick Suggestion Prompts */}
-      <div className="flex gap-1.5 overflow-x-auto px-2 py-1 scrollbar-none">
-        {quickPrompts.map((p) => (
-          <button
-            key={p}
-            onClick={() => sendChatMessage(p.slice(2).trim())}
-            className="shrink-0 rounded-full border border-gray-200 bg-white px-3 py-1 text-[11px] font-medium text-gray-700 shadow-xs hover:border-emerald-300 hover:bg-emerald-50 active:scale-95 transition-all dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
+          {/* Minimal Input Bar */}
+          <form
+            onSubmit={handleSend}
+            className="p-3 border-t border-zinc-200/80 bg-white flex items-center gap-2"
           >
-            {p}
-          </button>
-        ))}
-      </div>
+            <button
+              type="button"
+              onClick={toggleSpeechRecognition}
+              className={`p-2 rounded-lg border transition-colors ${
+                isRecording
+                  ? 'bg-rose-50 text-rose-600 border-rose-200'
+                  : 'bg-zinc-50 text-zinc-600 border-zinc-200 hover:bg-zinc-100'
+              }`}
+              title="Voice Input"
+            >
+              {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            </button>
 
-      {/* 4. Chat Input Bar */}
-      <form onSubmit={handleSend} className="p-2">
-        <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-white p-1.5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-          {/* Voice Input Button */}
-          <button
-            type="button"
-            onClick={toggleSpeechRecognition}
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all ${
-              isRecording
-                ? 'bg-rose-600 text-white animate-pulse shadow-md'
-                : 'text-gray-500 hover:bg-gray-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
-            }`}
-            title="Speak in your language"
-          >
-            {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-          </button>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={`Ask in ${currentLanguage.displayName} (e.g. fertilizer dose, yellow leaves, mandi prices)...`}
+              className="flex-1 rounded-lg border border-zinc-200 bg-zinc-50/50 px-3.5 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-zinc-300 outline-none transition-colors"
+            />
 
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={
-              isRecording
-                ? 'Listening... बोलिए...'
-                : `Ask KisanAI (${currentLanguage.nativeName})...`
-            }
-            className="flex-1 bg-transparent px-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-hidden dark:text-zinc-100"
-          />
-
-          <button
-            type="button"
-            onClick={() => navigateToSubScreen('crop_doctor')}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
-            title="Attach Leaf Image"
-          >
-            <ImageIcon className="h-5 w-5" />
-          </button>
-
-          <button
-            type="submit"
-            disabled={!input.trim() || isAgentThinking}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs hover:bg-emerald-700 disabled:opacity-40 transition-all"
-          >
-            <Send className="h-4 w-4" />
-          </button>
+            <button
+              type="submit"
+              disabled={!input.trim() || isAgentThinking}
+              className="rounded-lg bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-700 disabled:opacity-40 transition-colors"
+            >
+              <Send className="h-4 w-4" />
+            </button>
+          </form>
         </div>
-      </form>
+
+        {/* Right Column (4 Cols): Live Farm Context & Queries */}
+        <div className="lg:col-span-4 space-y-4 overflow-y-auto">
+          {/* Active Farm Context */}
+          <Card className="p-4 space-y-3">
+            <span className="text-xs font-semibold text-zinc-900 block">
+              Farm Reference Data
+            </span>
+
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-zinc-50 border border-zinc-100">
+                <span className="text-zinc-500 flex items-center gap-1.5">
+                  <Sprout className="h-3.5 w-3.5 text-zinc-400" />
+                  Primary Crop
+                </span>
+                <span className="font-medium text-zinc-800">
+                  {activeCrop?.cropName || 'Wheat'} ({activeCrop?.growthStage || 'Tillering'})
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-lg bg-zinc-50 border border-zinc-100">
+                <span className="text-zinc-500 flex items-center gap-1.5">
+                  <CloudSun className="h-3.5 w-3.5 text-zinc-400" />
+                  Spray Condition
+                </span>
+                <span className="font-medium text-emerald-700">
+                  {farmWeather?.sprayingWindowStatus || 'OPTIMAL'}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-lg bg-zinc-50 border border-zinc-100">
+                <span className="text-zinc-500 flex items-center gap-1.5">
+                  <Droplets className="h-3.5 w-3.5 text-zinc-400" />
+                  Soil Moisture
+                </span>
+                <span className="font-medium text-zinc-800">62% (Good)</span>
+              </div>
+            </div>
+          </Card>
+
+          {/* Quick Prompts */}
+          <Card className="p-4 space-y-2.5">
+            <span className="text-xs font-semibold text-zinc-900 block">
+              Suggested Questions
+            </span>
+
+            <div className="space-y-1.5">
+              {quickPrompts.map((prompt, i) => (
+                <button
+                  key={i}
+                  onClick={() => sendChatMessage(prompt)}
+                  className="w-full text-left text-xs bg-zinc-50 hover:bg-zinc-100 p-2 rounded-lg border border-zinc-100 text-zinc-700 transition-colors flex items-center justify-between"
+                >
+                  <span className="truncate">{prompt}</span>
+                  <ArrowUpRight className="h-3 w-3 text-zinc-400 shrink-0 ml-1" />
+                </button>
+              ))}
+            </div>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

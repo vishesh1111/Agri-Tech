@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { 
   Sprout, Calendar, Clock, AlertTriangle, CheckCircle2, 
-  ArrowLeft, Plus, FileText, ChevronRight, Activity, X, Droplet
+  ArrowLeft, Plus, FileText, ChevronRight, Activity, X, Droplet,
+  Check, ArrowRight, NotebookPen
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -82,7 +83,7 @@ const WHEAT_STAGES: GrowthStageItem[] = [
   },
   {
     stageNumber: 6,
-    stageName: 'Maturity & Golden Harvest',
+    stageName: 'Maturity & Harvest',
     dayRange: 'Day 100 - 120',
     description: 'Stems and spikes turn golden yellow. Grain moisture drops below 14%.',
     isCompleted: false,
@@ -93,68 +94,65 @@ const WHEAT_STAGES: GrowthStageItem[] = [
 ];
 
 export const CropGrowthTrackerScreen: React.FC = () => {
-  const { crops, farms, navigateBack, addCrop } = useKisanStore();
+  const { crops, farms, addCrop } = useKisanStore();
 
   const [selectedCropId, setSelectedCropId] = useState<string>(crops[0]?.id || 'crop_1');
   const [showAddCropModal, setShowAddCropModal] = useState(false);
   const [showObservationModal, setShowObservationModal] = useState(false);
 
-  // New crop modal state
+  // New crop state
   const [newCropName, setNewCropName] = useState('Wheat');
-  const [newVariety, setNewVariety] = useState('HD-3086');
-  const [newGrowthStage, setNewGrowthStage] = useState('Flowering & Booting');
-  const [newExpectedYield, setNewExpectedYield] = useState('22.5');
+  const [newVariety, setNewVariety] = useState('HD-3086 Sharbati');
+  const [newPlotArea, setNewPlotArea] = useState('4.5');
+  const [newExpectedYield, setNewExpectedYield] = useState('22 Quintals / Acre');
 
   // Observation state
   const [obsNote, setObsNote] = useState('');
+  const [obsTag, setObsTag] = useState('Healthy / Vigorous');
   const [observations, setObservations] = useState<FieldObservationLog[]>([
     {
       id: 'obs_1',
-      dateDisplay: 'Yesterday, 4:00 PM',
+      dateDisplay: 'Yesterday, 04:30 PM',
       stageName: 'Flowering & Booting',
-      note: 'Canopy height 78cm. Excellent earhead emergence. No rust pustules observed.',
-      healthTag: 'Excellent (92%)'
+      note: 'Canopy is dense and vibrant green. Flag leaves emerging uniformly across Plot A.',
+      healthTag: 'Healthy'
     },
     {
       id: 'obs_2',
       dateDisplay: '5 days ago',
-      stageName: 'Tillering',
-      note: '2nd irrigation given with 35kg Urea top-dress.',
-      healthTag: 'Normal'
+      stageName: 'Tillering & Vegetative',
+      note: 'Minor aphid presence spotted on south plot boundary. Applied neem biopesticide spray.',
+      healthTag: 'Treated'
     }
   ]);
 
-  const selectedCrop = crops.find(c => c.id === selectedCropId) || crops[0] || {
+  const activeCrop = crops.find(c => c.id === selectedCropId) || crops[0] || {
     id: 'crop_1',
     farmId: 'farm_1',
-    parcelId: 'p_1',
-    cropName: 'Wheat (Gehun)',
-    variety: 'HD-3086 (Pusa Gautami)',
-    growthStage: 'Flowering & Booting',
-    healthScore: 92,
-    sowingDate: '2024-11-10',
-    expectedHarvest: '2025-03-25',
-    expectedYieldPerAcre: 22.5,
-    notes: '2nd irrigation completed, healthy canopy.',
-    isNewCrop: false,
-    daysElapsed: 48
+    cropName: 'Wheat (Kanak)',
+    variety: 'HD-3086 Sharbati',
+    growthStage: 'Tillering & Booting',
+    daysElapsed: 48,
+    daysRemaining: 72,
+    healthScore: 88,
+    expectedYield: '22-24 Qtl/Acre',
+    expectedHarvest: 'April 15, 2027',
   };
 
-  const handleAddCropSubmit = (e: React.FormEvent) => {
+  const handleCreateCrop = (e: React.FormEvent) => {
     e.preventDefault();
     addCrop({
+      id: `crop_${Date.now()}`,
       farmId: farms[0]?.id || 'farm_1',
-      parcelId: 'p_1',
       cropName: newCropName,
       variety: newVariety,
-      growthStage: newGrowthStage,
+      growthStage: 'Sowing & Germination',
+      daysElapsed: 0,
+      daysRemaining: 120,
       healthScore: 95,
-      sowingDate: new Date().toISOString().split('T')[0],
-      expectedHarvest: 'In 90-120 days',
-      expectedYieldPerAcre: parseFloat(newExpectedYield) || 20,
-      notes: 'Newly added crop lifecycle tracking.',
-      isNewCrop: true,
-      daysElapsed: 0
+      expectedYield: newExpectedYield,
+      expectedHarvest: 'May 2027',
+      icon: '🌱'
     });
     setShowAddCropModal(false);
   };
@@ -166,9 +164,9 @@ export const CropGrowthTrackerScreen: React.FC = () => {
       {
         id: `obs_${Date.now()}`,
         dateDisplay: 'Just now',
-        stageName: selectedCrop.growthStage,
+        stageName: activeCrop.growthStage,
         note: obsNote,
-        healthTag: 'Good'
+        healthTag: obsTag
       },
       ...observations
     ]);
@@ -177,336 +175,351 @@ export const CropGrowthTrackerScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-20">
-      {/* Top Header */}
-      <div className="bg-gradient-to-r from-emerald-700 to-green-700 text-white px-4 pt-4 pb-5 shadow-md">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={navigateBack}
-              className="p-1.5 rounded-full hover:bg-white/10 active:bg-white/20 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-xl font-bold flex items-center gap-2">
-                <Sprout className="w-5 h-5 text-emerald-300" />
-                Crop Lifecycle Tracker
-              </h1>
-              <p className="text-xs text-emerald-100">Stage progress, required actions & harvest forecasts</p>
-            </div>
+    <div className="space-y-6">
+      {/* 1. Header Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
+              <Sprout className="h-5 w-5" />
+            </span>
+            <h1 className="text-xl font-semibold text-zinc-900">
+              Crop Lifecycle Tracker
+            </h1>
           </div>
-
-          <button
-            onClick={() => setShowAddCropModal(true)}
-            className="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 backdrop-blur-sm transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add Crop
-          </button>
+          <p className="text-xs text-zinc-500 mt-1">
+            Phenological growth tracking from sowing to harvest with stage-specific nutrition
+          </p>
         </div>
 
-        {/* Crop Selector Tabs */}
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-          {crops.map(crop => (
-            <button
-              key={crop.id}
-              onClick={() => setSelectedCropId(crop.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
-                selectedCrop.id === crop.id
-                  ? 'bg-white text-emerald-800 shadow-sm'
-                  : 'bg-emerald-800/60 text-emerald-100 hover:bg-emerald-800'
+        <button
+          onClick={() => setShowAddCropModal(true)}
+          className="flex items-center gap-2 rounded-lg bg-emerald-700 px-3.5 py-2 text-xs font-medium text-white hover:bg-emerald-800 transition-colors shadow-xs"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Crop Cycle</span>
+        </button>
+      </div>
+
+      {/* 2. Crop Switcher Tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {crops.map((c) => (
+          <button
+            key={c.id}
+            onClick={() => setSelectedCropId(c.id)}
+            className={`shrink-0 rounded-lg px-3.5 py-2 text-xs font-medium transition-colors flex items-center gap-2 ${
+              activeCrop.id === c.id
+                ? 'bg-zinc-900 text-white shadow-xs'
+                : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
+            }`}
+          >
+            <span>{c.cropName}</span>
+            <span className="text-zinc-400 text-[11px]">({c.variety})</span>
+          </button>
+        ))}
+      </div>
+
+      {/* 3. Selected Crop Overview Banner */}
+      <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h2 className="text-lg font-semibold text-zinc-900">
+                {activeCrop.cropName} — {activeCrop.variety}
+              </h2>
+              <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/60">
+                Health {activeCrop.healthScore}%
+              </span>
+            </div>
+            <p className="text-xs text-zinc-500 font-medium mt-1">
+              Current Stage: {activeCrop.growthStage} · Day {activeCrop.daysElapsed} of 120
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 text-xs">
+            <div className="rounded-lg bg-zinc-50 border border-zinc-100 p-2.5 px-3.5 text-center">
+              <span className="text-[11px] text-zinc-400 font-medium block">Days to Harvest</span>
+              <p className="text-base font-semibold text-zinc-900 mt-0.5">{activeCrop.daysRemaining || 72} Days</p>
+            </div>
+            <div className="rounded-lg bg-zinc-50 border border-zinc-100 p-2.5 px-3.5 text-center">
+              <span className="text-[11px] text-zinc-400 font-medium block">Target Yield</span>
+              <p className="text-base font-semibold text-zinc-900 mt-0.5">{activeCrop.expectedYield}</p>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* 4. Full-Width Horizontal Stage Pipeline (6 Columns) */}
+      <div className="space-y-3">
+        <h3 className="text-xs font-semibold text-zinc-600 uppercase tracking-wider">
+          Growth Milestones
+        </h3>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {WHEAT_STAGES.map((st) => (
+            <Card
+              key={st.stageNumber}
+              className={`p-3.5 border transition-all space-y-2 flex flex-col justify-between ${
+                st.isCurrent
+                  ? 'border-emerald-600 bg-white ring-1 ring-emerald-600 shadow-xs'
+                  : st.isCompleted
+                  ? 'border-zinc-200 bg-zinc-50/70'
+                  : 'border-zinc-200/80 bg-white opacity-60'
               }`}
             >
-              {crop.cropName} ({crop.variety})
-            </button>
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-medium text-zinc-400">Stage {st.stageNumber}</span>
+                  {st.isCompleted ? (
+                    <span className="h-4 w-4 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[10px] font-bold">
+                      ✓
+                    </span>
+                  ) : st.isCurrent ? (
+                    <span className="h-2 w-2 rounded-full bg-emerald-600"></span>
+                  ) : null}
+                </div>
+
+                <h4 className="font-medium text-xs text-zinc-900 mt-1">
+                  {st.stageName}
+                </h4>
+                <span className="text-[11px] text-zinc-500 block mt-0.5">
+                  {st.dayRange}
+                </span>
+              </div>
+
+              <p className="text-[11px] text-zinc-500 line-clamp-2 leading-relaxed">{st.description}</p>
+            </Card>
           ))}
         </div>
       </div>
 
-      <div className="px-4 py-4 space-y-4">
-        {/* Selected Crop Overview Card */}
-        <Card className="p-4 border-l-4 border-l-emerald-600">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded">
-                Active Crop
+      {/* 5. Bottom 12-Column Grid (Stage Deep Dive vs Field Observation Logs) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column (7 Cols): Current Stage Agronomic Deep Dive */}
+        <div className="lg:col-span-7 space-y-4">
+          <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-medium text-zinc-400 uppercase tracking-wider">
+                  Active Stage
+                </span>
+                <h3 className="font-semibold text-base text-zinc-900 mt-0.5">
+                  Flowering & Booting (Day 45 - 65)
+                </h3>
+              </div>
+              <span className="px-2.5 py-1 rounded text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/60">
+                On Track
               </span>
-              <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mt-1">
-                {selectedCrop.cropName}
-              </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Variety: {selectedCrop.variety}
-              </p>
             </div>
 
-            <div className="text-right">
-              <span className="text-xs font-semibold text-slate-500">Health Index</span>
-              <div className="text-xl font-black text-emerald-600">
-                {selectedCrop.healthScore}%
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-center">
-            <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg">
-              <span className="text-[10px] text-slate-400 block">Sowing Date</span>
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{selectedCrop.sowingDate}</span>
-            </div>
-            <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg">
-              <span className="text-[10px] text-slate-400 block">Days Elapsed</span>
-              <span className="text-xs font-bold text-emerald-600">{selectedCrop.daysElapsed || 48} Days</span>
-            </div>
-            <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg">
-              <span className="text-[10px] text-slate-400 block">Target Yield</span>
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{selectedCrop.expectedYieldPerAcre} Q/Acre</span>
-            </div>
-          </div>
-        </Card>
-
-        {/* Growth Timeline Stages */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
-              <Activity className="w-4 h-4 text-emerald-600" />
-              Growth Stage Roadmap
-            </h3>
-            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              Stage 4 of 6 (Active)
-            </span>
-          </div>
-
-          <div className="space-y-3">
-            {WHEAT_STAGES.map((stage) => (
-              <div 
-                key={stage.stageNumber}
-                className={`p-3.5 rounded-xl border transition-all ${
-                  stage.isCurrent
-                    ? 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-500 shadow-sm'
-                    : stage.isCompleted
-                    ? 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 opacity-90'
-                    : 'bg-slate-50/50 dark:bg-slate-800/30 border-dashed border-slate-200 dark:border-slate-700 opacity-60'
-                }`}
-              >
-                <div className="flex items-start justify-between mb-1.5">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      stage.isCompleted
-                        ? 'bg-emerald-600 text-white'
-                        : stage.isCurrent
-                        ? 'bg-emerald-500 text-white ring-4 ring-emerald-100 dark:ring-emerald-900/50 animate-pulse'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
-                    }`}>
-                      {stage.isCompleted ? <CheckCircle2 className="w-4 h-4" /> : stage.stageNumber}
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100">
-                        {stage.stageName}
-                      </h4>
-                      <span className="text-[10px] text-slate-500">{stage.dayRange}</span>
-                    </div>
-                  </div>
-
-                  {stage.isCurrent && (
-                    <span className="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                      Current Stage
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 pl-8">
-                  {stage.description}
+            <div className="space-y-3 text-xs">
+              <div className="p-3.5 rounded-lg bg-zinc-50 border border-zinc-200/70 space-y-1">
+                <span className="font-medium text-zinc-900 block">
+                  Recommended Action:
+                </span>
+                <p className="text-zinc-600 leading-relaxed">
+                  Apply 0:52:34 soluble spray (2 kg/acre in 150L water) for robust earhead development and spikelet fertility.
                 </p>
-
-                {/* Actions & Watchouts */}
-                <div className="pl-8 space-y-1.5">
-                  <div className="bg-white/80 dark:bg-slate-800 p-2 rounded-lg text-[11px] border border-emerald-100 dark:border-emerald-900/40">
-                    <span className="font-bold text-emerald-800 dark:text-emerald-300">Action Required: </span>
-                    <span className="text-slate-700 dark:text-slate-300">{stage.requiredAction}</span>
-                  </div>
-                  <div className="bg-amber-50/80 dark:bg-amber-950/30 p-2 rounded-lg text-[11px] border border-amber-200 dark:border-amber-900/40 text-amber-900 dark:text-amber-200">
-                    <span className="font-bold text-amber-800 dark:text-amber-400">Critical Watchout: </span>
-                    <span>{stage.keyWatchout}</span>
-                  </div>
-                </div>
               </div>
-            ))}
-          </div>
+
+              <div className="p-3.5 rounded-lg bg-zinc-50 border border-zinc-200/70 space-y-1">
+                <span className="font-medium text-zinc-900 block">
+                  Watchout & Prevention:
+                </span>
+                <p className="text-zinc-600 leading-relaxed">
+                  Inspect upper flag leaves for yellow powdery pustules (Yellow Rust). If detected early, apply recommended systemic fungicide per PAU bulletin.
+                </p>
+              </div>
+            </div>
+          </Card>
         </div>
 
-        {/* Field Observation Log Section */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
-              <FileText className="w-4 h-4 text-emerald-600" />
-              Field Observation Log
-            </h3>
-            <button
-              onClick={() => setShowObservationModal(true)}
-              className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              Log Inspection
-            </button>
-          </div>
-
-          <div className="space-y-2">
-            {observations.map(obs => (
-              <div 
-                key={obs.id}
-                className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs"
-              >
-                <div className="flex items-center justify-between text-slate-500 mb-1">
-                  <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded">
-                    {obs.stageName}
-                  </span>
-                  <span className="text-[10px]">{obs.dateDisplay}</span>
-                </div>
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{obs.note}</p>
+        {/* Right Column (5 Cols): Observation Logs */}
+        <div className="lg:col-span-5 space-y-4">
+          <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-sm text-zinc-900">
+                  Field Observations
+                </h3>
+                <p className="text-xs text-zinc-500">Record inspections and plot notes</p>
               </div>
-            ))}
-          </div>
+              <button
+                onClick={() => setShowObservationModal(true)}
+                className="text-xs font-medium text-emerald-700 hover:text-emerald-800"
+              >
+                + Add Note
+              </button>
+            </div>
+
+            <div className="space-y-2.5">
+              {observations.map((obs) => (
+                <div
+                  key={obs.id}
+                  className="p-3 rounded-lg bg-zinc-50 border border-zinc-100 text-xs space-y-1"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-zinc-900">{obs.stageName}</span>
+                    <span className="text-[11px] text-zinc-400">{obs.dateDisplay}</span>
+                  </div>
+                  <p className="text-zinc-600 leading-relaxed">{obs.note}</p>
+                  <span className="inline-block bg-zinc-200 text-zinc-700 text-[10px] font-medium px-2 py-0.5 rounded">
+                    {obs.healthTag}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
       </div>
 
-      {/* Add Crop Modal */}
-      {showAddCropModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-          <form 
-            onSubmit={handleAddCropSubmit}
-            className="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 shadow-2xl space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-base text-slate-800 dark:text-slate-100">Add Crop for Tracking</h3>
-              <button 
-                type="button" 
-                onClick={() => setShowAddCropModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600"
+      {/* Observation Modal */}
+      {showObservationModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+          <div className="max-w-md w-full p-5 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <h3 className="font-semibold text-sm text-zinc-900">
+                Log Field Observation
+              </h3>
+              <button
+                onClick={() => setShowObservationModal(false)}
+                className="text-zinc-400 hover:text-zinc-600"
               >
-                <X className="w-5 h-5" />
+                ✕
               </button>
             </div>
 
-            <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Crop Name</label>
-              <input 
-                type="text"
-                value={newCropName}
-                onChange={(e) => setNewCropName(e.target.value)}
-                placeholder="e.g. Mustard, Gram, Cotton"
-                required
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Crop Variety</label>
-              <input 
-                type="text"
-                value={newVariety}
-                onChange={(e) => setNewVariety(e.target.value)}
-                placeholder="e.g. Pusa Bold, JG 14"
-                required
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
+            <form onSubmit={handleAddObservation} className="space-y-3 text-xs">
               <div>
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Initial Stage</label>
+                <label className="font-medium text-zinc-700">Observation Notes</label>
+                <textarea
+                  rows={3}
+                  required
+                  placeholder="e.g. Flag leaves emerging evenly, no weed pressure observed..."
+                  value={obsNote}
+                  onChange={(e) => setObsNote(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                />
+              </div>
+
+              <div>
+                <label className="font-medium text-zinc-700">Condition Tag</label>
                 <select
-                  value={newGrowthStage}
-                  onChange={(e) => setNewGrowthStage(e.target.value)}
-                  className="w-full text-xs p-2 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
+                  value={obsTag}
+                  onChange={(e) => setObsTag(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
                 >
-                  <option value="Sowing & Germination">Sowing & Germination</option>
-                  <option value="Tillering & Vegetative">Tillering & Vegetative</option>
-                  <option value="Flowering & Booting">Flowering & Booting</option>
-                  <option value="Grain Filling">Grain Filling</option>
-                  <option value="Harvesting">Harvesting</option>
+                  <option>Healthy / Vigorous</option>
+                  <option>Moisture Deficit</option>
+                  <option>Pest Treated</option>
+                  <option>Nutrient Deficiency</option>
                 </select>
               </div>
 
-              <div>
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Target Yield (Q/Acre)</label>
-                <input 
-                  type="number"
-                  step="0.5"
-                  value={newExpectedYield}
-                  onChange={(e) => setNewExpectedYield(e.target.value)}
-                  className="w-full text-xs p-2 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
-                />
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowObservationModal(false)}
+                  className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-lg bg-emerald-700 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors"
+                >
+                  Save Note
+                </button>
               </div>
-            </div>
-
-            <div className="flex gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowAddCropModal(false)}
-                className="flex-1 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm"
-              >
-                Save Crop
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       )}
 
-      {/* Observation Modal */}
-      {showObservationModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-          <form 
-            onSubmit={handleAddObservation}
-            className="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 shadow-2xl space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-base text-slate-800 dark:text-slate-100">Log Field Observation</h3>
-              <button 
-                type="button" 
-                onClick={() => setShowObservationModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600"
+      {/* Add Crop Modal */}
+      {showAddCropModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+          <div className="max-w-md w-full p-5 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <h3 className="font-semibold text-sm text-zinc-900">
+                Register New Crop Season
+              </h3>
+              <button
+                onClick={() => setShowAddCropModal(false)}
+                className="text-zinc-400 hover:text-zinc-600"
               >
-                <X className="w-5 h-5" />
+                ✕
               </button>
             </div>
 
-            <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Observation Notes</label>
-              <textarea 
-                value={obsNote}
-                onChange={(e) => setObsNote(e.target.value)}
-                placeholder="Note down plant height, color, weed presence, irrigation response..."
-                rows={4}
-                required
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
-              />
-            </div>
+            <form onSubmit={handleCreateCrop} className="space-y-3 text-xs">
+              <div>
+                <label className="font-medium text-zinc-700">Crop Commodity</label>
+                <input
+                  type="text"
+                  required
+                  value={newCropName}
+                  onChange={(e) => setNewCropName(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                />
+              </div>
 
-            <div className="flex gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowObservationModal(false)}
-                className="flex-1 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm"
-              >
-                Record Observation
-              </button>
-            </div>
-          </form>
+              <div>
+                <label className="font-medium text-zinc-700">Cultivar / Variety</label>
+                <input
+                  type="text"
+                  required
+                  value={newVariety}
+                  onChange={(e) => setNewVariety(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-medium text-zinc-700">Plot Area (Acres)</label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    required
+                    value={newPlotArea}
+                    onChange={(e) => setNewPlotArea(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  />
+                </div>
+                <div>
+                  <label className="font-medium text-zinc-700">Expected Yield</label>
+                  <input
+                    type="text"
+                    required
+                    value={newExpectedYield}
+                    onChange={(e) => setNewExpectedYield(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddCropModal(false)}
+                  className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-lg bg-emerald-700 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors"
+                >
+                  Save Crop Cycle
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
   );
 };
+
 export default CropGrowthTrackerScreen;

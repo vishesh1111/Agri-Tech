@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "KisanAI - Autonomous Farm Operating System",
-  description: "AI-powered precision agriculture, real-time weather & pest alerts, crop disease pathology, and autonomous farm optimization.",
+  title: "KisanAI - Smart Farm Assistant",
+  description: "Precision farming, real-time weather & advisory, crop disease diagnosis, and farm management.",
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#15803d",
+  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -31,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${inter.variable} font-sans min-h-full flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors`}>
+      <body className={`${inter.variable} font-sans min-h-full flex flex-col bg-[#fbfbfb] text-zinc-900 antialiased`}>
         {children}
       </body>
     </html>

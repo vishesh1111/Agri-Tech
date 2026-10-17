@@ -17,7 +17,7 @@ export function BottomNavBar() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95 shadow-lg">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95 shadow-lg">
       <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;

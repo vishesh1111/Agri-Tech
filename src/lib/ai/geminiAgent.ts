@@ -1,3 +1,4 @@
+// src/lib/ai/geminiAgent.ts
 import {
   UserProfile,
   Farm,
@@ -7,10 +8,12 @@ import {
   CropPathologyResult,
   CropGrowthVisionAnalysis,
 } from '../types';
+import { compressImageForGemini } from '../utils/imageCompressor';
 
 export const GeminiFarmAgent = {
   /**
-   * Ask Farm Advisor with domain expert fallbacks
+   * Ask Farm Advisor via Vercel Serverless Function -> Gemini API Free Tier
+   * with local domain expert fallbacks
    */
   async askFarmAdvisor(
     prompt: string,
@@ -20,6 +23,32 @@ export const GeminiFarmAgent = {
     livestock: Livestock[],
     tasks: FarmTask[]
   ): Promise<string> {
+    try {
+      const res = await fetch('/api/gemini/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: prompt,
+          context: {
+            farmerName: userProfile?.name || 'Farmer',
+            farmName: activeFarm?.name || 'Main Farm',
+            crops: parcels.map((p) => p.currentCrop).filter(Boolean),
+            livestock: livestock.map((l) => ({ name: l.name, breed: l.breed, type: l.type })),
+            pendingTasksCount: tasks.filter((t) => !t.isCompleted).length,
+          },
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.reply) {
+          return data.reply;
+        }
+      }
+    } catch (e) {
+      console.warn('API call to /api/gemini/chat failed, using local engine:', e);
+    }
+
     // Local domain expert response engine
     const lower = prompt.toLowerCase();
 
@@ -91,28 +120,67 @@ export const GeminiFarmAgent = {
 
   /**
    * Analyze Crop Leaf Photo (Pathology)
+   * Rule 4: Compresses image on client before calling /api/gemini/crop-doctor
    */
   async analyzeCropLeaf(
     imageFileOrBase64: string | null,
     cropName = 'Wheat'
   ): Promise<CropPathologyResult> {
-    const lower = cropName.toLowerCase();
+    let compressedBase64: string | undefined = undefined;
 
+    if (imageFileOrBase64) {
+      try {
+        const compressed = await compressImageForGemini(imageFileOrBase64, 800, 800, 0.7);
+        compressedBase64 = compressed.base64;
+      } catch (e) {
+        console.warn('Client compression failed, attempting raw transmission:', e);
+        if (typeof imageFileOrBase64 === 'string') {
+          compressedBase64 = imageFileOrBase64.replace(/^data:image\/[a-z]+;base64,/, '');
+        }
+      }
+    }
+
+    try {
+      const res = await fetch('/api/gemini/crop-doctor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cropName,
+          imageBase64: compressedBase64,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.result) {
+          return data.result;
+        }
+      }
+    } catch (e) {
+      console.warn('API call to /api/gemini/crop-doctor failed, using offline engine:', e);
+    }
+
+    // Default offline fallback
+    const lower = cropName.toLowerCase();
     if (lower.includes('paddy') || lower.includes('rice')) {
       return {
         diseaseName: 'Bacterial Leaf Blight (Xanthomonas oryzae)',
         category: 'Bacterial Blight & Nitrogen Chlorosis',
         confidence: '94% Vision AI Match',
         severity: 'Moderate (Action required in 48h)',
-        symptomsSummary: 'Water-soaked lesions on leaf margins rapidly turning yellow and drying to straw-colored lesions.',
+        symptomsSummary:
+          'Water-soaked lesions on leaf margins rapidly turning yellow and drying to straw-colored lesions.',
         treatmentSteps: [
           '1. Spray Copper Oxychloride (50% WP) @ 2.5g/L + Streptocycline @ 0.1g/L',
           '2. Drain standing water from field for 48 hours to stop bacterial spread',
           '3. Apply 50kg Muriate of Potash (MOP) to improve plant disease immunity',
         ],
-        recommendedChemical: 'Copper Oxychloride 50% WP (2.5g/L) + Streptocycline (0.1g/L)',
-        organicRemedy: 'Fresh Cow Dung slurry spray (20% filtrate) or Neem Oil 10,000 ppm',
-        soilAndNutrientAdvice: 'Temporarily delay top-dressing Nitrogen urea until disease stabilizes.',
+        recommendedChemical:
+          'Copper Oxychloride 50% WP (2.5g/L) + Streptocycline (0.1g/L)',
+        organicRemedy:
+          'Fresh Cow Dung slurry spray (20% filtrate) or Neem Oil 10,000 ppm',
+        soilAndNutrientAdvice:
+          'Temporarily delay top-dressing Nitrogen urea until disease stabilizes.',
         isGeminiVisionAnalyzed: true,
       };
     }
@@ -123,15 +191,18 @@ export const GeminiFarmAgent = {
         category: 'Viral Infection & Sucking Pest',
         confidence: '92% Vision AI Match',
         severity: 'High Alert',
-        symptomsSummary: 'Upward thick leaf curling with vein thickening and enations on lower leaf surface.',
+        symptomsSummary:
+          'Upward thick leaf curling with vein thickening and enations on lower leaf surface.',
         treatmentSteps: [
           '1. Spray Afidopyropen 50 g/L DC @ 2ml/L to control whitefly vector',
           '2. Remove and safely destroy severely infected plants',
           '3. Apply Micronutrient Soluble Zinc & Boron spray (2g/L)',
         ],
-        recommendedChemical: 'Afidopyropen 50 g/L DC @ 2ml/L or Diafenthiuron 50% WP @ 1.2g/L',
+        recommendedChemical:
+          'Afidopyropen 50 g/L DC @ 2ml/L or Diafenthiuron 50% WP @ 1.2g/L',
         organicRemedy: 'Yellow Sticky Traps (10 per acre) + Neem extract spray',
-        soilAndNutrientAdvice: 'Foliar spray of 13:0:45 (Potassium Nitrate) @ 10g/L water.',
+        soilAndNutrientAdvice:
+          'Foliar spray of 13:0:45 (Potassium Nitrate) @ 10g/L water.',
         isGeminiVisionAnalyzed: true,
       };
     }
@@ -142,15 +213,19 @@ export const GeminiFarmAgent = {
       category: 'Fungal Pathogen & Nutrient Deficiency',
       confidence: '96% Vision AI Match',
       severity: 'Moderate (Requires Action in 48h)',
-      symptomsSummary: 'Characteristic tan oval lesions with yellow chlorotic halos on mid-leaf blades and yellowing leaf tips.',
+      symptomsSummary:
+        'Characteristic tan oval lesions with yellow chlorotic halos on mid-leaf blades and yellowing leaf tips.',
       treatmentSteps: [
         '1. Apply Propiconazole 25% EC @ 1ml/L water or Tebuconazole prior to rain',
         '2. Avoid overhead sprinkler irrigation for 48 hours to keep canopy foliage dry',
         '3. Apply Muriate of Potash (MOP) @ 25kg/acre + Soluble NPK 19:19:19 spray',
       ],
-      recommendedChemical: 'Propiconazole 25% EC @ 1ml/L or Tebuconazole 25.9% EC @ 1.2ml/L',
-      organicRemedy: 'Neem Oil 10,000 ppm @ 3ml/L + Trichoderma viride bio-fungicide',
-      soilAndNutrientAdvice: 'Soil test indicates low Potassium. Apply 25kg MOP/acre prior to next canal watering.',
+      recommendedChemical:
+        'Propiconazole 25% EC @ 1ml/L or Tebuconazole 25.9% EC @ 1.2ml/L',
+      organicRemedy:
+        'Neem Oil 10,000 ppm @ 3ml/L + Trichoderma viride bio-fungicide',
+      soilAndNutrientAdvice:
+        'Soil test indicates low Potassium. Apply 25kg MOP/acre prior to next canal watering.',
       isGeminiVisionAnalyzed: true,
     };
   },
@@ -160,7 +235,7 @@ export const GeminiFarmAgent = {
    */
   async analyzeCropGrowth(cropHint = 'Wheat'): Promise<CropGrowthVisionAnalysis> {
     return {
-      cropType: 'Wheat',
+      cropType: cropHint,
       variety: 'HD-3086 Sharbati Gold',
       growthStage: 'Tillering & Vegetative Stage (Crown Root Development)',
       growthPercentage: 48,
@@ -170,7 +245,8 @@ export const GeminiFarmAgent = {
       estimatedHarvestDate: '15 April 2026',
       diseaseStatus: 'Healthy Canopy • Clear of Rust & Blight',
       healthScore: 92,
-      keyActionRecommendation: 'Apply 2nd irrigation with 25kg/acre Nitrogen top-dressing for maximum tiller emergence.',
+      keyActionRecommendation:
+        'Apply 2nd irrigation with 25kg/acre Nitrogen top-dressing for maximum tiller emergence.',
       confidence: '97% AI Vision Match',
     };
   },

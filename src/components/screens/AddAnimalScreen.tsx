@@ -51,39 +51,35 @@ export const AddAnimalScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-20">
-      {/* Top Header */}
-      <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 py-4 sticky top-0 z-10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={navigateBack}
-              className="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="text-base font-bold text-slate-800 dark:text-slate-100">
-              Register New Animal
-            </h1>
-          </div>
-
-          <button
-            onClick={navigateBack}
-            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-full"
-          >
-            <X className="w-5 h-5" />
-          </button>
+    <div className="space-y-6 max-w-2xl mx-auto">
+      {/* 1. Header Toolbar */}
+      <div className="flex items-center justify-between bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
+        <div>
+          <h1 className="text-xl font-black text-gray-900 dark:text-zinc-100 flex items-center gap-2">
+            <span>🐄</span>
+            <span>Register New Livestock Animal</span>
+          </h1>
+          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+            Add cattle, buffalo or flock record to the herd database with optional GPS collar
+          </p>
         </div>
+
+        <button
+          onClick={navigateBack}
+          className="rounded-xl bg-gray-100 dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-gray-700 dark:text-zinc-300 hover:bg-gray-200"
+        >
+          Cancel
+        </button>
       </div>
 
-      <div className="max-w-md mx-auto p-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <Card className="p-6 border border-gray-200 dark:border-zinc-800 space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           {/* Type Picker */}
           <div>
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+            <label className="font-bold text-gray-700 dark:text-zinc-300 block mb-1.5">
               Select Animal Category
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {ANIMAL_TYPES.map(t => (
                 <button
                   key={t}
@@ -91,8 +87,8 @@ export const AddAnimalScreen: React.FC = () => {
                   onClick={() => setType(t)}
                   className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
                     type === t
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                      : 'bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border-gray-200 dark:border-zinc-700 hover:bg-gray-50'
                   }`}
                 >
                   {t}
@@ -101,102 +97,106 @@ export const AddAnimalScreen: React.FC = () => {
             </div>
           </div>
 
-          {/* Name & Tag */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Animal Name</label>
+              <label className="font-bold text-gray-700 dark:text-zinc-300">Animal Name</label>
               <input 
                 type="text"
+                required
+                placeholder="e.g. Ganga"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Gauri"
-                required
-                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
+                className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Ear Tag ID</label>
+              <label className="font-bold text-gray-700 dark:text-zinc-300">Ear Tag / Collar ID</label>
               <input 
                 type="text"
+                required
+                placeholder="e.g. C-05"
                 value={tagId}
                 onChange={(e) => setTagId(e.target.value)}
-                placeholder="e.g. C-05"
-                required
-                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
+                className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1"
               />
             </div>
           </div>
 
-          {/* Breed & Age */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Breed</label>
+              <label className="font-bold text-gray-700 dark:text-zinc-300">Breed</label>
               <input 
                 type="text"
+                required
+                placeholder="e.g. Sahiwal / Murrah"
                 value={breed}
                 onChange={(e) => setBreed(e.target.value)}
-                placeholder="e.g. Gir / Murrah"
-                required
-                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
+                className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Age (Years)</label>
+              <label className="font-bold text-gray-700 dark:text-zinc-300">Age (Years)</label>
               <input 
                 type="number"
                 value={ageYears}
                 onChange={(e) => setAgeYears(e.target.value)}
-                min="0"
-                max="25"
-                required
-                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white mt-1"
+                className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1"
               />
             </div>
           </div>
 
           {/* GPS Collar Toggle */}
-          <Card className="p-4 space-y-3">
+          <div className="pt-2 border-t border-gray-100 dark:border-zinc-800 space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Radio className="w-4 h-4 text-emerald-600" />
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-100">
-                  Attach GPS Collar / Geofence
+              <div>
+                <span className="font-bold text-gray-900 dark:text-zinc-100 block">
+                  Assign KisanTrack GPS Collar
+                </span>
+                <span className="text-[11px] text-gray-400">
+                  Enables real-time geofence tracking and boundary alerts
                 </span>
               </div>
 
-              <input 
-                type="checkbox"
-                checked={hasBleTracker}
-                onChange={(e) => setHasBleTracker(e.target.checked)}
-                className="accent-emerald-600 w-4 h-4 rounded"
-              />
+              <button
+                type="button"
+                onClick={() => setHasBleTracker(!hasBleTracker)}
+                className={`w-12 h-6 rounded-full transition-colors relative p-0.5 ${
+                  hasBleTracker ? 'bg-emerald-600' : 'bg-gray-300 dark:bg-zinc-700'
+                }`}
+              >
+                <div
+                  className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                    hasBleTracker ? 'translate-x-6' : 'translate-x-0'
+                  }`}
+                />
+              </button>
             </div>
 
             {hasBleTracker && (
               <div>
-                <label className="text-[11px] text-slate-500 block mb-1">Tracker Device Identifier</label>
+                <label className="font-bold text-gray-700 dark:text-zinc-300">Collar Device ID</label>
                 <input 
                   type="text"
                   value={bleDeviceName}
                   onChange={(e) => setBleDeviceName(e.target.value)}
-                  placeholder="e.g. KisanTrack-BLE-05"
-                  className="w-full text-xs p-2 rounded-lg border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                  className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1"
                 />
               </div>
             )}
-          </Card>
+          </div>
 
           <button
             type="submit"
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all active:scale-[0.99] text-sm mt-4"
+            className="w-full rounded-xl bg-emerald-600 py-3.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition-all active:scale-95"
           >
-            Save Animal Profile
+            Register Animal in Herd Database
           </button>
         </form>
-      </div>
+      </Card>
     </div>
   );
 };
+
 export default AddAnimalScreen;

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { 
-  Clock, Calendar, Sparkles, Check, ArrowLeft, X, 
+  Clock, Calendar, Sparkles, Check, 
   Droplet, Sliders, AlertCircle
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
@@ -49,151 +49,140 @@ export const SetScheduleScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-20">
-      {/* Top Header */}
-      <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 py-4 sticky top-0 z-10">
+    <div className="space-y-6 max-w-2xl mx-auto">
+      {/* 1. Header Toolbar */}
+      <div className="flex items-center justify-between bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
+        <div>
+          <h1 className="text-xl font-black text-gray-900 dark:text-zinc-100 flex items-center gap-2">
+            <span>⏱️</span>
+            <span>Configure Smart Irrigation Schedule</span>
+          </h1>
+          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+            Automated motorized valve timers with Open-Meteo satellite rain skip
+          </p>
+        </div>
+
+        <button
+          onClick={navigateBack}
+          className="rounded-xl bg-gray-100 dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-gray-700 dark:text-zinc-300 hover:bg-gray-200"
+        >
+          Cancel
+        </button>
+      </div>
+
+      {savedNotification && (
+        <div className="p-4 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center gap-2 text-xs font-bold shadow-xs animate-fade-in border border-emerald-300">
+          <Check className="w-4 h-4 text-emerald-600" />
+          <span>Irrigation automation schedule updated successfully!</span>
+        </div>
+      )}
+
+      {/* 2. Smart AI Toggle */}
+      <Card className="p-5 border-2 border-emerald-300 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button 
-              onClick={navigateBack}
-              className="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="text-base font-bold text-slate-800 dark:text-slate-100">
-              Set Irrigation Schedule
-            </h1>
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-extrabold text-emerald-950 dark:text-emerald-200">
+                Autonomous Satellite Rain Skip
+              </h3>
+              <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">
+                Automatically skips watering cycle if forecast predicts rainfall &gt; 5mm in next 24 hours
+              </p>
+            </div>
           </div>
 
           <button
-            onClick={navigateBack}
-            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-full"
+            type="button"
+            onClick={() => setSmartScheduling(!smartScheduling)}
+            className={`w-12 h-6 rounded-full transition-colors relative p-0.5 ${
+              smartScheduling ? 'bg-emerald-600' : 'bg-gray-300 dark:bg-zinc-700'
+            }`}
           >
-            <X className="w-5 h-5" />
+            <div
+              className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                smartScheduling ? 'translate-x-6' : 'translate-x-0'
+              }`}
+            />
           </button>
         </div>
-      </div>
+      </Card>
 
-      <div className="max-w-md mx-auto p-4 space-y-5">
-        {savedNotification && (
-          <div className="p-3 bg-emerald-100 text-emerald-800 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-sm animate-fade-in">
-            <Check className="w-4 h-4 text-emerald-600" />
-            <span>Schedule updated successfully!</span>
-          </div>
-        )}
-
-        {/* Smart AI Toggle */}
-        <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-emerald-950 dark:text-emerald-200">
-                  Autonomous Weather Skip
-                </h3>
-                <p className="text-xs text-emerald-700 dark:text-emerald-300">
-                  Skip watering if rainfall &gt; 5mm predicted
-                </p>
-              </div>
-            </div>
-
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input 
-                type="checkbox" 
-                checked={smartScheduling}
-                onChange={(e) => setSmartScheduling(e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+      {/* 3. Schedule Form */}
+      <Card className="p-6 border border-gray-200 dark:border-zinc-800 space-y-5">
+        <form onSubmit={handleSave} className="space-y-5 text-xs">
+          {/* Start Time */}
+          <div>
+            <label className="font-bold text-gray-700 dark:text-zinc-300 block mb-1.5">
+              Cycle Start Time (Early morning recommended)
             </label>
-          </div>
-        </div>
-
-        {/* Start Time */}
-        <Card className="p-4 space-y-3">
-          <div className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold text-sm">
-            <Clock className="w-4 h-4 text-emerald-600" />
-            Irrigation Start Time
+            <input
+              type="time"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              className="w-full text-base font-bold p-3 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+            />
           </div>
 
-          <p className="text-xs text-slate-500">
-            Early morning watering minimizes evaporation loss and prevents fungal spores on leaves.
-          </p>
-
-          <input 
-            type="time" 
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-            className="w-full text-base font-bold p-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-slate-800 dark:text-white"
-          />
-        </Card>
-
-        {/* Duration Slider */}
-        <Card className="p-4 space-y-3">
-          <div className="flex items-center justify-between text-slate-800 dark:text-slate-100 font-bold text-sm">
-            <div className="flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-emerald-600" />
-              Duration Per Zone
+          {/* Duration Slider */}
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <label className="font-bold text-gray-700 dark:text-zinc-300">
+                Watering Duration Per Zone
+              </label>
+              <span className="font-black text-emerald-600 text-sm">
+                {duration} Minutes
+              </span>
             </div>
-            <span className="text-emerald-600 font-extrabold text-base">{duration} mins</span>
+            <input
+              type="range"
+              min="15"
+              max="120"
+              step="5"
+              value={duration}
+              onChange={(e) => setDuration(parseInt(e.target.value))}
+              className="w-full h-2 bg-gray-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+            />
           </div>
 
-          <input 
-            type="range"
-            min="15"
-            max="120"
-            step="5"
-            value={duration}
-            onChange={(e) => setDuration(parseInt(e.target.value))}
-            className="w-full accent-emerald-600 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
-          />
-
-          <div className="flex justify-between text-[11px] text-slate-400">
-            <span>15 mins (Light drip)</span>
-            <span>60 mins</span>
-            <span>120 mins (Flood)</span>
+          {/* Active Days of Week */}
+          <div className="space-y-2">
+            <label className="font-bold text-gray-700 dark:text-zinc-300 block">
+              Active Days of the Week
+            </label>
+            <div className="grid grid-cols-7 gap-2">
+              {DAYS.map(d => {
+                const isSelected = selectedDays.includes(d.id);
+                return (
+                  <button
+                    key={d.id}
+                    type="button"
+                    onClick={() => toggleDay(d.id)}
+                    className={`py-3 rounded-xl font-bold text-xs transition-all ${
+                      isSelected
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 hover:bg-gray-200'
+                    }`}
+                  >
+                    {d.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </Card>
 
-        {/* Day Selector */}
-        <Card className="p-4 space-y-3">
-          <div className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold text-sm">
-            <Calendar className="w-4 h-4 text-emerald-600" />
-            Repeat Days
-          </div>
-
-          <div className="grid grid-cols-7 gap-1.5 pt-1">
-            {DAYS.map(day => {
-              const isSelected = selectedDays.includes(day.id);
-              return (
-                <button
-                  key={day.id}
-                  type="button"
-                  onClick={() => toggleDay(day.id)}
-                  className={`py-2 rounded-xl text-xs font-bold transition-all ${
-                    isSelected
-                      ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-                  }`}
-                >
-                  {day.label}
-                </button>
-              );
-            })}
-          </div>
-        </Card>
-
-        {/* Save Button */}
-        <button
-          onClick={handleSave}
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all active:scale-[0.99] text-sm"
-        >
-          Save Irrigation Schedule
-        </button>
-      </div>
+          <button
+            type="submit"
+            className="w-full rounded-xl bg-emerald-600 py-3.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition-all active:scale-95"
+          >
+            Save Irrigation Automation Schedule
+          </button>
+        </form>
+      </Card>
     </div>
   );
 };
+
 export default SetScheduleScreen;
