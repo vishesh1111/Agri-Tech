@@ -1,69 +1,148 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import { useKisanStore } from '@/stores/useKisanStore';
+import { TopAppBar } from '@/components/layout/TopAppBar';
+import { BottomNavBar } from '@/components/layout/BottomNavBar';
+
+// Core Tab Screens (Loaded dynamically to optimize bundle and SSR)
+const HomeScreen = dynamic(() => import('@/components/screens/HomeScreen'), { ssr: false });
+const FarmsScreen = dynamic(() => import('@/components/screens/FarmsScreen'), { ssr: false });
+const AIAgentScreen = dynamic(() => import('@/components/screens/AIAgentScreen'), { ssr: false });
+const MarketScreen = dynamic(() => import('@/components/screens/MarketScreen'), { ssr: false });
+const MoreHubScreen = dynamic(() => import('@/components/screens/MoreHubScreen'), { ssr: false });
+
+// Sub-Screens
+const SoilReportScreen = dynamic(() => import('@/components/screens/SoilReportScreen'), { ssr: false });
+const IrrigationScreen = dynamic(() => import('@/components/screens/IrrigationScreen'), { ssr: false });
+const SetScheduleScreen = dynamic(() => import('@/components/screens/SetScheduleScreen'), { ssr: false });
+const LivestockScreen = dynamic(() => import('@/components/screens/LivestockScreen'), { ssr: false });
+const AnimalDetailScreen = dynamic(() => import('@/components/screens/AnimalDetailScreen'), { ssr: false });
+const AddAnimalScreen = dynamic(() => import('@/components/screens/AddAnimalScreen'), { ssr: false });
+const FinanceScreen = dynamic(() => import('@/components/screens/FinanceScreen'), { ssr: false });
+const CropDoctorScreen = dynamic(() => import('@/components/screens/CropDoctorScreen'), { ssr: false });
+const FarmActionPlanScreen = dynamic(() => import('@/components/screens/FarmActionPlanScreen'), { ssr: false });
+const NotificationsScreen = dynamic(() => import('@/components/screens/NotificationsScreen'), { ssr: false });
+const SettingsScreen = dynamic(() => import('@/components/screens/SettingsScreen'), { ssr: false });
+const FarmerProfileScreen = dynamic(() => import('@/components/screens/FarmerProfileScreen'), { ssr: false });
+const FarmWeatherScreen = dynamic(() => import('@/components/screens/FarmWeatherScreen'), { ssr: false });
+const GovtSchemesScreen = dynamic(() => import('@/components/screens/GovtSchemesScreen'), { ssr: false });
+const CropGrowthTrackerScreen = dynamic(() => import('@/components/screens/CropGrowthTrackerScreen'), { ssr: false });
+const CctvMonitorScreen = dynamic(() => import('@/components/screens/CctvMonitorScreen'), { ssr: false });
+const PoultryScannerScreen = dynamic(() => import('@/components/screens/PoultryScannerScreen'), { ssr: false });
+const MastitisScannerScreen = dynamic(() => import('@/components/screens/MastitisScannerScreen'), { ssr: false });
+const OfficerPortalScreen = dynamic(() => import('@/components/screens/OfficerPortalScreen'), { ssr: false });
+
+export default function App() {
+  const {
+    currentTab,
+    currentSubScreen,
+    isDarkTheme,
+    navigateBack,
+    initialize,
+  } = useKisanStore();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  // Sync dark theme class on document element
+  useEffect(() => {
+    if (isDarkTheme) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkTheme]);
+
+  // Determine which sub-screen or tab to render
+  const renderContent = () => {
+    if (currentSubScreen !== 'none') {
+      switch (currentSubScreen) {
+        case 'soil_report':
+          return <SoilReportScreen />;
+        case 'irrigation_detail':
+          return <IrrigationScreen />;
+        case 'set_schedule':
+        case 'irrigation_schedule':
+          return <SetScheduleScreen />;
+        case 'livestock_list':
+          return <LivestockScreen />;
+        case 'animal_detail':
+          return <AnimalDetailScreen />;
+        case 'add_animal':
+          return <AddAnimalScreen />;
+        case 'finance_dashboard':
+          return <FinanceScreen />;
+        case 'crop_doctor':
+          return <CropDoctorScreen />;
+        case 'tasks_list':
+          return <FarmActionPlanScreen />;
+        case 'notifications':
+          return <NotificationsScreen />;
+        case 'settings':
+          return <SettingsScreen />;
+        case 'user_profile':
+        case 'farmer_profile':
+          return <FarmerProfileScreen />;
+        case 'weather_report':
+          return <FarmWeatherScreen />;
+        case 'govt_schemes':
+          return <GovtSchemesScreen />;
+        case 'crop_growth_tracker':
+          return <CropGrowthTrackerScreen />;
+        case 'cctv_monitor':
+          return <CctvMonitorScreen />;
+        case 'poultry_scanner':
+          return <PoultryScannerScreen />;
+        case 'mastitis_scanner':
+          return <MastitisScannerScreen />;
+        case 'officer_portal':
+          return <OfficerPortalScreen />;
+        case 'farms_manager':
+          return <FarmsScreen />;
+        case 'market_soil_testing':
+          return <MarketScreen />;
+        default:
+          return <HomeScreen />;
+      }
+    }
+
+    // Main 5-tab navigation
+    switch (currentTab) {
+      case 'home':
+        return <HomeScreen />;
+      case 'farms':
+        return <FarmsScreen />;
+      case 'ai_agent':
+        return <AIAgentScreen />;
+      case 'market':
+        return <MarketScreen />;
+      case 'more':
+        return <MoreHubScreen />;
+      default:
+        return <HomeScreen />;
+    }
+  };
+
+  const isSubScreenActive = currentSubScreen !== 'none';
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+      {/* Top App Bar is shown unless specific full-screen views take precedence */}
+      <TopAppBar
+        showBackButton={isSubScreenActive}
+        onBackClick={navigateBack}
+      />
+
+      {/* Main Screen Content Body */}
+      <main className="flex-1 max-w-lg w-full mx-auto pb-16">
+        {renderContent()}
       </main>
+
+      {/* Mobile-first Bottom Navigation Bar (Hidden when inside sub-screens) */}
+      {!isSubScreenActive && <BottomNavBar />}
     </div>
   );
 }
