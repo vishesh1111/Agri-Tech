@@ -67,6 +67,9 @@ interface KisanStoreState {
   // Settings
   isDarkTheme: boolean;
   currentLanguage: AppLanguage;
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  toggleSidebar: () => void;
 
   // Selected Entities
   selectedFarmId: string;
@@ -253,6 +256,7 @@ export const useKisanStore = create<KisanStoreState>((set, get) => ({
   currentSubScreen: 'none',
   navigationStack: [],
   isDarkTheme: false,
+  sidebarOpen: true,
   currentLanguage: LANGUAGES[0],
   selectedFarmId: 'farm_1',
   selectedAnimalId: 'c_01',
@@ -436,6 +440,14 @@ export const useKisanStore = create<KisanStoreState>((set, get) => ({
       }
       return { isDarkTheme: newTheme };
     });
+  },
+
+  setSidebarOpen: (open: boolean) => {
+    set({ sidebarOpen: open });
+  },
+
+  toggleSidebar: () => {
+    set((state) => ({ sidebarOpen: !state.sidebarOpen }));
   },
 
   setLanguage: (lang: AppLanguage) => {

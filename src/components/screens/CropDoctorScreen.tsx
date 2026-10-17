@@ -44,7 +44,7 @@ export function CropDoctorScreen() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-lg font-semibold text-zinc-900">
-              Crop Doctor (Leaf Diagnosis)
+              Crop Doctor
             </h1>
             <Badge variant="neutral">Vision AI</Badge>
           </div>

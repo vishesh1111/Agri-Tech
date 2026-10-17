@@ -50,7 +50,7 @@ export function TopAppBar({ title, showBackButton, onBackClick }: TopAppBarProps
 
         <div>
           <h1 className="text-sm font-semibold text-zinc-900">
-            {title || 'KisanAI'}
+            {title || 'KisanTech'}
           </h1>
           {!title && userProfile && (
             <p className="text-[11px] text-zinc-400">

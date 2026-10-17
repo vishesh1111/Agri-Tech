@@ -4,7 +4,7 @@ import React from 'react';
 import { 
   Droplets, Clock, Calendar, Power, AlertCircle, 
   CheckCircle2, ChevronRight, Sliders, Play, Square,
-  Settings, Zap
+  Settings, Zap, Waves, Sparkles
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -39,13 +39,23 @@ export const IrrigationScreen: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => navigateToSubScreen('irrigation_schedule')}
-          className="flex items-center gap-2 rounded-lg bg-zinc-900 px-3.5 py-2 text-xs font-medium text-white hover:bg-zinc-800 transition-colors shadow-xs"
-        >
-          <Settings className="w-3.5 h-3.5" />
-          <span>Configure Schedule</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigateToSubScreen('crop_water_advisor')}
+            className="flex items-center gap-2 rounded-lg bg-blue-700 px-3.5 py-2 text-xs font-semibold text-white hover:bg-blue-800 transition-colors shadow-xs"
+          >
+            <Waves className="w-3.5 h-3.5" />
+            <span>Visual Water Advisor</span>
+          </button>
+
+          <button
+            onClick={() => navigateToSubScreen('irrigation_schedule')}
+            className="flex items-center gap-2 rounded-lg bg-zinc-900 px-3.5 py-2 text-xs font-medium text-white hover:bg-zinc-800 transition-colors shadow-xs"
+          >
+            <Settings className="w-3.5 h-3.5" />
+            <span>Configure Schedule</span>
+          </button>
+        </div>
       </div>
 
       {/* 2. Top Telemetry Cards (3 Columns) */}
@@ -106,6 +116,37 @@ export const IrrigationScreen: React.FC = () => {
             </div>
           </div>
         </Card>
+      </div>
+
+      {/* 2.5 Visual Crop Water Advisor Feature Card */}
+      <div 
+        onClick={() => navigateToSubScreen('crop_water_advisor')}
+        className="bg-gradient-to-r from-blue-900 via-sky-900 to-indigo-950 text-white rounded-xl p-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:shadow-md transition-all border border-blue-800"
+      >
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 shrink-0">
+            <Waves className="w-5 h-5 text-sky-300" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="text-sm font-bold text-white">
+                Interactive Crop Water Depth & Root Visualizer
+              </h4>
+              <span className="bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                Interactive Model
+              </span>
+            </div>
+            <p className="text-xs text-blue-100/80 mt-0.5">
+              Input crop & soil details to see the exact minimum irrigation level (cm) with an animated cross-section
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-white bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-lg border border-white/20 shrink-0 justify-center">
+          <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+          <span>Launch Visualizer</span>
+          <ChevronRight className="w-4 h-4 ml-0.5" />
+        </div>
       </div>
 
       {/* 3. Automation Schedule Banner */}

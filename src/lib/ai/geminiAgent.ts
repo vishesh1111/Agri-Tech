@@ -115,7 +115,7 @@ export const GeminiFarmAgent = {
       return 'Current weather is 28°C, humidity 55%, wind speed 11 km/h. Clear skies provide an optimal foliar spraying window today.';
     }
 
-    return `KisanAI active for ${userProfile?.name || 'Farmer'} at ${activeFarm?.name || 'Main Farm'}. Ask any specific question about crop diseases, mandi rates, fertilizer dosage, or livestock care.`;
+    return `KisanTech active for ${userProfile?.name || 'Farmer'} at ${activeFarm?.name || 'Main Farm'}. Ask any specific question about crop diseases, mandi rates, fertilizer dosage, or livestock care.`;
   },
 
   /**

@@ -103,16 +103,25 @@ export const LivestockScreen: React.FC = () => {
       {/* 3. Cattle & Dairy Animals Grid (3-Column Desktop Grid) */}
       {(selectedCategory === 'All' || selectedCategory === 'Cattle & Dairy' || selectedCategory === 'Goat & Sheep') && (
         <div className="space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-emerald-50/60 border border-emerald-200/60">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping"></span>
-              <span className="text-xs font-semibold text-emerald-950">
-                Virtual Pasture Geofence Active (150m Farm Boundary)
-              </span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping"></span>
+                <span className="text-xs font-semibold text-emerald-950">
+                  Virtual Pasture Geofence & CCTV Boundary Monitoring Active
+                </span>
+              </div>
+              <p className="text-[11px] text-emerald-800 mt-0.5">
+                BLE collar radar tracking active (150m boundary). Switch to live CCTV footage to draw virtual fence lines and get alerts.
+              </p>
             </div>
-            <p className="text-[11px] text-emerald-800">
-              Click <span className="font-semibold underline">View Profile →</span> on any cow to view real-time radar coordinates and test boundary breach alerts.
-            </p>
+            <button
+              onClick={() => navigateToSubScreen('cctv_monitor')}
+              className="shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-700 text-white text-xs font-semibold hover:bg-emerald-800 transition-all shadow-xs"
+            >
+              <Video className="w-3.5 h-3.5" />
+              <span>Live CCTV Fence →</span>
+            </button>
           </div>
 
           <div className="flex items-center justify-between pt-1">
@@ -227,8 +236,8 @@ export const LivestockScreen: React.FC = () => {
             <Video className="h-5 w-5" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-zinc-900">CCTV Estrus Heat Monitor</h4>
-            <p className="text-xs text-zinc-500 mt-0.5 leading-relaxed">Continuous pen video monitoring with mounting detection and AI timing window</p>
+            <h4 className="text-sm font-semibold text-zinc-900">Virtual Fencing AI (CCTV Camera)</h4>
+            <p className="text-xs text-zinc-500 mt-0.5 leading-relaxed">Live pasture video monitoring, interactive boundary lines, and instant perimeter breach alarms</p>
           </div>
         </button>
 

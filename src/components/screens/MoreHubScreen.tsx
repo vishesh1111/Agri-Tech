@@ -20,6 +20,7 @@ import {
   Bell,
   ChevronRight,
   LayoutGrid,
+  Waves,
 } from 'lucide-react';
 import { useKisanStore } from '@/stores/useKisanStore';
 import { SubScreen } from '@/lib/types';
@@ -62,6 +63,14 @@ export function MoreHubScreen() {
       category: 'core',
     },
     {
+      id: 'crop_water_advisor',
+      title: 'Crop Water & Level Advisor',
+      subtitle: 'Minimum water level animation & root wetting depth',
+      icon: Waves,
+      badge: 'Visual Model',
+      category: 'core',
+    },
+    {
       id: 'soil_report',
       title: 'Soil Health & NPK Card',
       subtitle: 'Nutrient tests and remediation guidelines',
@@ -86,7 +95,7 @@ export function MoreHubScreen() {
     // AI & Advanced Diagnostics
     {
       id: 'crop_doctor',
-      title: 'Crop Doctor (Leaf Pathology)',
+      title: 'Crop Doctor',
       subtitle: 'Camera disease scan and treatment steps',
       icon: Stethoscope,
       badge: 'Vision AI',
@@ -110,8 +119,8 @@ export function MoreHubScreen() {
     },
     {
       id: 'cctv_monitor',
-      title: 'CCTV Estrus Heat Monitor',
-      subtitle: 'Automated video mounting detection',
+      title: 'Virtual Fencing AI (CCTV)',
+      subtitle: 'Perimeter line crossing & livestock breach alerts',
       icon: Video,
       badge: 'Live CCTV',
       category: 'ai',

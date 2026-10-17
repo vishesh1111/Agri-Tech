@@ -1,64 +1,56 @@
 // src/app/api/gemini/chat/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-
-
+import { executeGeminiWithRotation } from '@/lib/ai/geminiMultiKey';
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { message, context } = body;
 
-    const apiKey = process.env.GEMINI_API_KEY;
-
-    if (apiKey && apiKey !== 'MY_GEMINI_API_KEY' && apiKey.trim().length > 0) {
-      try {
-        const systemInstruction = `
-You are KisanAI Farm Advisor, an expert agronomic and veterinary AI assistant designed for Indian farmers.
+    const systemInstruction = `
+You are KisanTech Farm Advisor, an expert agronomic and veterinary AI assistant designed for Indian farmers.
 Always give actionable, practical, friendly guidance in simple language.
 Ground your response in the farmer's context if provided:
+- Farmer Name: ${context?.farmerName || 'Farmer'}
 - Active Farm: ${context?.farmName || 'Kisan Farm'}
 - Crops: ${JSON.stringify(context?.crops || [])}
 - Livestock: ${JSON.stringify(context?.livestock || [])}
-- Weather: ${JSON.stringify(context?.weather || '28°C, optimal')}
+- Pending Tasks: ${context?.pendingTasksCount ?? 0}
+- Weather: ${JSON.stringify(context?.weather || '28°C, optimal conditions')}
 Keep answers concise (under 120 words) with clear bullet points.
+If the farmer asks about disease, mandi prices, fertilizers, or animal health, give precise, practical advice suitable for Indian agriculture (ICAR / KVK practices).
 `.trim();
 
-        const payload = {
-          contents: [
-            {
-              parts: [{ text: `${systemInstruction}\n\nFarmer Query: ${message}` }],
-            },
-          ],
-          generationConfig: {
-            temperature: 0.3,
-            maxOutputTokens: 250,
-          },
-        };
+    const payload = {
+      contents: [
+        {
+          parts: [{ text: `${systemInstruction}\n\nFarmer Query: ${message}` }],
+        },
+      ],
+      generationConfig: {
+        temperature: 0.3,
+        maxOutputTokens: 300,
+      },
+    };
 
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          }
-        );
+    const result = await executeGeminiWithRotation(payload);
 
-        if (res.ok) {
-          const data = await res.json();
-          const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (reply) {
-            return NextResponse.json({ success: true, reply });
-          }
-        }
-      } catch (err) {
-        console.warn('Gemini chat API call failed, using expert engine:', err);
-      }
+    if (result && result.text) {
+      return NextResponse.json({
+        success: true,
+        reply: result.text,
+        modelUsed: result.modelUsed,
+        keyUsed: result.keyUsed,
+      });
     }
 
-    // Expert domain heuristic engine fallback
+    // Expert domain heuristic engine fallback if all keys fail or network is unavailable
     const fallbackReply = getFallbackAdvisorReply(message);
-    return NextResponse.json({ success: true, reply: fallbackReply });
+    return NextResponse.json({
+      success: true,
+      reply: fallbackReply,
+      isFallback: true,
+    });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error?.message || 'Chat error' },
@@ -133,5 +125,5 @@ function getFallbackAdvisorReply(prompt: string): string {
     return 'Current weather is 28°C, humidity 55%, wind speed 11 km/h. Clear skies provide an optimal foliar spraying window today.';
   }
 
-  return 'KisanAI is active. You can ask any specific question about crop diseases, mandi rates, fertilizer dosage, irrigation schedules, or livestock health.';
+  return 'KisanTech is active. You can ask any specific question about crop diseases, mandi rates, fertilizer dosage, irrigation schedules, or livestock health.';
 }

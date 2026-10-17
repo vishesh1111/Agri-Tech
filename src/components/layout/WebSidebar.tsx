@@ -22,7 +22,8 @@ export const WebSidebar: React.FC = () => {
     userProfile,
     currentLanguage,
     setLanguage,
-    notifications
+    notifications,
+    sidebarOpen,
   } = useKisanStore();
 
   const activeFarm = farms.find(f => f.id === selectedFarmId) || farms[0];
@@ -72,7 +73,7 @@ export const WebSidebar: React.FC = () => {
       title: 'Livestock & Sensors',
       items: [
         { label: 'Herd & Cattle', icon: Heart, sub: 'livestock_list' },
-        { label: 'CCTV Estrus Monitor', icon: Video, sub: 'cctv_monitor' },
+        { label: 'Virtual Fencing AI', icon: Video, sub: 'cctv_monitor' },
         { label: 'Mastitis Scan', icon: Activity, sub: 'mastitis_scanner' },
         { label: 'Poultry Health', icon: Volume2, sub: 'poultry_scanner' }
       ]
@@ -97,7 +98,11 @@ export const WebSidebar: React.FC = () => {
   };
 
   return (
-    <aside className="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-white border-r border-zinc-200/80 z-30">
+    <aside
+      className={`hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-white border-r border-zinc-200/80 z-30 transition-transform duration-300 ease-in-out ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}
+    >
       {/* Brand Header */}
       <div className="h-14 px-4 flex items-center justify-between border-b border-zinc-200/80">
         <button 
@@ -108,14 +113,9 @@ export const WebSidebar: React.FC = () => {
             🌱
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-semibold text-sm text-zinc-900 tracking-tight">
-                KisanAI
-              </span>
-              <span className="text-[10px] text-zinc-400 font-normal">
-                v2.0
-              </span>
-            </div>
+            <span className="font-semibold text-sm text-zinc-900 tracking-tight block">
+              KisanTech
+            </span>
             <span className="text-[11px] text-zinc-500 font-normal block -mt-0.5">
               Smart Farm Assistant
             </span>

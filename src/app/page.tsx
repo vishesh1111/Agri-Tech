@@ -35,6 +35,7 @@ const CctvMonitorScreen = dynamic(() => import('@/components/screens/CctvMonitor
 const PoultryScannerScreen = dynamic(() => import('@/components/screens/PoultryScannerScreen'), { ssr: false });
 const MastitisScannerScreen = dynamic(() => import('@/components/screens/MastitisScannerScreen'), { ssr: false });
 const OfficerPortalScreen = dynamic(() => import('@/components/screens/OfficerPortalScreen'), { ssr: false });
+const CropWaterVisualizerScreen = dynamic(() => import('@/components/screens/CropWaterVisualizerScreen'), { ssr: false });
 
 export default function App() {
   const {
@@ -43,6 +44,7 @@ export default function App() {
     isDarkTheme,
     navigateBack,
     initialize,
+    sidebarOpen,
   } = useKisanStore();
 
   useEffect(() => {
@@ -107,6 +109,8 @@ export default function App() {
           return <FarmsScreen />;
         case 'market_soil_testing':
           return <MarketScreen />;
+        case 'crop_water_advisor':
+          return <CropWaterVisualizerScreen />;
         default:
           return <HomeScreen />;
       }
@@ -136,8 +140,10 @@ export default function App() {
       {/* Desktop Left Navigation Sidebar (Hidden on mobile) */}
       <WebSidebar />
 
-      {/* Main Content Area (Offset by sidebar width on desktop) */}
-      <div className="flex-1 md:pl-64 flex flex-col min-h-screen">
+      {/* Main Content Area (Offset by sidebar width on desktop when open) */}
+      <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out ${
+        sidebarOpen ? 'md:pl-64' : 'md:pl-0'
+      }`}>
         {/* Sticky Web Header */}
         <WebHeader
           showBackButton={isSubScreenActive}

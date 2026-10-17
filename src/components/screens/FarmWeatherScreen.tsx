@@ -68,10 +68,8 @@ export function FarmWeatherScreen() {
       </div>
 
       {farmWeather && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column (7 Cols): Hero Weather Card, Hourly & 7-Day Forecast */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* Current Conditions Card */}
+        <div className="space-y-6">
+          {/* Current Conditions Card */}
             <Card className="p-6 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
               <div className="flex items-start justify-between">
                 <div>
@@ -214,11 +212,10 @@ export function FarmWeatherScreen() {
                 </table>
               </div>
             </Card>
-          </div>
 
-          {/* Right Column (5 Cols): Spraying Window & Advanced Environmental Grid */}
-          <div className="lg:col-span-5 space-y-6">
-            {/* Agricultural Spraying Window Card */}
+            {/* Bottom Section (When Scrolled): Spraying Window & Microclimate Indices */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Agricultural Spraying Window Card */}
             <Card className="p-5 border border-zinc-200/80 bg-white space-y-4">
               <div className="flex items-center justify-between">
                 <div>

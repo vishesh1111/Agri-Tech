@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "KisanAI - Smart Farm Assistant",
+  title: "KisanTech - Smart Farm Assistant",
   description: "Precision farming, real-time weather & advisory, crop disease diagnosis, and farm management.",
   manifest: "/manifest.json",
   icons: {

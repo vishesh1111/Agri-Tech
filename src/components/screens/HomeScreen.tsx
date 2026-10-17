@@ -16,7 +16,8 @@ import {
   FileCheck,
   MapPin,
   Search,
-  Check
+  Check,
+  Video
 } from 'lucide-react';
 import { useKisanStore } from '@/stores/useKisanStore';
 import { Card, Badge } from '@/components/ui/Card';
@@ -51,10 +52,10 @@ export function HomeScreen() {
   const netMargin = totalIncome - totalExpense;
 
   const quickActions = [
-    { label: 'Weather Forecast', subLabel: 'Hourly & spray advisory', icon: CloudSun, action: () => navigateToSubScreen('weather_report') },
+    { label: 'Virtual Fencing AI', subLabel: 'Live CCTV perimeter tracking', icon: Video, action: () => navigateToSubScreen('cctv_monitor') },
     { label: 'Crop Doctor', subLabel: 'Instant leaf diagnosis', icon: Stethoscope, action: () => navigateToSubScreen('crop_doctor') },
+    { label: 'Weather Forecast', subLabel: 'Hourly & spray advisory', icon: CloudSun, action: () => navigateToSubScreen('weather_report') },
     { label: 'Irrigation & Water', subLabel: 'Zone schedules', icon: Droplets, action: () => navigateToSubScreen('irrigation_detail') },
-    { label: 'Mandi Rates', subLabel: 'Live APMC market prices', icon: Store, action: () => setTab('market') },
     { label: 'Farm Tasks', subLabel: `${pendingTasks.length} pending actions`, icon: CheckCircle2, action: () => navigateToSubScreen('tasks_list') },
     { label: 'Herd & Cattle', subLabel: 'Livestock status', icon: Activity, action: () => navigateToSubScreen('livestock_list') },
   ];
@@ -424,7 +425,7 @@ export function HomeScreen() {
               </div>
               <div>
                 <h4 className="text-xs font-semibold text-zinc-900">
-                  Ask KisanAI Assistant
+                  Ask KisanTech Assistant
                 </h4>
                 <p className="text-[11px] text-zinc-500">
                   Guidance on spraying, dosage, diseases & prices

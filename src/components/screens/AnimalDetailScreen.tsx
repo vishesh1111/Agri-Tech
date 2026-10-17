@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { 
   Heart, ArrowLeft, Shield, MapPin, Battery, Activity, 
   Calendar, Clock, CheckCircle2, AlertTriangle, Sparkles, Plus,
-  Radio, Droplet, Compass, Navigation
+  Radio, Droplet, Compass, Navigation, Video
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -46,8 +46,11 @@ export const AnimalDetailScreen: React.FC = () => {
     insight: 'Milk production +8% above cohort average. Rumination index optimal.'
   };
 
-  const isInside = simulatedStray ? false : animal.isInsideFence;
-  const currentDistance = simulatedStray ? 172 : (animal.distanceFromCenterM ?? 42);
+  const isInside = simulatedStray ? false : (animal.isInsideFence ?? true);
+  const currentDistance = simulatedStray ? 172 : (animal.distanceFromCenterM ?? animal.distanceMetersFromCenter ?? 42);
+  const fenceRadius = animal.fenceRadiusM ?? animal.fenceRadiusMeters ?? 150;
+  const collarBattery = animal.trackerBatteryPercent ?? animal.batteryPercent ?? 92;
+  const collarId = animal.trackerDeviceId ?? animal.bleDeviceName ?? 'KisanTag-BLE-01';
 
   const handleSaveYield = (e: React.FormEvent) => {
     e.preventDefault();
@@ -204,20 +207,30 @@ export const AnimalDetailScreen: React.FC = () => {
                     Virtual Pasture Geofence & Collar Telemetry
                   </h3>
                 </div>
-                <p className="text-xs text-zinc-500 mt-0.5">Collar ID: {animal.trackerDeviceId}</p>
+                <p className="text-xs text-zinc-500 mt-0.5">Collar ID: {collarId}</p>
               </div>
 
-              {isInside ? (
-                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2.5 py-1 rounded">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-ping"></span>
-                  <span>Inside Perimeter</span>
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-800 bg-rose-50 border border-rose-200/60 px-2.5 py-1 rounded animate-pulse">
-                  <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
-                  <span>Outside Perimeter (Straying!)</span>
-                </span>
-              )}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => navigateToSubScreen('cctv_monitor')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-700 text-white text-xs font-semibold hover:bg-emerald-800 transition-all shadow-xs"
+                >
+                  <Video className="w-3.5 h-3.5" />
+                  <span>Open CCTV Fence →</span>
+                </button>
+
+                {isInside ? (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2.5 py-1.5 rounded">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-ping"></span>
+                    <span>Inside Perimeter</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-800 bg-rose-50 border border-rose-200/60 px-2.5 py-1.5 rounded animate-pulse">
+                    <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+                    <span>Outside Perimeter (Straying!)</span>
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Visual Geofence Radar / Satellite Boundary Canvas */}
@@ -325,11 +338,11 @@ export const AnimalDetailScreen: React.FC = () => {
               </div>
               <div>
                 <span className="text-[10px] text-zinc-400 font-medium block">Perimeter Fence Limit</span>
-                <p className="text-sm font-semibold text-zinc-900 mt-0.5">{animal.fenceRadiusM} m</p>
+                <p className="text-sm font-semibold text-zinc-900 mt-0.5">{fenceRadius} m</p>
               </div>
               <div>
                 <span className="text-[10px] text-zinc-400 font-medium block">Collar Battery</span>
-                <p className="text-sm font-semibold text-zinc-900 mt-0.5">{animal.trackerBatteryPercent}%</p>
+                <p className="text-sm font-semibold text-zinc-900 mt-0.5">{collarBattery}%</p>
               </div>
             </div>
 

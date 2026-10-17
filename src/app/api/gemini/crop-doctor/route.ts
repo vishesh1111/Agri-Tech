@@ -1,7 +1,6 @@
 // src/app/api/gemini/crop-doctor/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-
-
+import { executeGeminiWithRotation } from '@/lib/ai/geminiMultiKey';
 
 interface PathologyResult {
   diseaseName: string;
@@ -15,6 +14,7 @@ interface PathologyResult {
   soilAndNutrientAdvice: string;
   isGeminiVisionAnalyzed: boolean;
   modelUsed?: string;
+  keyUsed?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -22,11 +22,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { imageBase64, cropName = 'Wheat' } = body;
 
-    const apiKey = process.env.GEMINI_API_KEY;
-
-    if (apiKey && apiKey !== 'MY_GEMINI_API_KEY' && apiKey.trim().length > 0) {
-      try {
-        const promptText = `
+    const promptText = `
 Analyze this leaf image of a ${cropName} crop for an Indian farmer using Gemini Vision AI.
 Identify potential fungal, bacterial, viral diseases OR nutrient deficiencies (e.g. Nitrogen, Zinc, Iron, Potassium deficiency).
 
@@ -44,65 +40,48 @@ Respond strictly in valid JSON with these exact keys:
 }
 `.trim();
 
-        const parts: any[] = [{ text: promptText }];
-        if (imageBase64) {
-          parts.push({
-            inlineData: {
-              mimeType: 'image/jpeg',
-              data: imageBase64.replace(/^data:image\/[a-z]+;base64,/, ''),
-            },
-          });
-        }
+    const parts: any[] = [{ text: promptText }];
+    if (imageBase64) {
+      parts.push({
+        inlineData: {
+          mimeType: 'image/jpeg',
+          data: imageBase64.replace(/^data:image\/[a-z]+;base64,/, ''),
+        },
+      });
+    }
 
-        const payload = {
-          contents: [{ parts }],
-          generationConfig: {
-            responseMimeType: 'application/json',
-            temperature: 0.2,
-          },
+    const payload = {
+      contents: [{ parts }],
+      generationConfig: {
+        responseMimeType: 'application/json',
+        temperature: 0.2,
+      },
+    };
+
+    const callResult = await executeGeminiWithRotation(payload, {
+      preferredModel: 'gemini-2.5-flash',
+      timeoutMs: 20000,
+    });
+
+    if (callResult && callResult.text) {
+      try {
+        // Strip markdown backticks if any
+        const cleanedText = callResult.text
+          .replace(/^```json\s*/i, '')
+          .replace(/^```\s*/, '')
+          .replace(/\s*```$/, '')
+          .trim();
+
+        const parsed = JSON.parse(cleanedText);
+        const resultJson: PathologyResult = {
+          ...parsed,
+          isGeminiVisionAnalyzed: true,
+          modelUsed: callResult.modelUsed,
+          keyUsed: callResult.keyUsed,
         };
-
-        // Try gemini-2.5-flash first, then fallback to gemini-1.5-flash
-        const models = ['gemini-2.5-flash', 'gemini-1.5-flash'];
-        let resultJson: PathologyResult | null = null;
-        let successfulModel = '';
-
-        for (const model of models) {
-          try {
-            const res = await fetch(
-              `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-              }
-            );
-
-            if (res.ok) {
-              const data = await res.json();
-              const textContent =
-                data.candidates?.[0]?.content?.parts?.[0]?.text;
-              if (textContent) {
-                const parsed = JSON.parse(textContent);
-                resultJson = {
-                  ...parsed,
-                  isGeminiVisionAnalyzed: true,
-                  modelUsed: model,
-                };
-                successfulModel = model;
-                break;
-              }
-            }
-          } catch (modelErr) {
-            console.warn(`Attempt with ${model} failed:`, modelErr);
-          }
-        }
-
-        if (resultJson) {
-          return NextResponse.json({ success: true, result: resultJson });
-        }
-      } catch (geminiError) {
-        console.warn('Gemini API call failed, deploying expert knowledge fallback:', geminiError);
+        return NextResponse.json({ success: true, result: resultJson });
+      } catch (parseErr) {
+        console.warn('Failed to parse Gemini vision JSON, falling back:', parseErr);
       }
     }
 

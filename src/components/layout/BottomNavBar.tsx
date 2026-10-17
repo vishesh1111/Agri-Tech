@@ -11,7 +11,7 @@ export function BottomNavBar() {
   const tabs: { id: MainTab; label: string; icon: React.ElementType }[] = [
     { id: 'home', label: 'Home', icon: Home },
     { id: 'farms', label: 'Farms', icon: Sprout },
-    { id: 'ai_agent', label: 'KisanAI', icon: Bot },
+    { id: 'ai_agent', label: 'KisanTech', icon: Bot },
     { id: 'market', label: 'Market', icon: Store },
     { id: 'more', label: 'More Hub', icon: LayoutGrid },
   ];

@@ -419,7 +419,7 @@ export const initialChatMessages: ChatMessage[] = [
   {
     id: 1,
     isFromUser: false,
-    text: 'Namaste Ramesh! I am your KisanAI autonomous farm assistant. I am monitoring your 5-acre plots, weather forecasts, livestock tracking, and APMC mandi rates. How can I help you today?',
+    text: 'Namaste Ramesh! I am your KisanTech autonomous farm assistant. I am monitoring your 5-acre plots, weather forecasts, livestock tracking, and APMC mandi rates. How can I help you today?',
     timestamp: Date.now() - 7200000,
     timeFormatted: '08:00 AM',
     isDiagnosis: false,

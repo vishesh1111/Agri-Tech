@@ -1,5 +1,5 @@
 /**
- * KisanAI — Data Entity Types
+ * KisanTech — Data Entity Types
  * Ported from: app/src/main/java/com/example/data/model/Entities.kt
  * Every field, type, and default value matches the Android Kotlin data classes.
  */
@@ -570,7 +570,8 @@ export type SubScreen =
   | 'mastitis_scanner'
   | 'officer_portal'
   | 'farms_manager'
-  | 'market_soil_testing';
+  | 'market_soil_testing'
+  | 'crop_water_advisor';
 
 
 // ── Language ──

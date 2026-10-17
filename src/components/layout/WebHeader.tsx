@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeft, Search, Bell, ShieldCheck, CloudSun, 
-  ChevronRight, CheckCheck
+  ChevronRight, CheckCheck, PanelLeftClose, PanelLeftOpen
 } from 'lucide-react';
 import { useKisanStore } from '@/stores/useKisanStore';
 import { SubScreen } from '@/lib/types';
@@ -28,7 +28,9 @@ export const WebHeader: React.FC<WebHeaderProps> = ({
     notifications,
     navigateToSubScreen,
     markAllNotificationsRead,
-    setTab
+    setTab,
+    sidebarOpen,
+    toggleSidebar
   } = useKisanStore();
 
   const [showNotifMenu, setShowNotifMenu] = useState(false);
@@ -58,12 +60,13 @@ export const WebHeader: React.FC<WebHeaderProps> = ({
         'weather_report': 'Weather & Radar',
         'govt_schemes': 'Government Schemes',
         'crop_growth_tracker': 'Crop Lifecycle',
-        'cctv_monitor': 'CCTV Estrus Monitor',
+        'cctv_monitor': 'Virtual Fencing AI',
         'poultry_scanner': 'Poultry Health',
         'mastitis_scanner': 'Mastitis Scan',
         'officer_portal': 'Officer Verification',
         'farms_manager': 'Fields & Land Parcels',
-        'market_soil_testing': 'Soil Testing Labs'
+        'market_soil_testing': 'Soil Testing Labs',
+        'crop_water_advisor': 'Crop Water & Level Visualizer'
       };
       return titles[currentSubScreen] || 'Farm Management';
     }
@@ -74,7 +77,7 @@ export const WebHeader: React.FC<WebHeaderProps> = ({
       case 'ai_agent': return 'AI Assistant';
       case 'market': return 'Mandi & Market';
       case 'more': return 'Modules';
-      default: return 'KisanAI';
+      default: return 'KisanTech';
     }
   };
 
@@ -106,12 +109,26 @@ export const WebHeader: React.FC<WebHeaderProps> = ({
   return (
     <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-xs border-b border-zinc-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
-        {/* Left Section: Back button & Title */}
-        <div className="flex items-center gap-3 min-w-0">
+        {/* Left Section: Sidebar Toggle, Back button & Title */}
+        <div className="flex items-center gap-2.5 min-w-0">
+          {/* Sidebar Toggle Button (Desktop) */}
+          <button
+            onClick={toggleSidebar}
+            className="hidden md:flex p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 transition-colors cursor-pointer shrink-0"
+            title={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+            aria-label="Toggle sidebar"
+          >
+            {sidebarOpen ? (
+              <PanelLeftClose className="w-4 h-4" />
+            ) : (
+              <PanelLeftOpen className="w-4 h-4 text-emerald-700" />
+            )}
+          </button>
+
           {showBackButton ? (
             <button
               onClick={onBackClick}
-              className="p-1.5 rounded-lg text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+              className="p-1.5 rounded-lg text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors shrink-0"
               title="Go back"
             >
               <ArrowLeft className="w-4 h-4" />
