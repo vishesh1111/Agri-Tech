@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { 
   Clock, Calendar, Sparkles, Check, 
-  Droplet, Sliders, AlertCircle
+  Droplet, Sliders, AlertCircle, ArrowLeft
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { useKisanStore } from '@/stores/useKisanStore';
@@ -51,45 +51,49 @@ export const SetScheduleScreen: React.FC = () => {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {/* 1. Header Toolbar */}
-      <div className="flex items-center justify-between bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
+      <div className="flex items-center justify-between bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div>
-          <h1 className="text-xl font-black text-gray-900 dark:text-zinc-100 flex items-center gap-2">
-            <span>⏱️</span>
-            <span>Configure Smart Irrigation Schedule</span>
-          </h1>
-          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
-            Automated motorized valve timers with Open-Meteo satellite rain skip
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
+              <Clock className="h-5 w-5" />
+            </span>
+            <h1 className="text-xl font-semibold text-zinc-900">
+              Configure Irrigation Schedule
+            </h1>
+          </div>
+          <p className="text-xs text-zinc-500 mt-1">
+            Valve automation schedule with weather-based rain skip
           </p>
         </div>
 
         <button
           onClick={navigateBack}
-          className="rounded-xl bg-gray-100 dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-gray-700 dark:text-zinc-300 hover:bg-gray-200"
+          className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 shadow-xs"
         >
           Cancel
         </button>
       </div>
 
       {savedNotification && (
-        <div className="p-4 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center gap-2 text-xs font-bold shadow-xs animate-fade-in border border-emerald-300">
-          <Check className="w-4 h-4 text-emerald-600" />
-          <span>Irrigation automation schedule updated successfully!</span>
+        <div className="p-3 bg-emerald-50 text-emerald-800 rounded-lg flex items-center gap-2 text-xs font-medium border border-emerald-200">
+          <Check className="w-4 h-4 text-emerald-700" />
+          <span>Irrigation schedule saved successfully!</span>
         </div>
       )}
 
-      {/* 2. Smart AI Toggle */}
-      <Card className="p-5 border-2 border-emerald-300 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20">
+      {/* 2. Smart Toggle */}
+      <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
-              <Sparkles className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-extrabold text-emerald-950 dark:text-emerald-200">
-                Autonomous Satellite Rain Skip
+              <h3 className="text-sm font-semibold text-zinc-900">
+                Weather Rain Skip
               </h3>
-              <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">
-                Automatically skips watering cycle if forecast predicts rainfall &gt; 5mm in next 24 hours
+              <p className="text-xs text-zinc-500 mt-0.5">
+                Automatically skips cycle if rain forecast exceeds 5mm in the next 24 hours
               </p>
             </div>
           </div>
@@ -97,13 +101,13 @@ export const SetScheduleScreen: React.FC = () => {
           <button
             type="button"
             onClick={() => setSmartScheduling(!smartScheduling)}
-            className={`w-12 h-6 rounded-full transition-colors relative p-0.5 ${
-              smartScheduling ? 'bg-emerald-600' : 'bg-gray-300 dark:bg-zinc-700'
+            className={`w-11 h-6 rounded-full transition-colors relative p-0.5 ${
+              smartScheduling ? 'bg-emerald-700' : 'bg-zinc-200'
             }`}
           >
             <div
-              className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                smartScheduling ? 'translate-x-6' : 'translate-x-0'
+              className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform ${
+                smartScheduling ? 'translate-x-5' : 'translate-x-0'
               }`}
             />
           </button>
@@ -111,74 +115,80 @@ export const SetScheduleScreen: React.FC = () => {
       </Card>
 
       {/* 3. Schedule Form */}
-      <Card className="p-6 border border-gray-200 dark:border-zinc-800 space-y-5">
+      <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <form onSubmit={handleSave} className="space-y-5 text-xs">
           {/* Start Time */}
           <div>
-            <label className="font-bold text-gray-700 dark:text-zinc-300 block mb-1.5">
-              Cycle Start Time (Early morning recommended)
+            <label className="font-medium text-zinc-700 block mb-1">
+              Start Time
             </label>
             <input
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="w-full text-base font-bold p-3 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+              className="rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
             />
+            <span className="text-zinc-400 text-[11px] block mt-1">
+              Early morning watering minimizes evaporation loss
+            </span>
           </div>
 
           {/* Duration Slider */}
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <label className="font-bold text-gray-700 dark:text-zinc-300">
-                Watering Duration Per Zone
-              </label>
-              <span className="font-black text-emerald-600 text-sm">
-                {duration} Minutes
-              </span>
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <label className="font-medium text-zinc-700">Duration per Zone</label>
+              <span className="font-semibold text-zinc-900 text-sm">{duration} minutes</span>
             </div>
             <input
               type="range"
-              min="15"
-              max="120"
-              step="5"
+              min={15}
+              max={120}
+              step={5}
               value={duration}
               onChange={(e) => setDuration(parseInt(e.target.value))}
-              className="w-full h-2 bg-gray-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+              className="w-full h-1.5 bg-zinc-200 rounded-lg appearance-none cursor-pointer accent-emerald-700"
             />
+            <div className="flex justify-between text-[11px] text-zinc-400 mt-1">
+              <span>15 min</span>
+              <span>60 min</span>
+              <span>120 min</span>
+            </div>
           </div>
 
-          {/* Active Days of Week */}
-          <div className="space-y-2">
-            <label className="font-bold text-gray-700 dark:text-zinc-300 block">
-              Active Days of the Week
+          {/* Days Selection */}
+          <div>
+            <label className="font-medium text-zinc-700 block mb-2">
+              Watering Days
             </label>
-            <div className="grid grid-cols-7 gap-2">
-              {DAYS.map(d => {
-                const isSelected = selectedDays.includes(d.id);
+            <div className="flex gap-2">
+              {DAYS.map((day) => {
+                const isSelected = selectedDays.includes(day.id);
                 return (
                   <button
-                    key={d.id}
+                    key={day.id}
                     type="button"
-                    onClick={() => toggleDay(d.id)}
-                    className={`py-3 rounded-xl font-bold text-xs transition-all ${
+                    onClick={() => toggleDay(day.id)}
+                    className={`flex-1 py-2 rounded-lg text-xs font-medium transition-colors ${
                       isSelected
-                        ? 'bg-emerald-600 text-white shadow-xs'
-                        : 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 hover:bg-gray-200'
+                        ? 'bg-zinc-900 text-white'
+                        : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
                     }`}
                   >
-                    {d.label}
+                    {day.label}
                   </button>
                 );
               })}
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full rounded-xl bg-emerald-600 py-3.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition-all active:scale-95"
-          >
-            Save Irrigation Automation Schedule
-          </button>
+          <div className="pt-2">
+            <button
+              type="submit"
+              className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors shadow-xs"
+            >
+              Save Schedule
+            </button>
+          </div>
         </form>
       </Card>
     </div>

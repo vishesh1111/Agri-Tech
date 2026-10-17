@@ -17,7 +17,7 @@ export function BottomNavBar() {
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95 shadow-lg">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-zinc-200/80 bg-white/95 backdrop-blur-md shadow-[0_-1px_3px_rgba(0,0,0,0.03)]">
       <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -26,20 +26,20 @@ export function BottomNavBar() {
             <button
               key={tab.id}
               onClick={() => setTab(tab.id)}
-              className={`flex flex-col items-center justify-center gap-1 rounded-xl px-3 py-1.5 transition-all ${
+              className={`flex flex-col items-center justify-center gap-1 rounded-lg px-3 py-1 transition-colors ${
                 isActive
-                  ? 'text-emerald-600 dark:text-emerald-400 font-semibold'
-                  : 'text-gray-500 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  ? 'text-emerald-800 font-semibold'
+                  : 'text-zinc-400 hover:text-zinc-800'
               }`}
             >
               <div
-                className={`flex h-8 w-12 items-center justify-center rounded-full transition-all ${
-                  isActive ? 'bg-emerald-100 dark:bg-emerald-950/60 scale-105' : ''
+                className={`flex h-7 w-10 items-center justify-center rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-50 text-emerald-800' : ''
                 }`}
               >
-                <Icon className={`h-5 w-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.75]'}`} />
+                <Icon className={`h-4 w-4 ${isActive ? 'stroke-[2.2]' : 'stroke-[1.7]'}`} />
               </div>
-              <span className="text-[11px] tracking-tight">{tab.label}</span>
+              <span className="text-[10px] tracking-tight">{tab.label}</span>
             </button>
           );
         })}
@@ -47,3 +47,5 @@ export function BottomNavBar() {
     </nav>
   );
 }
+
+export default BottomNavBar;

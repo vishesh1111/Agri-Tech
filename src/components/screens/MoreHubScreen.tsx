@@ -19,6 +19,7 @@ import {
   Settings,
   Bell,
   ChevronRight,
+  LayoutGrid,
 } from 'lucide-react';
 import { useKisanStore } from '@/stores/useKisanStore';
 import { SubScreen } from '@/lib/types';
@@ -29,7 +30,6 @@ interface HubTile {
   title: string;
   subtitle: string;
   icon: React.ElementType;
-  color: string;
   badge?: string;
   category: 'core' | 'ai' | 'finance' | 'admin';
 }
@@ -43,86 +43,76 @@ export function MoreHubScreen() {
     {
       id: 'crop_growth_tracker',
       title: 'Crop Lifecycle Tracker',
-      subtitle: 'Phenological stages & harvest predictor',
+      subtitle: 'Phenological stages and harvest outlook',
       icon: TrendingUp,
-      color: 'bg-emerald-600',
       category: 'core',
     },
     {
       id: 'weather_report',
-      title: 'Farm Weather & Spray Window',
-      subtitle: 'Satellite telemetry & ET0 rate',
+      title: 'Weather & Spray Window',
+      subtitle: 'Agro-meteorology and spray suitability',
       icon: CloudSun,
-      color: 'bg-sky-500',
       category: 'core',
     },
     {
       id: 'irrigation_detail',
-      title: 'Water & Irrigation Engine',
-      subtitle: 'Zone controls & smart schedules',
+      title: 'Irrigation & Water Control',
+      subtitle: 'Zone controls and automation schedule',
       icon: Droplets,
-      color: 'bg-blue-600',
       category: 'core',
     },
     {
       id: 'soil_report',
       title: 'Soil Health & NPK Card',
-      subtitle: 'Sensor telemetry & deficiency map',
+      subtitle: 'Nutrient tests and remediation guidelines',
       icon: FileText,
-      color: 'bg-amber-600',
       category: 'core',
     },
     {
       id: 'livestock_list',
-      title: 'Livestock & GPS Geofence',
-      subtitle: 'Cattle records & milk yield logs',
+      title: 'Livestock & Geofence',
+      subtitle: 'Cattle profiles, milk yield, and collars',
       icon: Sparkles,
-      color: 'bg-rose-500',
       category: 'core',
     },
     {
       id: 'tasks_list',
-      title: 'Action Plan & Tasks',
-      subtitle: 'Prioritized farm work schedule',
+      title: 'Action Plan & Field Tasks',
+      subtitle: 'Prioritized farm operations checklist',
       icon: CheckCircle2,
-      color: 'bg-purple-600',
       category: 'core',
     },
 
-    // AI & Advanced Scanners
+    // AI & Advanced Diagnostics
     {
       id: 'crop_doctor',
       title: 'Crop Doctor (Leaf Pathology)',
-      subtitle: 'Instant vision disease diagnosis',
+      subtitle: 'Camera disease scan and treatment steps',
       icon: Stethoscope,
-      color: 'bg-green-700',
-      badge: 'AI Vision',
+      badge: 'Vision AI',
       category: 'ai',
     },
     {
       id: 'mastitis_scanner',
       title: 'Mastitis Udder Health Scanner',
-      subtitle: 'Bovine udder scan & SCC estimate',
+      subtitle: 'Bovine udder scan and SCC estimation',
       icon: Activity,
-      color: 'bg-rose-600',
-      badge: 'Udder AI',
+      badge: 'Health AI',
       category: 'ai',
     },
     {
       id: 'poultry_scanner',
-      title: 'Poultry Flock Audio AI',
-      subtitle: 'Acoustic cough & distress detector',
+      title: 'Poultry Bioacoustics Scanner',
+      subtitle: 'Audio cough and respiratory distress check',
       icon: Mic,
-      color: 'bg-indigo-600',
-      badge: 'Audio ML',
+      badge: 'Audio AI',
       category: 'ai',
     },
     {
       id: 'cctv_monitor',
-      title: 'CCTV Cattle Estrus Monitor',
-      subtitle: 'Camera feed mounting behavior alert',
+      title: 'CCTV Estrus Heat Monitor',
+      subtitle: 'Automated video mounting detection',
       icon: Video,
-      color: 'bg-red-600',
       badge: 'Live CCTV',
       category: 'ai',
     },
@@ -130,75 +120,73 @@ export function MoreHubScreen() {
     // Finance & Govt
     {
       id: 'finance_dashboard',
-      title: 'Farm Finance & Ledger',
-      subtitle: 'Profitability optimizer & cash accounts',
+      title: 'Farm Financial Ledger',
+      subtitle: 'Expense ledger and net operating margins',
       icon: DollarSign,
-      color: 'bg-emerald-600',
       category: 'finance',
     },
     {
       id: 'govt_schemes',
       title: 'Government Schemes & Subsidies',
-      subtitle: 'PM-KISAN, PMFBY, KUSUM direct benefits',
+      subtitle: 'PM-KISAN, PMFBY, and solar subsidies',
       icon: Award,
-      color: 'bg-amber-500',
       category: 'finance',
     },
     {
       id: 'officer_portal',
-      title: 'Government Officer Verification',
-      subtitle: 'Crop claims, pesticide review & audit desk',
+      title: 'Inspection & Claims Portal',
+      subtitle: 'Crop damage evidence and officer verification',
       icon: ShieldCheck,
-      color: 'bg-blue-700',
-      badge: 'Officer Desk',
+      badge: 'Verification',
       category: 'admin',
     },
 
     // System
     {
       id: 'user_profile',
-      title: 'Farmer Profile & Credentials',
-      subtitle: 'Aadhaar, contact, farm holding details',
+      title: 'Farmer Profile & Identity',
+      subtitle: 'Aadhaar, contact, and holding records',
       icon: User,
-      color: 'bg-gray-600',
       category: 'admin',
     },
     {
       id: 'notifications',
-      title: 'Risk Alerts & Warnings',
-      subtitle: 'Severe weather & scheme notices',
+      title: 'Alerts & Notifications',
+      subtitle: 'Weather warnings and scheme notices',
       icon: Bell,
-      color: 'bg-amber-600',
       badge: unreadNotifs > 0 ? `${unreadNotifs} New` : undefined,
       category: 'admin',
     },
     {
       id: 'settings',
-      title: 'App Settings & Regional Languages',
-      subtitle: 'Hindi, Punjabi, Bengali, Marathi, Theme',
+      title: 'Preferences & Regional Languages',
+      subtitle: 'Language selection and offline storage',
       icon: Settings,
-      color: 'bg-gray-500',
       category: 'admin',
     },
   ];
 
   const categories = [
-    { key: 'core', label: '🌾 Farm Operations & Agronomic Health' },
-    { key: 'ai', label: '🤖 Autonomous AI & Vision Diagnostics' },
-    { key: 'finance', label: '💰 Finance, Schemes & Direct Transfers' },
-    { key: 'admin', label: '⚙️ Account, Officer Portal & Settings' },
+    { key: 'core', label: 'Farm Operations & Agronomy' },
+    { key: 'ai', label: 'AI Diagnostic Scanners' },
+    { key: 'finance', label: 'Finance & Schemes' },
+    { key: 'admin', label: 'Account & Verification' },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-gray-900 dark:text-zinc-100 flex items-center gap-2">
-            <span>🚜</span>
-            <span>Comprehensive Farm Modules Directory</span>
-          </h1>
-          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
-            Access all 22 autonomous farm management capabilities across agronomy, livestock, finance and government portals
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
+              <LayoutGrid className="h-5 w-5" />
+            </span>
+            <h1 className="text-xl font-semibold text-zinc-900">
+              Farm Modules Directory
+            </h1>
+          </div>
+          <p className="text-xs text-zinc-500 mt-1">
+            Access all modules across agronomy, livestock, finance, scanners, and government programs
           </p>
         </div>
       </div>
@@ -213,41 +201,41 @@ export function MoreHubScreen() {
         );
 
         return (
-          <div key={cat.key} className="space-y-3">
-            <h3 className="text-xs font-extrabold uppercase tracking-wider text-gray-500 dark:text-zinc-400 px-1">
+          <div key={cat.key} className="space-y-2.5">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 px-1">
               {cat.label}
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {catTiles.map((tile) => {
                 const Icon = tile.icon;
                 return (
                   <Card
                     key={tile.id}
                     onClick={() => navigateToSubScreen(tile.id as SubScreen)}
-                    className="cursor-pointer hover:border-emerald-300 hover:shadow-md hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-between p-4 border border-gray-200 dark:border-zinc-800"
+                    className="cursor-pointer hover:border-zinc-300 transition-all flex items-center justify-between p-3.5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
                   >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-sm ${tile.color}`}>
-                        <Icon className="h-6 w-6" />
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700">
+                        <Icon className="h-4 w-4" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="text-sm font-bold text-gray-900 dark:text-zinc-100 truncate">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <h4 className="text-xs font-medium text-zinc-900 truncate">
                             {tile.title}
                           </h4>
                           {tile.badge && (
-                            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                            <span className="rounded px-1.5 py-0.5 text-[10px] font-medium bg-zinc-100 text-zinc-700">
                               {tile.badge}
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-zinc-400 truncate mt-0.5">
+                        <p className="text-[11px] text-zinc-500 truncate mt-0.5">
                           {tile.subtitle}
                         </p>
                       </div>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-gray-400 shrink-0 ml-2" />
+                    <ChevronRight className="h-4 w-4 text-zinc-400 shrink-0 ml-2" />
                   </Card>
                 );
               })}

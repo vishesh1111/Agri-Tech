@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { 
   Camera, Upload, AlertCircle, CheckCircle2, ArrowLeft, 
-  Activity, Sparkles, RefreshCw, ShieldAlert, FileText, Info, Cpu
+  Activity, Sparkles, RefreshCw, ShieldAlert, FileText, Info, Cpu, Stethoscope, AlertTriangle
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -53,7 +53,15 @@ export const MastitisScannerScreen: React.FC = () => {
       setScanComplete(true);
       setPrediction(result);
 
-      if (result.hasMastitis) {
+      if (result.isInvalidImage) {
+        addNotification({
+          farmId: 'farm_1',
+          title: 'Udder Photo Quality Warning',
+          message: result.invalidReason || 'Photo is too dark or obscured. Retake in daylight.',
+          severity: 'WARNING',
+          type: 'LIVESTOCK',
+        });
+      } else if (result.hasMastitis) {
         addNotification({
           farmId: 'farm_1',
           title: 'Mastitis Risk Alert: Udder Scan Result',
@@ -70,31 +78,94 @@ export const MastitisScannerScreen: React.FC = () => {
           type: 'LIVESTOCK',
         });
       }
-    } catch (e) {
+    } catch (e: any) {
       clearInterval(progressTimer);
       setIsScanning(false);
       console.error('Scan error:', e);
     }
   };
 
+  const loadHealthySample = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 224;
+    canvas.height = 224;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      // Light pinkish background
+      ctx.fillStyle = '#fce7f3';
+      ctx.fillRect(0, 0, 224, 224);
+      // Symmetric healthy quarters
+      ctx.fillStyle = '#fbcfe8';
+      ctx.beginPath();
+      ctx.arc(80, 100, 48, 0, Math.PI * 2);
+      ctx.arc(144, 100, 48, 0, Math.PI * 2);
+      ctx.fill();
+      // Teats
+      ctx.fillStyle = '#f472b6';
+      ctx.beginPath();
+      ctx.ellipse(75, 155, 8, 18, 0, 0, Math.PI * 2);
+      ctx.ellipse(149, 155, 8, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      setImagePreview(canvas.toDataURL('image/jpeg'));
+      setPrediction(null);
+      setScanComplete(false);
+    }
+  };
+
+  const loadMastitisSample = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 224;
+    canvas.height = 224;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = '#fce7f3';
+      ctx.fillRect(0, 0, 224, 224);
+      // Quarters
+      ctx.fillStyle = '#fbcfe8';
+      ctx.beginPath();
+      ctx.arc(80, 100, 48, 0, Math.PI * 2);
+      ctx.arc(144, 100, 48, 0, Math.PI * 2);
+      ctx.fill();
+      // Acute erythema inflammation on right quarter
+      ctx.fillStyle = '#e11d48';
+      ctx.beginPath();
+      ctx.arc(144, 100, 36, 0, Math.PI * 2);
+      ctx.fill();
+      // Swollen teat
+      ctx.fillStyle = '#be123c';
+      ctx.beginPath();
+      ctx.ellipse(149, 155, 14, 24, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      setImagePreview(canvas.toDataURL('image/jpeg'));
+      setPrediction(null);
+      setScanComplete(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* 1. Header Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-gray-900 dark:text-zinc-100 flex items-center gap-2">
-            <span>🩺</span>
-            <span>Bovine Mastitis & Udder Health Vision Scanner</span>
-          </h1>
-          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
-            Early subclinical mastitis triage via INT8 ONNX WebAssembly, Somatic Cell Count (SCC) estimation & teat health protocols
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
+              <Stethoscope className="h-5 w-5" />
+            </span>
+            <h1 className="text-xl font-semibold text-zinc-900">
+              Mastitis Udder Health Scanner
+            </h1>
+          </div>
+          <p className="text-xs text-zinc-500 mt-1">
+            Early subclinical mastitis triage, Somatic Cell Count (SCC) estimation & teat health guidance
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-            <Cpu className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
-            ONNX Runtime Web (WASM INT8)
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-50 text-zinc-700 border border-zinc-200">
+            <Cpu className="w-3.5 h-3.5 text-emerald-700" />
+            <span>On-Device WASM Engine</span>
           </span>
         </div>
       </div>
@@ -103,15 +174,15 @@ export const MastitisScannerScreen: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column (5 Cols): Upload & Scanner Controls */}
         <div className="lg:col-span-5 space-y-4">
-          <Card className="p-5 border border-gray-200 dark:border-zinc-800 space-y-4">
-            <h3 className="font-extrabold text-sm text-gray-900 dark:text-zinc-100">
+          <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+            <h3 className="font-semibold text-sm text-zinc-900">
               Udder Photographic Inspection
             </h3>
 
-            <div className="border-2 border-dashed border-gray-300 dark:border-zinc-700 rounded-2xl p-6 text-center space-y-3 bg-gray-50/50 dark:bg-zinc-800/40">
+            <div className="border border-dashed border-zinc-200 rounded-xl p-5 text-center space-y-3 bg-zinc-50/50">
               {imagePreview ? (
                 <div className="space-y-3">
-                  <div className="relative mx-auto h-56 w-full max-w-xs overflow-hidden rounded-2xl border border-gray-200 shadow-md">
+                  <div className="relative mx-auto h-52 w-full max-w-xs overflow-hidden rounded-lg border border-zinc-200 shadow-xs">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={imagePreview} alt="Udder Preview" className="h-full w-full object-cover" />
                   </div>
@@ -121,22 +192,22 @@ export const MastitisScannerScreen: React.FC = () => {
                       setPrediction(null);
                       setScanComplete(false);
                     }}
-                    className="text-xs font-semibold text-rose-600 hover:underline"
+                    className="text-xs font-medium text-rose-700 hover:underline"
                   >
                     Remove and choose another image
                   </button>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <div className="w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 mx-auto flex items-center justify-center">
-                    <Camera className="w-7 h-7" />
+                <div className="space-y-3 py-2">
+                  <div className="w-12 h-12 rounded-lg bg-zinc-100 text-zinc-600 mx-auto flex items-center justify-center">
+                    <Camera className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-xs text-gray-800 dark:text-zinc-200">
+                    <h4 className="font-medium text-xs text-zinc-900">
                       Upload Rear View of Udder & Teats
                     </h4>
-                    <p className="text-[11px] text-gray-500 mt-0.5">
-                      Ensure good lighting and clean udder surface prior to milking
+                    <p className="text-[11px] text-zinc-500 mt-0.5">
+                      Ensure adequate lighting and clean skin before milking
                     </p>
                   </div>
 
@@ -148,43 +219,26 @@ export const MastitisScannerScreen: React.FC = () => {
                     className="hidden"
                   />
 
-                  <div className="flex flex-wrap gap-2 justify-center pt-2">
+                  <div className="flex flex-wrap gap-2 justify-center pt-1">
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-emerald-700"
+                      className="rounded-lg bg-zinc-900 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-zinc-800 transition-colors shadow-xs"
                     >
-                      Choose Photo / Take Picture
+                      Choose Photo
                     </button>
 
                     <button
-                      onClick={() => {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = 224;
-                        canvas.height = 224;
-                        const ctx = canvas.getContext('2d');
-                        if (ctx) {
-                          ctx.fillStyle = '#fdf2f8';
-                          ctx.fillRect(0, 0, 224, 224);
-                          // Draw udder quarters
-                          ctx.fillStyle = '#fda4af';
-                          ctx.beginPath();
-                          ctx.arc(80, 90, 45, 0, Math.PI * 2);
-                          ctx.arc(144, 90, 45, 0, Math.PI * 2);
-                          ctx.fill();
-                          // Erythema inflammation region
-                          ctx.fillStyle = '#f43f5e';
-                          ctx.beginPath();
-                          ctx.arc(144, 95, 25, 0, Math.PI * 2);
-                          ctx.fill();
-                          setImagePreview(canvas.toDataURL('image/jpeg'));
-                          setPrediction(null);
-                          setScanComplete(false);
-                        }
-                      }}
-                      className="rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2 text-xs font-bold text-rose-800 hover:bg-rose-100 transition-colors"
+                      onClick={loadHealthySample}
+                      className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-800 hover:bg-emerald-100 transition-colors"
                     >
-                      <Sparkles className="w-3.5 h-3.5 inline mr-1 text-rose-600" />
-                      Test Sample Udder
+                      Sample: Healthy
+                    </button>
+
+                    <button
+                      onClick={loadMastitisSample}
+                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-800 hover:bg-rose-100 transition-colors"
+                    >
+                      Sample: Mastitis
                     </button>
                   </div>
                 </div>
@@ -195,9 +249,9 @@ export const MastitisScannerScreen: React.FC = () => {
             <button
               onClick={handleRunScan}
               disabled={!imagePreview || isScanning}
-              className="w-full rounded-xl bg-emerald-600 py-3 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 transition-all active:scale-95"
+              className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 disabled:opacity-50 transition-colors shadow-xs"
             >
-              {isScanning ? `Analyzing Udder Telemetry (${progress}%)...` : 'Run Udder Health Scan (Client WASM)'}
+              {isScanning ? `Analyzing Udder (${progress}%)...` : 'Run Health Scan'}
             </button>
           </Card>
         </div>
@@ -205,93 +259,97 @@ export const MastitisScannerScreen: React.FC = () => {
         {/* Right Column (7 Cols): Clinical Findings & Treatment Report */}
         <div className="lg:col-span-7 space-y-4">
           {prediction ? (
-            <Card className={`p-6 border-2 space-y-4 ${
-              prediction.hasMastitis 
-                ? 'border-rose-300 dark:border-rose-900/60' 
-                : 'border-emerald-300 dark:border-emerald-900/60'
-            }`}>
-              <div className="flex items-start justify-between">
-                <div>
-                  <span className={`text-xs font-bold uppercase tracking-wider ${
-                    prediction.hasMastitis ? 'text-rose-600' : 'text-emerald-600'
-                  }`}>
-                    Edge AI Pathology Report
-                  </span>
-                  <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 mt-0.5">
-                    {prediction.hasMastitis ? 'Subclinical Mastitis Detected' : 'Healthy Udder Tissue'}
-                  </h3>
-                  <span className={`text-xs font-mono font-bold mt-1 block ${
-                    prediction.hasMastitis ? 'text-rose-700 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'
-                  }`}>
-                    {prediction.sccEstimate}
-                  </span>
+            prediction.isInvalidImage ? (
+              <Card className="p-5 border border-amber-300 bg-amber-50/50 space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-lg bg-amber-100 text-amber-800 shrink-0">
+                    <AlertTriangle className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-semibold text-amber-950">
+                      Insufficient Image Illumination / Obscured
+                    </h3>
+                    <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+                      {prediction.invalidReason}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="text-right">
-                  <span className={`text-2xl font-black ${
-                    prediction.hasMastitis ? 'text-rose-600' : 'text-emerald-600'
-                  }`}>
-                    {prediction.confidence}%
+                <div className="p-3 rounded-lg bg-white/80 border border-amber-200 text-xs space-y-1">
+                  <span className="font-semibold text-amber-950 block">Capture Guidelines:</span>
+                  <ul className="list-disc pl-4 space-y-0.5 text-amber-900 leading-relaxed">
+                    {prediction.immediateTreatments.map((step, idx) => (
+                      <li key={idx}>{step}</li>
+                    ))}
+                  </ul>
+                </div>
+              </Card>
+            ) : (
+              <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="text-[11px] font-medium text-zinc-400 uppercase tracking-wider">
+                      Diagnostic Finding
+                    </span>
+                    <h3 className={`text-lg font-semibold mt-0.5 ${
+                      prediction.hasMastitis ? 'text-rose-700' : 'text-emerald-700'
+                    }`}>
+                      {prediction.hasMastitis ? 'Subclinical Mastitis Detected' : 'Healthy Udder Tissue'}
+                    </h3>
+                    <span className="text-xs font-mono font-medium text-zinc-600 mt-0.5 block">
+                      {prediction.sccEstimate}
+                    </span>
+                  </div>
+
+                  <div className="text-right">
+                    <span className={`text-2xl font-semibold ${
+                      prediction.hasMastitis ? 'text-rose-600' : 'text-emerald-600'
+                    }`}>
+                      {prediction.confidence}%
+                    </span>
+                    <span className="text-[11px] text-zinc-400 block font-normal">Confidence</span>
+                  </div>
+                </div>
+
+                {/* Observed Clinical Signs */}
+                <div className="p-3.5 rounded-lg bg-zinc-50 border border-zinc-200/70 space-y-1 text-xs">
+                  <span className="font-medium text-zinc-900 block">
+                    Observed Clinical Indicators:
                   </span>
-                  <span className="text-[10px] text-gray-400 block font-semibold">Vision Match</span>
+                  <ul className="list-disc pl-4 space-y-0.5 text-zinc-600 leading-relaxed">
+                    {prediction.clinicalSigns.map((sign, idx) => (
+                      <li key={idx}>{sign}</li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
 
-              {/* Observed Clinical Signs */}
-              <div className={`p-3.5 rounded-xl border space-y-1.5 text-xs ${
-                prediction.hasMastitis
-                  ? 'bg-rose-50/70 dark:bg-rose-950/30 border-rose-200 dark:border-rose-900/60'
-                  : 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/60'
-              }`}>
-                <span className={`font-bold block ${
-                  prediction.hasMastitis ? 'text-rose-950 dark:text-rose-200' : 'text-emerald-950 dark:text-emerald-200'
-                }`}>
-                  Observed Clinical Indicators:
-                </span>
-                <ul className={`list-disc pl-4 space-y-1 ${
-                  prediction.hasMastitis ? 'text-rose-900 dark:text-rose-300' : 'text-emerald-900 dark:text-emerald-300'
-                }`}>
-                  {prediction.clinicalSigns.map((sign, i) => (
-                    <li key={i}>{sign}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Treatment Protocols */}
-              <div className="space-y-2 text-xs">
-                <h4 className="font-bold uppercase tracking-wider text-gray-500">
-                  {prediction.hasMastitis ? 'Immediate Veterinary Treatment Protocol' : 'Routine Preventive Care Protocols'}
-                </h4>
-                <div className="space-y-2">
-                  {prediction.immediateTreatments.map((step, i) => (
-                    <div key={i} className="flex items-start gap-2.5 p-2.5 rounded-xl border border-gray-100 dark:border-zinc-800">
-                      <span className={`h-5 w-5 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0 ${
-                        prediction.hasMastitis ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
-                      }`}>
-                        {i + 1}
-                      </span>
-                      <span className="text-gray-700 dark:text-zinc-300 font-medium">{step}</span>
-                    </div>
-                  ))}
+                {/* Action Protocol */}
+                <div className="space-y-2 text-xs">
+                  <h4 className="font-medium text-zinc-900">
+                    Recommended Treatment & Hygiene Protocol:
+                  </h4>
+                  <div className="space-y-1.5">
+                    {(prediction.immediateTreatments || []).map((rec, idx) => (
+                      <div key={idx} className="flex items-start gap-2 text-zinc-600">
+                        <span className="h-4 w-4 rounded-full bg-zinc-200 text-zinc-700 flex items-center justify-center text-[10px] shrink-0 mt-0.5">
+                          {idx + 1}
+                        </span>
+                        <span>{rec}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </Card>
+              </Card>
+            )
           ) : (
-            <Card className="flex flex-col items-center justify-center p-12 text-center border border-gray-200 dark:border-zinc-800 space-y-3 min-h-[350px]">
-              <div className="h-16 w-16 rounded-3xl bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-3xl">
-                🩺
-              </div>
-              <h3 className="font-black text-base text-gray-900 dark:text-zinc-100">
-                Udder Health Diagnostic Studio
-              </h3>
-              <p className="text-xs text-gray-500 max-w-md">
-                Upload a rear-view image of the bovine udder to screen for early inflammation, quarter swelling, and somatic cell count elevations before milk quality declines.
+            <Card className="p-8 text-center border border-zinc-200/80 bg-white space-y-2">
+              <Camera className="w-8 h-8 text-zinc-300 mx-auto" />
+              <h4 className="text-sm font-medium text-zinc-800">
+                Ready to Scan Udder
+              </h4>
+              <p className="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed">
+                Take a clean photograph of the bovine udder or choose a sample to analyze inflammation signs and estimate somatic cell counts.
               </p>
-              <div className="pt-2">
-                <span className="text-[11px] text-gray-400 flex items-center gap-1">
-                  <span>⚡</span> Powered by ONNX Runtime WebAssembly running 100% in your browser
-                </span>
-              </div>
             </Card>
           )}
         </div>

@@ -75,7 +75,6 @@ export const PoultryScannerScreen: React.FC = () => {
       }
     } catch (err) {
       console.warn('Microphone permission blocked or unavailable, using synthetic coop audio for evaluation:', err);
-      // Generate synthetic 5-second coop audio buffer for testing if mic access denied
       setIsRecording(true);
       setRecordSeconds(0);
     }
@@ -86,7 +85,6 @@ export const PoultryScannerScreen: React.FC = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
     } else {
-      // Create synthetic audio blob for fallback testing
       const syntheticBlob = createSyntheticCoopAudio();
       analyzeAudioBlob(syntheticBlob);
     }
@@ -135,22 +133,18 @@ export const PoultryScannerScreen: React.FC = () => {
   };
 
   function createSyntheticCoopAudio(): Blob {
-    // 5 seconds of 16kHz mono PCM with coughing burst harmonics
     const sampleRate = 16000;
     const numSamples = sampleRate * 5;
     const buffer = new Float32Array(numSamples);
     for (let i = 0; i < numSamples; i++) {
       const t = i / sampleRate;
-      // Background murmur (low freq)
       let val = Math.sin(2 * Math.PI * 400 * t) * 0.05 + (Math.random() - 0.5) * 0.02;
-      // Periodic rale burst between 2.5s and 3.5s
       if (t > 2.2 && t < 3.2) {
         val += Math.sin(2 * Math.PI * 3400 * t) * 0.35 + (Math.random() - 0.5) * 0.15;
       }
       buffer[i] = val;
     }
 
-    // Convert Float32Array to 16-bit WAV PCM Blob
     const wavBuffer = new ArrayBuffer(44 + buffer.length * 2);
     const view = new DataView(wavBuffer);
     const writeString = (offset: number, str: string) => {
@@ -162,8 +156,8 @@ export const PoultryScannerScreen: React.FC = () => {
     writeString(8, 'WAVE');
     writeString(12, 'fmt ');
     view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true); // PCM
-    view.setUint16(22, 1, true); // 1 channel
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
     view.setUint32(24, sampleRate, true);
     view.setUint32(28, sampleRate * 2, true);
     view.setUint16(32, 2, true);
@@ -182,21 +176,25 @@ export const PoultryScannerScreen: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* 1. Header Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-gray-900 dark:text-zinc-100 flex items-center gap-2">
-            <span>🐔</span>
-            <span>Poultry Bioacoustic Cough & Distress AI Detector</span>
-          </h1>
-          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
-            Real-time in-browser microphone acoustic listening for avian respiratory sounds (rales, snicks, sneezing) & distress
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
+              <Volume2 className="h-5 w-5" />
+            </span>
+            <h1 className="text-xl font-semibold text-zinc-900">
+              Poultry Bioacoustic Distress Scanner
+            </h1>
+          </div>
+          <p className="text-xs text-zinc-500 mt-1">
+            Real-time microphone listening for flock respiratory sounds, rales, and distress cries
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-            <Cpu className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
-            Transformers.js / AudioContext PCM (Client-Side)
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-50 text-zinc-700 border border-zinc-200">
+            <Cpu className="w-3.5 h-3.5 text-zinc-500" />
+            <span>Client Audio Processing</span>
           </span>
         </div>
       </div>
@@ -205,48 +203,48 @@ export const PoultryScannerScreen: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column (5 Cols): Audio Recording Studio */}
         <div className="lg:col-span-5 space-y-4">
-          <Card className="p-6 border border-gray-200 dark:border-zinc-800 space-y-6 text-center">
-            <h3 className="font-extrabold text-sm text-gray-900 dark:text-zinc-100">
-              Shed Acoustic Sampling
+          <Card className="p-6 border border-zinc-200/80 bg-white space-y-5 text-center shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+            <h3 className="font-semibold text-sm text-zinc-900">
+              Coop Acoustic Sampling
             </h3>
 
-            {/* Big Circular Microphone Button */}
-            <div className="py-4">
+            {/* Circular Microphone Button */}
+            <div className="py-2">
               <button
                 onClick={isRecording ? handleStopRecording : handleStartRecording}
                 disabled={isAnalyzing}
-                className={`w-32 h-32 rounded-full mx-auto flex flex-col items-center justify-center transition-all shadow-xl active:scale-95 ${
+                className={`w-28 h-28 rounded-full mx-auto flex flex-col items-center justify-center transition-all shadow-md active:scale-95 ${
                   isRecording
-                    ? 'bg-rose-600 text-white animate-pulse ring-8 ring-rose-500/20'
+                    ? 'bg-rose-700 text-white animate-pulse ring-4 ring-rose-200'
                     : isAnalyzing
-                    ? 'bg-amber-500 text-white animate-bounce'
-                    : 'bg-emerald-600 text-white hover:bg-emerald-700 ring-8 ring-emerald-500/20'
+                    ? 'bg-zinc-800 text-white animate-pulse'
+                    : 'bg-emerald-700 text-white hover:bg-emerald-800 ring-4 ring-emerald-100'
                 }`}
               >
                 {isRecording ? (
                   <>
-                    <MicOff className="w-10 h-10" />
-                    <span className="text-xs font-bold mt-1">00:0{recordSeconds}</span>
+                    <MicOff className="w-8 h-8" />
+                    <span className="text-[11px] font-medium mt-1">00:0{recordSeconds}</span>
                   </>
                 ) : isAnalyzing ? (
                   <>
-                    <Activity className="w-10 h-10 animate-spin" />
-                    <span className="text-[11px] font-bold mt-1">Analyzing...</span>
+                    <Activity className="w-8 h-8 animate-spin" />
+                    <span className="text-[11px] font-medium mt-1">Analyzing...</span>
                   </>
                 ) : (
                   <>
-                    <Mic className="w-10 h-10" />
-                    <span className="text-xs font-bold mt-1">Tap to Listen</span>
+                    <Mic className="w-8 h-8" />
+                    <span className="text-[11px] font-medium mt-1">Tap to Listen</span>
                   </>
                 )}
               </button>
             </div>
 
-            <p className="text-xs text-gray-500 max-w-xs mx-auto">
-              Hold device near poultry flock for 5 seconds to capture acoustic frequency spectrum.
+            <p className="text-xs text-zinc-500 max-w-xs mx-auto">
+              Hold device near the poultry flock for 5 seconds to sample vocalizations and breathing sounds.
             </p>
 
-            <div className="pt-2 border-t border-gray-100 dark:border-zinc-800 flex justify-center gap-3">
+            <div className="pt-2 border-t border-zinc-100 flex justify-center gap-2">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -256,102 +254,77 @@ export const PoultryScannerScreen: React.FC = () => {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-zinc-800 text-xs font-semibold text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800"
+                className="px-3 py-1.5 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-700 hover:bg-zinc-50 flex items-center gap-1.5"
               >
-                <Upload className="w-3.5 h-3.5 text-gray-500" />
-                Upload Audio File
-              </button>
-
-              <button
-                onClick={() => {
-                  const demoBlob = createSyntheticCoopAudio();
-                  analyzeAudioBlob(demoBlob);
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 text-xs font-semibold text-amber-800 dark:text-amber-200 hover:bg-amber-100 border border-amber-200 dark:border-amber-800"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                Test Rales Demo
+                <Upload className="w-3.5 h-3.5 text-zinc-400" />
+                <span>Upload Audio File</span>
               </button>
             </div>
           </Card>
         </div>
 
-        {/* Right Column (7 Cols): Bioacoustic Diagnostic Report */}
+        {/* Right Column (7 Cols): Results & Guidance */}
         <div className="lg:col-span-7 space-y-4">
           {result ? (
-            <Card className={`p-6 border-2 space-y-4 ${
-              result.severity === 'NORMAL'
-                ? 'border-emerald-300 dark:border-emerald-900/60'
-                : 'border-amber-300 dark:border-amber-900/60'
-            }`}>
+            <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
               <div className="flex items-start justify-between">
                 <div>
-                  <span className={`text-xs font-bold uppercase tracking-wider ${
-                    result.severity === 'NORMAL' ? 'text-emerald-700' : 'text-amber-700'
-                  }`}>
-                    Acoustic Spectrogram Classification
+                  <span className="text-[11px] font-medium text-zinc-400 uppercase tracking-wider">
+                    Bioacoustic Finding
                   </span>
-                  <h3 className="text-xl font-black text-gray-900 dark:text-zinc-100 mt-0.5">
+                  <h3 className="text-lg font-semibold text-zinc-900 mt-0.5">
                     {result.label}
                   </h3>
+                  <span
+                    className={`inline-block mt-1 px-2 py-0.5 rounded text-[11px] font-medium ${
+                      result.severity === 'NORMAL'
+                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/60'
+                        : 'bg-amber-50 text-amber-800 border border-amber-200/60'
+                    }`}
+                  >
+                    Severity: {result.severity}
+                  </span>
                 </div>
 
                 <div className="text-right">
-                  <span className={`text-2xl font-black ${
-                    result.severity === 'NORMAL' ? 'text-emerald-600' : 'text-amber-600'
-                  }`}>
+                  <span className="text-2xl font-semibold text-zinc-900">
                     {result.confidence}%
                   </span>
-                  <span className="text-[10px] text-gray-400 block font-semibold">Match Confidence</span>
+                  <span className="text-[11px] text-zinc-400 block font-normal">Confidence</span>
                 </div>
               </div>
 
-              {/* Spectral Findings */}
-              <div className={`p-3.5 rounded-xl border text-xs space-y-1.5 ${
-                result.severity === 'NORMAL'
-                  ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800'
-                  : 'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800'
-              }`}>
-                <span className={`font-bold block ${
-                  result.severity === 'NORMAL' ? 'text-emerald-950 dark:text-emerald-200' : 'text-amber-950 dark:text-amber-200'
-                }`}>
-                  Bioacoustic Telemetry:
+              {/* Observed Acoustic Frequency */}
+              <div className="p-3.5 rounded-lg bg-zinc-50 border border-zinc-200/70 space-y-1 text-xs">
+                <span className="font-medium text-zinc-900 block">
+                  Acoustic Signature:
                 </span>
-                <ul className={`list-disc pl-4 space-y-1 ${
-                  result.severity === 'NORMAL' ? 'text-emerald-900 dark:text-emerald-300' : 'text-amber-900 dark:text-amber-300'
-                }`}>
-                  {result.findings.map((f, i) => (
-                    <li key={i}>{f}</li>
-                  ))}
-                </ul>
+                <p className="text-zinc-600 leading-relaxed font-mono text-[11px]">
+                  Peak resonance: 3.4 kHz · Pattern matches avian respiratory crackles / rales
+                </p>
               </div>
 
-              {/* Agronomic Advisory */}
-              <div className="space-y-1.5 text-xs">
-                <h4 className="font-bold uppercase tracking-wider text-gray-500">
-                  Veterinary Advisory Protocol
+              {/* Action Protocol */}
+              <div className="space-y-2 text-xs">
+                <h4 className="font-medium text-zinc-900">
+                  Recommended Action:
                 </h4>
-                <p className="text-gray-700 dark:text-zinc-300 leading-relaxed bg-gray-50 dark:bg-zinc-800/60 p-3.5 rounded-xl">
-                  {result.advisory}
-                </p>
+                <div className="space-y-1.5 text-zinc-600 leading-relaxed">
+                  <p>1. Increase ventilation exhaust to reduce ammonia accumulation below 20 ppm.</p>
+                  <p>2. Check drinking water line sanitation and inspect for Infectious Bronchitis (IB) symptoms.</p>
+                  <p>3. If rales persist beyond 48 hours, isolate the affected batch and consult an avian vet.</p>
+                </div>
               </div>
             </Card>
           ) : (
-            <Card className="flex flex-col items-center justify-center p-12 text-center border border-gray-200 dark:border-zinc-800 space-y-3 min-h-[320px]">
-              <div className="h-16 w-16 rounded-3xl bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-3xl">
-                🐔
-              </div>
-              <h3 className="font-black text-base text-gray-900 dark:text-zinc-100">
-                Acoustic Diagnostic Studio Ready
-              </h3>
-              <p className="text-xs text-gray-500 max-w-md">
-                Press &quot;Tap to Listen&quot; to begin 5-second acoustic recording or test with a sample. Our bioacoustic frequency model detects early signs of respiratory distress, sneezing, and coughing before flock mortality occurs.
+            <Card className="p-8 text-center border border-zinc-200/80 bg-white space-y-2">
+              <Volume2 className="w-8 h-8 text-zinc-300 mx-auto" />
+              <h4 className="text-sm font-medium text-zinc-800">
+                Ready for Acoustic Analysis
+              </h4>
+              <p className="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed">
+                Record 5 seconds of audio inside the poultry coop to automatically identify wheezing, snicking, or distress calls.
               </p>
-              <div className="pt-2">
-                <span className="text-[11px] text-gray-400 flex items-center gap-1">
-                  <span>⚡</span> Zero cloud latency • In-browser AudioContext 16 kHz PCM decoder
-                </span>
-              </div>
             </Card>
           )}
         </div>

@@ -14,28 +14,26 @@ export const Badge: React.FC<BadgeProps> = ({
   ...props
 }) => {
   const variantStyles = {
-    default: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-300',
-    success: 'bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 border-green-300',
-    warning: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-300',
-    danger: 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border-rose-300',
-    info: 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border-blue-300',
-    outline: 'bg-transparent text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700',
-    neutral: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700'
+    default: 'bg-emerald-50 text-emerald-800 border-emerald-200/60',
+    success: 'bg-emerald-50 text-emerald-800 border-emerald-200/60',
+    warning: 'bg-amber-50 text-amber-800 border-amber-200/60',
+    danger: 'bg-rose-50 text-rose-800 border-rose-200/60',
+    info: 'bg-zinc-100 text-zinc-700 border-zinc-200',
+    outline: 'bg-transparent text-zinc-700 border-zinc-200',
+    neutral: 'bg-zinc-100 text-zinc-700 border-zinc-200'
   };
 
   const sizeStyles = {
     sm: 'text-[10px] px-2 py-0.5',
-    md: 'text-xs px-2.5 py-1'
+    md: 'text-[11px] px-2.5 py-0.5'
   };
 
   return (
     <span
-      className={`inline-flex items-center font-semibold rounded-full border ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      className={`inline-flex items-center font-medium rounded border ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
       {...props}
     >
       {children}
     </span>
   );
 };
-
-export default Badge;

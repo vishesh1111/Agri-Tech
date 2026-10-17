@@ -35,52 +35,56 @@ export const FarmerProfileScreen: React.FC = () => {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* 1. Header Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-gray-900 dark:text-zinc-100 flex items-center gap-2">
-            <span>👤</span>
-            <span>Farmer Profile & Government Credentials</span>
-          </h1>
-          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
-            Verified PM-KISAN Aadhaar linkage, landholding credentials & agricultural certifications
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
+              <User className="h-5 w-5" />
+            </span>
+            <h1 className="text-xl font-semibold text-zinc-900">
+              Farmer Profile & Landholder Identity
+            </h1>
+          </div>
+          <p className="text-xs text-zinc-500 mt-1">
+            PM-KISAN Aadhaar linkage, landholding credentials & agricultural details
           </p>
         </div>
 
         <button
           onClick={() => setIsEditing(!isEditing)}
-          className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-emerald-700 transition-all active:scale-95"
+          className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-xs"
         >
-          <Edit3 className="w-4 h-4" />
-          <span>{isEditing ? 'Cancel Edit' : 'Edit Profile Information'}</span>
+          <Edit3 className="w-3.5 h-3.5 text-zinc-500" />
+          <span>{isEditing ? 'Cancel Edit' : 'Edit Information'}</span>
         </button>
       </div>
 
       {savedSuccess && (
-        <div className="p-4 bg-emerald-100 text-emerald-800 rounded-2xl text-xs font-bold flex items-center gap-2 border border-emerald-300 shadow-xs animate-fade-in">
-          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-          <span>Profile details updated successfully!</span>
+        <div className="p-3 bg-emerald-50 text-emerald-800 rounded-lg text-xs font-medium flex items-center gap-2 border border-emerald-200">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span>Profile details saved successfully!</span>
         </div>
       )}
 
       {/* 2. Profile Avatar Banner */}
-      <Card className="p-6 border border-gray-200 dark:border-zinc-800 bg-gradient-to-r from-emerald-600 to-green-800 text-white">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
-          <div className="w-20 h-20 rounded-3xl bg-white text-emerald-800 font-black text-2xl flex items-center justify-center shadow-lg border-2 border-emerald-300">
+      <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
+          <div className="w-16 h-16 rounded-xl bg-zinc-100 text-zinc-800 font-semibold text-xl flex items-center justify-center border border-zinc-200">
             {name.split(' ').map(n => n[0]).join('')}
           </div>
-          <div>
-            <div className="flex items-center justify-center sm:justify-start gap-2.5 flex-wrap">
-              <h2 className="text-2xl font-black">{name}</h2>
-              <span className="bg-emerald-950/80 text-emerald-200 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-400/30">
+          <div className="space-y-1">
+            <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+              <h2 className="text-lg font-semibold text-zinc-900">{name}</h2>
+              <span className="bg-emerald-50 text-emerald-800 text-[11px] font-medium px-2 py-0.5 rounded border border-emerald-200/60">
                 Verified Landowner
               </span>
             </div>
-            <p className="text-xs text-emerald-100 mt-1 flex items-center justify-center sm:justify-start gap-1">
-              <MapPin className="w-3.5 h-3.5" />
+            <p className="text-xs text-zinc-500 flex items-center justify-center sm:justify-start gap-1">
+              <MapPin className="w-3.5 h-3.5 text-zinc-400" />
               <span>{village}, {district}, {state} ({pinCode})</span>
             </p>
-            <span className="inline-block mt-2 bg-emerald-900/60 font-mono text-xs font-bold px-3 py-1 rounded-xl text-emerald-200">
-              Kisan Registration ID: PB-LDH-2026-8841
+            <span className="text-[11px] font-mono text-zinc-500 block">
+              Registration ID: PB-LDH-2026-8841
             </span>
           </div>
         </div>
@@ -89,100 +93,100 @@ export const FarmerProfileScreen: React.FC = () => {
       {/* 3. Form Grid (2 Columns) */}
       <form onSubmit={handleSave} className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
         {/* Left Column: Personal & Contact */}
-        <Card className="p-6 border border-gray-200 dark:border-zinc-800 space-y-4">
-          <h3 className="font-extrabold text-sm text-gray-900 dark:text-zinc-100 uppercase tracking-wider">
-            Identity & Contact Details
+        <Card className="p-5 border border-zinc-200/80 bg-white space-y-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+          <h3 className="font-semibold text-sm text-zinc-900">
+            Identity & Contact
           </h3>
 
           <div>
-            <label className="font-bold text-gray-700 dark:text-zinc-300">Full Name</label>
+            <label className="font-medium text-zinc-700">Full Name</label>
             <input 
               type="text"
               disabled={!isEditing}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1 disabled:opacity-75"
+              className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1 disabled:bg-zinc-50 disabled:text-zinc-500"
             />
           </div>
 
           <div>
-            <label className="font-bold text-gray-700 dark:text-zinc-300">Phone Number</label>
+            <label className="font-medium text-zinc-700">Phone Number</label>
             <input 
               type="tel"
               disabled={!isEditing}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1 disabled:opacity-75"
+              className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1 disabled:bg-zinc-50 disabled:text-zinc-500"
             />
           </div>
 
           <div>
-            <label className="font-bold text-gray-700 dark:text-zinc-300">Age</label>
+            <label className="font-medium text-zinc-700">Age</label>
             <input 
               type="number"
               disabled={!isEditing}
               value={age}
               onChange={(e) => setAge(e.target.value)}
-              className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1 disabled:opacity-75"
+              className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1 disabled:bg-zinc-50 disabled:text-zinc-500"
             />
           </div>
 
           <div>
-            <label className="font-bold text-gray-700 dark:text-zinc-300">Aadhaar Verification Status</label>
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 mt-1 font-mono font-bold">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>XXXX-XXXX-4819 (e-KYC Completed)</span>
+            <label className="font-medium text-zinc-700">Aadhaar Status</label>
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-zinc-50 border border-zinc-200 text-zinc-700 mt-1 font-mono text-[11px]">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>XXXX-XXXX-4819 · e-KYC Verified</span>
             </div>
           </div>
         </Card>
 
         {/* Right Column: Agricultural & Holding Details */}
-        <Card className="p-6 border border-gray-200 dark:border-zinc-800 space-y-4">
-          <h3 className="font-extrabold text-sm text-gray-900 dark:text-zinc-100 uppercase tracking-wider">
-            Agricultural Holding & Operations
+        <Card className="p-5 border border-zinc-200/80 bg-white space-y-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+          <h3 className="font-semibold text-sm text-zinc-900">
+            Farming Holding & Location
           </h3>
 
           <div>
-            <label className="font-bold text-gray-700 dark:text-zinc-300">Farming Operation Type</label>
+            <label className="font-medium text-zinc-700">Farming Operation Type</label>
             <input 
               type="text"
               disabled={!isEditing}
               value={farmingType}
               onChange={(e) => setFarmingType(e.target.value)}
-              className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1 disabled:opacity-75"
+              className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1 disabled:bg-zinc-50 disabled:text-zinc-500"
             />
           </div>
 
           <div>
-            <label className="font-bold text-gray-700 dark:text-zinc-300">Village / Town</label>
+            <label className="font-medium text-zinc-700">Village / Town</label>
             <input 
               type="text"
               disabled={!isEditing}
               value={village}
               onChange={(e) => setVillage(e.target.value)}
-              className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1 disabled:opacity-75"
+              className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1 disabled:bg-zinc-50 disabled:text-zinc-500"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="font-bold text-gray-700 dark:text-zinc-300">District</label>
+              <label className="font-medium text-zinc-700">District</label>
               <input 
                 type="text"
                 disabled={!isEditing}
                 value={district}
                 onChange={(e) => setDistrict(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1 disabled:opacity-75"
+                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1 disabled:bg-zinc-50 disabled:text-zinc-500"
               />
             </div>
             <div>
-              <label className="font-bold text-gray-700 dark:text-zinc-300">State</label>
+              <label className="font-medium text-zinc-700">State</label>
               <input 
                 type="text"
                 disabled={!isEditing}
                 value={state}
                 onChange={(e) => setState(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1 disabled:opacity-75"
+                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1 disabled:bg-zinc-50 disabled:text-zinc-500"
               />
             </div>
           </div>
@@ -190,7 +194,7 @@ export const FarmerProfileScreen: React.FC = () => {
           {isEditing && (
             <button
               type="submit"
-              className="w-full rounded-xl bg-emerald-600 py-3 text-xs font-bold text-white shadow-xs hover:bg-emerald-700 transition-all mt-4"
+              className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors shadow-xs mt-2"
             >
               Save Profile Changes
             </button>

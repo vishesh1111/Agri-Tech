@@ -132,7 +132,7 @@ export default function App() {
   const isSubScreenActive = currentSubScreen !== 'none';
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 flex antialiased selection:bg-emerald-500 selection:text-white transition-colors">
+    <div className="min-h-screen bg-[#fbfbfb] text-zinc-900 flex antialiased selection:bg-emerald-600 selection:text-white">
       {/* Desktop Left Navigation Sidebar (Hidden on mobile) */}
       <WebSidebar />
 

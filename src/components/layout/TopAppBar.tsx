@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ArrowLeft, Bell, Moon, Sun, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Bell } from 'lucide-react';
 import { useKisanStore } from '@/stores/useKisanStore';
 
 interface TopAppBarProps {
@@ -14,10 +14,7 @@ export function TopAppBar({ title, showBackButton, onBackClick }: TopAppBarProps
   const {
     userProfile,
     notifications,
-    isDarkTheme,
-    toggleTheme,
     navigateToSubScreen,
-    currentSubScreen,
   } = useKisanStore();
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
@@ -31,20 +28,20 @@ export function TopAppBar({ title, showBackButton, onBackClick }: TopAppBarProps
     : 'RK';
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-emerald-800/20 bg-gradient-to-r from-emerald-700 via-emerald-800 to-green-900 px-4 text-white shadow-md">
+    <header className="sticky top-0 z-40 flex h-14 w-full items-center justify-between border-b border-zinc-200/80 bg-white/95 backdrop-blur-xs px-4 text-zinc-900 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
       <div className="flex items-center gap-3">
         {showBackButton ? (
           <button
             onClick={onBackClick}
-            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10 active:scale-95 transition-all"
+            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-zinc-100 transition-colors"
             aria-label="Back"
           >
-            <ArrowLeft className="h-6 w-6" />
+            <ArrowLeft className="h-4 w-4 text-zinc-600" />
           </button>
         ) : (
           <button
             onClick={() => navigateToSubScreen('user_profile')}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 font-bold text-white shadow ring-2 ring-emerald-300/40 hover:scale-105 active:scale-95 transition-all"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 font-semibold text-xs text-zinc-800 hover:bg-zinc-200 transition-colors"
             aria-label="Profile"
           >
             {initials}
@@ -52,54 +49,31 @@ export function TopAppBar({ title, showBackButton, onBackClick }: TopAppBarProps
         )}
 
         <div>
-          <h1 className="text-lg font-bold tracking-tight flex items-center gap-1.5">
+          <h1 className="text-sm font-semibold text-zinc-900">
             {title || 'KisanAI'}
-            {!title && <span className="text-base">🌾</span>}
           </h1>
           {!title && userProfile && (
-            <p className="text-xs text-emerald-200">
-              {userProfile.village}, {userProfile.state}
+            <p className="text-[11px] text-zinc-400">
+              {userProfile.district}, {userProfile.state}
             </p>
           )}
         </div>
       </div>
 
       <div className="flex items-center gap-2">
-        {/* Officer Portal quick link */}
-        {currentSubScreen !== 'officer_portal' && (
-          <button
-            onClick={() => navigateToSubScreen('officer_portal' as any)}
-            className="hidden sm:flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold hover:bg-white/25 transition-all"
-            title="Government Officer Verification Portal"
-          >
-            <ShieldCheck className="h-3.5 w-3.5 text-emerald-200" />
-            <span>Officer Portal</span>
-          </button>
-        )}
-
-        {/* Theme toggle */}
-        <button
-          onClick={toggleTheme}
-          className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-white/10 active:scale-95 transition-all"
-          aria-label="Toggle Theme"
-        >
-          {isDarkTheme ? <Sun className="h-5 w-5 text-amber-300" /> : <Moon className="h-5 w-5 text-emerald-100" />}
-        </button>
-
-        {/* Notifications */}
         <button
           onClick={() => navigateToSubScreen('notifications')}
-          className="relative flex h-9 w-9 items-center justify-center rounded-full hover:bg-white/10 active:scale-95 transition-all"
+          className="relative flex h-8 w-8 items-center justify-center rounded-lg hover:bg-zinc-100 text-zinc-600 transition-colors"
           aria-label="Notifications"
         >
-          <Bell className="h-5 w-5" />
+          <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
-            <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow">
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </span>
+            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-emerald-600"></span>
           )}
         </button>
       </div>
     </header>
   );
 }
+
+export default TopAppBar;

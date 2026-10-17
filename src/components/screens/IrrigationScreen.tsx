@@ -24,180 +24,182 @@ export const IrrigationScreen: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* 1. Header Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-gray-900 dark:text-zinc-100 flex items-center gap-2">
-            <span>💧</span>
-            <span>Minimum Water Irrigation Engine</span>
-          </h1>
-          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
-            Sensor-driven precision scheduling, solar pump telemetry & automated motorized valve controls
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
+              <Droplets className="h-5 w-5" />
+            </span>
+            <h1 className="text-xl font-semibold text-zinc-900">
+              Irrigation & Water Management
+            </h1>
+          </div>
+          <p className="text-xs text-zinc-500 mt-1">
+            Sensor-driven scheduling, soil moisture tracking, and motorized valve controls
           </p>
         </div>
 
         <button
           onClick={() => navigateToSubScreen('irrigation_schedule')}
-          className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700 transition-all active:scale-95"
+          className="flex items-center gap-2 rounded-lg bg-zinc-900 px-3.5 py-2 text-xs font-medium text-white hover:bg-zinc-800 transition-colors shadow-xs"
         >
-          <Settings className="w-4 h-4" />
-          <span>Configure Automation Schedule</span>
+          <Settings className="w-3.5 h-3.5" />
+          <span>Configure Schedule</span>
         </button>
       </div>
 
       {/* 2. Top Telemetry Cards (3 Columns) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="p-5 border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20">
+        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-blue-400">
-                Pumps & Valves Active
+              <span className="text-xs font-medium text-zinc-500">
+                Active Valves
               </span>
-              <p className="text-3xl font-black text-blue-700 dark:text-blue-300 mt-1">
-                {activeZonesCount} / {irrigationZones.length}
+              <p className="text-2xl font-semibold text-zinc-900 mt-1">
+                {activeZonesCount} of {irrigationZones.length}
               </p>
-              <span className="text-[11px] text-blue-600 font-semibold block mt-1">
+              <span className="text-[11px] text-zinc-400 mt-1 block">
                 Motorized valves open
               </span>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 dark:bg-blue-900 text-blue-600">
-              <Droplets className="h-6 w-6" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
+              <Droplets className="h-5 w-5" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-5 border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20">
+        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400">
-                Estimated Water Used
+              <span className="text-xs font-medium text-zinc-500">
+                Water Delivered (Today)
               </span>
-              <p className="text-3xl font-black text-emerald-700 dark:text-emerald-300 mt-1">
-                {totalWaterUsed.toLocaleString()} <span className="text-sm font-normal text-gray-500">Liters</span>
+              <p className="text-2xl font-semibold text-zinc-900 mt-1">
+                {totalWaterUsed.toLocaleString()} <span className="text-xs font-normal text-zinc-400">L</span>
               </p>
-              <span className="text-[11px] text-emerald-600 font-semibold block mt-1">
-                28% savings vs flood irrigation
+              <span className="text-[11px] text-zinc-400 mt-1 block">
+                28% savings vs flood method
               </span>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900 text-emerald-600">
-              <Zap className="h-6 w-6" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700">
+              <Zap className="h-5 w-5" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-5 border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/20">
+        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-purple-800 dark:text-purple-400">
-                FAO-56 ET0 Soil Deficit
+              <span className="text-xs font-medium text-zinc-500">
+                Moisture Deficit (FAO-56)
               </span>
-              <p className="text-3xl font-black text-purple-700 dark:text-purple-300 mt-1">
+              <p className="text-2xl font-semibold text-zinc-900 mt-1">
                 -4.2 mm
               </p>
-              <span className="text-[11px] text-purple-600 font-semibold block mt-1">
-                Adequate root zone moisture
+              <span className="text-[11px] text-zinc-400 mt-1 block">
+                Adequate root zone reserves
               </span>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-100 dark:bg-purple-900 text-purple-600">
-              <Clock className="h-6 w-6" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700">
+              <Clock className="h-5 w-5" />
             </div>
           </div>
         </Card>
       </div>
 
-      {/* 3. Autonomous Schedule Banner */}
+      {/* 3. Automation Schedule Banner */}
       <div 
         onClick={() => navigateToSubScreen('irrigation_schedule')}
-        className="bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/40 rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-blue-100/60 transition-colors"
+        className="bg-zinc-50 border border-zinc-200/80 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:bg-zinc-100/60 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
-            <Clock className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-lg bg-zinc-900 text-white flex items-center justify-center shadow-xs">
+            <Clock className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="text-sm font-extrabold text-blue-950 dark:text-blue-200">
-              Autonomous Smart Irrigation Automation Active
+            <h4 className="text-xs font-semibold text-zinc-900">
+              Automated Schedule Active
             </h4>
-            <p className="text-xs text-blue-700 dark:text-blue-300 mt-0.5">
-              Scheduled: Mon, Wed, Fri @ 05:30 AM (45 mins cycle) • Auto-skips if rain forecast exceeds 5mm
+            <p className="text-xs text-zinc-500 mt-0.5">
+              Mon, Wed, Fri at 05:30 AM (45 min cycle) · Auto-skips if rain forecast exceeds 5mm
             </p>
           </div>
         </div>
-        <ChevronRight className="w-5 h-5 text-blue-600" />
+        <ChevronRight className="w-4 h-4 text-zinc-400" />
       </div>
 
       {/* 4. Irrigation Zones (3-Column Desktop Grid) */}
       <div className="space-y-3">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
-          Field Irrigation Zones & Motorized Valve Actuators ({irrigationZones.length})
+        <h3 className="text-xs font-semibold text-zinc-600 uppercase tracking-wider">
+          Field Irrigation Zones ({irrigationZones.length})
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {irrigationZones.map((zone) => (
-            <Card key={zone.id} className="p-5 border border-gray-200 dark:border-zinc-800 space-y-4 shadow-xs">
+            <Card key={zone.id} className="p-4 border border-zinc-200/80 bg-white space-y-3 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-extrabold text-gray-900 dark:text-zinc-100">
+                    <h4 className="text-sm font-semibold text-zinc-900">
                       {zone.name}
                     </h4>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${
                       zone.isRunning 
-                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 animate-pulse' 
-                        : 'bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-zinc-400'
+                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/60' 
+                        : 'bg-zinc-100 text-zinc-600'
                     }`}>
-                      {zone.isRunning ? 'IRRIGATING' : 'STOPPED'}
+                      {zone.isRunning ? 'Active' : 'Standby'}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-500 mt-0.5 block">
-                    {zone.cropName} • Flow: {zone.flowRateLpm || 45} LPM
+                  <span className="text-xs text-zinc-500 mt-0.5 block">
+                    {zone.cropName} · Flow: {zone.flowRateLpm || 45} LPM
                   </span>
                 </div>
 
                 <button
                   onClick={() => toggleIrrigationZone(zone.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors ${
                     zone.isRunning
-                      ? 'bg-rose-600 hover:bg-rose-700 text-white'
-                      : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                      ? 'bg-rose-700 hover:bg-rose-800 text-white'
+                      : 'bg-emerald-700 hover:bg-emerald-800 text-white'
                   }`}
                 >
                   {zone.isRunning ? (
                     <>
-                      <Square className="w-3.5 h-3.5 fill-current" />
-                      <span>Stop Valve</span>
+                      <Square className="w-3 h-3 fill-current" />
+                      <span>Stop</span>
                     </>
                   ) : (
                     <>
-                      <Play className="w-3.5 h-3.5 fill-current" />
-                      <span>Start Valve</span>
+                      <Play className="w-3 h-3 fill-current" />
+                      <span>Start</span>
                     </>
                   )}
                 </button>
               </div>
 
               {/* Moisture Gauge */}
-              <div className="space-y-1.5 pt-1">
+              <div className="space-y-1.5 pt-1 border-t border-zinc-100">
                 <div className="flex justify-between text-xs">
-                  <span className="text-gray-500 font-medium">Volumetric Soil Moisture</span>
-                  <span className="font-extrabold text-gray-900 dark:text-zinc-100">
+                  <span className="text-zinc-500">Soil Moisture</span>
+                  <span className="font-semibold text-zinc-900">
                     {zone.currentMoisture ?? zone.soilMoisture ?? 55}%
                   </span>
                 </div>
-                <div className="w-full bg-gray-100 dark:bg-zinc-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-zinc-100 h-1.5 rounded-full overflow-hidden">
                   <div 
-                    className={`h-full rounded-full transition-all duration-500 ${
+                    className={`h-full rounded-full ${
                       (zone.currentMoisture ?? zone.soilMoisture ?? 55) < 40 
                         ? 'bg-amber-500' 
-                        : (zone.currentMoisture ?? zone.soilMoisture ?? 55) > 80 
-                        ? 'bg-blue-600' 
-                        : 'bg-emerald-500'
+                        : 'bg-emerald-600'
                     }`}
                     style={{ width: `${Math.min(zone.currentMoisture ?? zone.soilMoisture ?? 55, 100)}%` }}
                   ></div>
                 </div>
-                <div className="flex justify-between text-[11px] text-gray-400">
+                <div className="flex justify-between text-[11px] text-zinc-400">
                   <span>Target: {zone.targetMoisture ?? 65}%</span>
-                  <span>{zone.isRunning ? `${zone.remainingMinutes} min remaining` : `Next: ${zone.scheduledTime}`}</span>
+                  <span>{zone.isRunning ? `${zone.remainingMinutes} min left` : `Next: ${zone.scheduledTime}`}</span>
                 </div>
               </div>
             </Card>

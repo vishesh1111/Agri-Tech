@@ -53,31 +53,30 @@ export const AddAnimalScreen: React.FC = () => {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {/* 1. Header Toolbar */}
-      <div className="flex items-center justify-between bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-xs">
+      <div className="flex items-center justify-between bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <div>
-          <h1 className="text-xl font-black text-gray-900 dark:text-zinc-100 flex items-center gap-2">
-            <span>🐄</span>
-            <span>Register New Livestock Animal</span>
+          <h1 className="text-xl font-semibold text-zinc-900">
+            Register Livestock
           </h1>
-          <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
-            Add cattle, buffalo or flock record to the herd database with optional GPS collar
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Add cattle, buffalo, or small ruminant record to the farm registry
           </p>
         </div>
 
         <button
           onClick={navigateBack}
-          className="rounded-xl bg-gray-100 dark:bg-zinc-800 px-3.5 py-1.5 text-xs font-bold text-gray-700 dark:text-zinc-300 hover:bg-gray-200"
+          className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 shadow-xs"
         >
           Cancel
         </button>
       </div>
 
-      <Card className="p-6 border border-gray-200 dark:border-zinc-800 space-y-5">
+      <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           {/* Type Picker */}
           <div>
-            <label className="font-bold text-gray-700 dark:text-zinc-300 block mb-1.5">
-              Select Animal Category
+            <label className="font-medium text-zinc-700 block mb-1.5">
+              Animal Type
             </label>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {ANIMAL_TYPES.map(t => (
@@ -85,10 +84,10 @@ export const AddAnimalScreen: React.FC = () => {
                   key={t}
                   type="button"
                   onClick={() => setType(t)}
-                  className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
+                  className={`py-1.5 px-2.5 rounded-lg text-xs font-medium transition-colors border ${
                     type === t
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                      : 'bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border-gray-200 dark:border-zinc-700 hover:bg-gray-50'
+                      ? 'bg-zinc-900 text-white border-zinc-900 shadow-xs'
+                      : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50'
                   }`}
                 >
                   {t}
@@ -99,62 +98,62 @@ export const AddAnimalScreen: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="font-bold text-gray-700 dark:text-zinc-300">Animal Name</label>
+              <label className="font-medium text-zinc-700">Animal Name / Call Sign</label>
               <input 
                 type="text"
                 required
                 placeholder="e.g. Ganga"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1"
+                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1"
               />
             </div>
 
             <div>
-              <label className="font-bold text-gray-700 dark:text-zinc-300">Ear Tag / Collar ID</label>
+              <label className="font-medium text-zinc-700">Ear Tag / ID</label>
               <input 
                 type="text"
                 required
                 placeholder="e.g. C-05"
                 value={tagId}
                 onChange={(e) => setTagId(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1"
+                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="font-bold text-gray-700 dark:text-zinc-300">Breed</label>
+              <label className="font-medium text-zinc-700">Breed</label>
               <input 
                 type="text"
                 required
                 placeholder="e.g. Sahiwal / Murrah"
                 value={breed}
                 onChange={(e) => setBreed(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1"
+                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1"
               />
             </div>
 
             <div>
-              <label className="font-bold text-gray-700 dark:text-zinc-300">Age (Years)</label>
+              <label className="font-medium text-zinc-700">Age (Years)</label>
               <input 
                 type="number"
                 value={ageYears}
                 onChange={(e) => setAgeYears(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1"
+                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1"
               />
             </div>
           </div>
 
           {/* GPS Collar Toggle */}
-          <div className="pt-2 border-t border-gray-100 dark:border-zinc-800 space-y-3">
+          <div className="pt-2 border-t border-zinc-100 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <span className="font-bold text-gray-900 dark:text-zinc-100 block">
-                  Assign KisanTrack GPS Collar
+                <span className="font-medium text-zinc-900 block">
+                  Assign GPS / BLE Collar
                 </span>
-                <span className="text-[11px] text-gray-400">
+                <span className="text-[11px] text-zinc-400">
                   Enables real-time geofence tracking and boundary alerts
                 </span>
               </div>
@@ -162,13 +161,13 @@ export const AddAnimalScreen: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setHasBleTracker(!hasBleTracker)}
-                className={`w-12 h-6 rounded-full transition-colors relative p-0.5 ${
-                  hasBleTracker ? 'bg-emerald-600' : 'bg-gray-300 dark:bg-zinc-700'
+                className={`w-11 h-6 rounded-full transition-colors relative p-0.5 ${
+                  hasBleTracker ? 'bg-emerald-700' : 'bg-zinc-200'
                 }`}
               >
                 <div
                   className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                    hasBleTracker ? 'translate-x-6' : 'translate-x-0'
+                    hasBleTracker ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
               </button>
@@ -176,12 +175,12 @@ export const AddAnimalScreen: React.FC = () => {
 
             {hasBleTracker && (
               <div>
-                <label className="font-bold text-gray-700 dark:text-zinc-300">Collar Device ID</label>
+                <label className="font-medium text-zinc-700">Collar Device ID</label>
                 <input 
                   type="text"
                   value={bleDeviceName}
                   onChange={(e) => setBleDeviceName(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white mt-1"
+                  className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1"
                 />
               </div>
             )}
@@ -189,9 +188,9 @@ export const AddAnimalScreen: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full rounded-xl bg-emerald-600 py-3.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition-all active:scale-95"
+            className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors shadow-xs"
           >
-            Register Animal in Herd Database
+            Save Animal Record
           </button>
         </form>
       </Card>

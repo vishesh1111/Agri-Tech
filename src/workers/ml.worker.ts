@@ -1,10 +1,11 @@
 // src/workers/ml.worker.ts
 import * as ort from 'onnxruntime-web';
 
-// Configure ONNX Runtime Web for browser environments
+// Configure ONNX Runtime Web for local origin WASM delivery
 if (typeof self !== 'undefined') {
-  ort.env.wasm.numThreads = 1; // Avoid SharedArrayBuffer / COOP requirement
-  ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/';
+  ort.env.wasm.numThreads = 1; // Single-thread avoids SharedArrayBuffer / COOP requirement
+  const origin = self.location ? self.location.origin : '';
+  ort.env.wasm.wasmPaths = origin ? `${origin}/wasm/` : '/wasm/';
 }
 
 const DEFAULT_MASTITIS_URL = '/models/mastitis_int8.onnx';
@@ -38,12 +39,11 @@ async function getMastitisSession(modelUrl?: string): Promise<ort.InferenceSessi
     if (!buffer) {
       const res = await fetch(targetUrl);
       if (!res.ok) {
-        // Fallback to local public model if remote HF URL failed
         if (targetUrl !== DEFAULT_MASTITIS_URL) {
           const fallbackRes = await fetch(DEFAULT_MASTITIS_URL);
           buffer = await fallbackRes.arrayBuffer();
         } else {
-          throw new Error(`Failed to load model weights: ${res.statusText}`);
+          throw new Error(`Failed to load model weights: ${res.status} ${res.statusText}`);
         }
       } else {
         buffer = await res.arrayBuffer();
@@ -99,11 +99,8 @@ self.onmessage = async (event: MessageEvent) => {
     }
 
     if (type === 'PREDICT_POULTRY') {
-      // payload.audio is Float32Array at 16kHz
       const audioData: Float32Array = payload.audio;
       
-      // Perform Bioacoustic DSP Feature Extraction
-      // Compute RMS Energy, High-Frequency Rales Band Ratio (3.0kHz - 5.5kHz), and Cough Spikes
       let sumSq = 0;
       let peakAmp = 0;
       let zeroCrossings = 0;
@@ -116,10 +113,8 @@ self.onmessage = async (event: MessageEvent) => {
         }
       }
       const rms = Math.sqrt(sumSq / audioData.length);
-      const zeroCrossingRate = zeroCrossings / audioData.length; // correlates with high frequency content
+      const zeroCrossingRate = zeroCrossings / audioData.length;
 
-      // Avian respiratory distress (rales/sneezing/snicking) creates sharp acoustic bursts with elevated zero crossing rate
-      // and high frequency spikes between 3 kHz and 5 kHz.
       const hasElevatedZCR = zeroCrossingRate > 0.18;
       const hasAudibleEnergy = rms > 0.01;
       const isDistress = hasAudibleEnergy && (hasElevatedZCR || peakAmp > 0.45);
