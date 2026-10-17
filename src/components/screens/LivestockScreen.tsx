@@ -103,11 +103,23 @@ export const LivestockScreen: React.FC = () => {
       {/* 3. Cattle & Dairy Animals Grid (3-Column Desktop Grid) */}
       {(selectedCategory === 'All' || selectedCategory === 'Cattle & Dairy' || selectedCategory === 'Goat & Sheep') && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-emerald-50/60 border border-emerald-200/60">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping"></span>
+              <span className="text-xs font-semibold text-emerald-950">
+                Virtual Pasture Geofence Active (150m Farm Boundary)
+              </span>
+            </div>
+            <p className="text-[11px] text-emerald-800">
+              Click <span className="font-semibold underline">View Profile →</span> on any cow to view real-time radar coordinates and test boundary breach alerts.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between pt-1">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-600">
               Registered Cattle ({filteredAnimals.length})
             </h2>
-            <span className="text-xs text-zinc-500 font-medium">GPS Geofence: Active</span>
+            <span className="text-xs text-zinc-500 font-medium">3 of 3 Inside Perimeter</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
