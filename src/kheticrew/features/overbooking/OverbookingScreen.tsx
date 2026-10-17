@@ -502,46 +502,96 @@ export const OverbookingScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Monte Carlo Histogram & Payout Tiers */}
+        {/* Right Column: Farmer Arrival Guarantee & Payout Tiers */}
         <div className="lg:col-span-7 space-y-4">
-          {/* Monte Carlo Histogram */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
+          {/* Simple Harvest Guarantee Comparison */}
+          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
               <div>
-                <h3 className="font-bold text-slate-900 text-sm sm:text-base">
-                  {t.overbooking.monteCarloTitle}
+                <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                  <span>Harvest Arrival Guarantee: Old Way vs Smart Booking</span>
                 </h3>
-                <p className="text-xs text-slate-500">
-                  {t.overbooking.histogramSubtitle}
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Why booking extra standby backup protects your crop from morning worker shortages.
                 </p>
               </div>
-              <span className="text-xs bg-slate-100 font-semibold text-slate-700 px-2.5 py-1 rounded-md border border-slate-200">
-                Threshold Nmin = {nMin}
+              <span className="text-xs bg-brand-50 font-bold text-brand-700 px-2.5 py-1 rounded-md border border-brand-200">
+                Target: {nMin} to {nNeeded} workers
               </span>
             </div>
 
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={histogramChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="shows" label={{ value: 'Actual Workers Showing Up (S)', position: 'insideBottom', offset: -5, fontSize: 11 }} />
-                  <YAxis unit="%" />
-                  <Tooltip
-                    formatter={(val: any) => [`${val}%`, 'Frequency']}
-                    labelFormatter={(label) => `${label} workers showing up`}
-                  />
-                  <Legend wrapperStyle={{ fontSize: '12px' }} />
-                  <Bar dataKey="Naive" fill="#f97316" radius={[4, 4, 0, 0]} name={`Naive (Book N=${nNeeded})`} />
-                  <Bar dataKey="Overbooked" fill="#0284c7" radius={[4, 4, 0, 0]} name={`Overbooked (Book M=${activeM})`} />
-                </BarChart>
-              </ResponsiveContainer>
+            {/* Visual Comparison Strip */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Card 1: Old Way (Naive) */}
+              <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-900 uppercase tracking-wide">
+                      Old Way (Book Exactly {nNeeded})
+                    </span>
+                    <span className="text-xs font-black px-2 py-0.5 rounded bg-amber-200 text-amber-900">
+                      {Math.round(recommendation.confidenceAtN * 100)}% Certain
+                    </span>
+                  </div>
+
+                  {/* Visual Progress Bar */}
+                  <div className="w-full bg-amber-200/80 rounded-full h-2.5 mt-2.5 overflow-hidden">
+                    <div
+                      className="bg-amber-600 h-2.5 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.round(recommendation.confidenceAtN * 100)}%` }}
+                    />
+                  </div>
+
+                  <p className="text-xs text-amber-900 mt-3 leading-relaxed">
+                    <strong>High Shortage Risk:</strong> On typical mornings, only <strong>{Math.max(1, Math.round(nNeeded * 0.7))}–{Math.max(2, Math.round(nNeeded * 0.8))} workers</strong> arrive due to transport, family emergencies, or nearby higher wages.
+                  </p>
+                </div>
+
+                <div className="text-[11px] font-semibold text-amber-800 pt-2 border-t border-amber-200/60 flex items-center gap-1.5">
+                  <XCircle className="w-4 h-4 text-amber-700 shrink-0" />
+                  <span>High chance of harvest delay & crop spoilage</span>
+                </div>
+              </div>
+
+              {/* Card 2: Smart Booking */}
+              <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-300 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-emerald-900 uppercase tracking-wide">
+                      Smart Booking (Book {activeM})
+                    </span>
+                    <span className="text-xs font-black px-2 py-0.5 rounded bg-emerald-200 text-emerald-950">
+                      {Math.round(recommendation.confidenceAtM * 100)}% Guaranteed
+                    </span>
+                  </div>
+
+                  {/* Visual Progress Bar */}
+                  <div className="w-full bg-emerald-200 rounded-full h-2.5 mt-2.5 overflow-hidden">
+                    <div
+                      className="bg-emerald-600 h-2.5 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.round(recommendation.confidenceAtM * 100)}%` }}
+                    />
+                  </div>
+
+                  <p className="text-xs text-emerald-900 mt-3 leading-relaxed">
+                    <strong>Guaranteed Full Crew:</strong> You confirm <strong>{nNeeded} main workers</strong> + <strong>{activeM - nNeeded} paid standbys</strong>. Even if 2–3 drop out, your field work starts on time at {startTime}.
+                  </p>
+                </div>
+
+                <div className="text-[11px] font-semibold text-emerald-800 pt-2 border-t border-emerald-200/60 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                  <span>Harvest completed on time before weather turns</span>
+                </div>
+              </div>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-700 flex items-start gap-2">
+            {/* Plain language explanation banner */}
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700 flex items-start gap-2.5">
               <Info className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
-              <span>
-                <strong>Interpretation:</strong> In naive booking (orange), the distribution peaks around 7-8 workers, causing failure in {Math.round((1 - recommendation.confidenceAtN) * 100)}% of runs. In overbooking M={activeM} (blue), the distribution shifts securely above {nMin}, achieving {Math.round(recommendation.confidenceAtM * 100)}% guarantee.
-              </span>
+              <div className="leading-relaxed">
+                <strong>Fair Standby Guarantee:</strong> The {activeM - nNeeded} standby backup workers are notified in advance. If all {nNeeded} main workers arrive and standbys are not needed in the field, each standby still receives a fair <strong>{formatINR(wageOffered * assumptions.reportingAllowanceRatio)} show-up allowance</strong> (30% of wage) for being ready on call.
+              </div>
             </div>
           </div>
 
