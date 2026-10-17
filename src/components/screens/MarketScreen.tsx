@@ -35,7 +35,7 @@ export function MarketScreen() {
 
   // Sell Online Form State
   const [listCrop, setListCrop] = useState('Wheat (Kanak)');
-  const [listVariety, setListVariety] = useState('HD-3086 Sharbati');
+  const [listVariety, setListVariety] = useState('Pusa Gautami');
   const [listQty, setListQty] = useState('50');
   const [listPrice, setListPrice] = useState('2450');
   const [listMoisture, setListMoisture] = useState('11.5');
@@ -116,10 +116,10 @@ export function MarketScreen() {
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id as any)}
-            className={`shrink-0 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-colors ${
+            className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-medium transition-all duration-200 hover:-translate-y-0.5 active:scale-95 cursor-pointer ${
               activeTab === t.id
-                ? 'bg-zinc-100 border border-zinc-300 text-zinc-900 font-semibold'
-                : 'border border-zinc-200/80 bg-white text-zinc-600 hover:bg-zinc-50'
+                ? 'bg-zinc-100 border border-zinc-300 text-zinc-900 font-semibold shadow-2xs'
+                : 'border border-zinc-200/80 bg-white text-zinc-600 hover:bg-zinc-50 hover:border-zinc-300'
             }`}
           >
             {t.label}
@@ -170,9 +170,9 @@ export function MarketScreen() {
                     return (
                       <tr
                         key={m.id}
-                        className="hover:bg-zinc-50/70 transition-colors"
+                        className="hover:bg-emerald-50/50 hover:translate-x-0.5 transition-all duration-200 cursor-pointer group"
                       >
-                        <td className="py-3 px-4 font-medium text-zinc-900">
+                        <td className="py-3 px-4 font-medium text-zinc-900 group-hover:text-emerald-900 transition-colors">
                           <div className="flex items-center gap-2">
                             <span>{m.cropName}</span>
                             {m.isBestPrice && (
@@ -199,7 +199,7 @@ export function MarketScreen() {
                           +{m.changePercent}%
                         </td>
                         <td className="py-3 px-4 text-center">
-                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded transition-transform group-hover:scale-105">
                             <TrendingUp className="h-3 w-3" />
                             {m.trend7Day}
                           </span>
@@ -211,7 +211,7 @@ export function MarketScreen() {
                               setListCrop(m.cropName);
                               setListPrice(m.pricePerQuintal.toString());
                             }}
-                            className="rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 px-2.5 py-1 text-xs font-medium text-zinc-700 transition-colors"
+                            className="rounded-lg border border-zinc-200 bg-white hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 hover:scale-105 active:scale-95 px-2.5 py-1 text-xs font-medium text-zinc-700 transition-all duration-200 cursor-pointer shadow-2xs"
                           >
                             Sell Here
                           </button>
@@ -257,12 +257,12 @@ export function MarketScreen() {
               return (
                 <Card
                   key={p.id}
-                  className="flex flex-col justify-between space-y-3 p-4 hover:border-zinc-300 transition-colors"
+                  className="flex flex-col justify-between space-y-3 p-4 hover:border-emerald-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.99] transition-all duration-250 group cursor-pointer"
                 >
                   <div className="space-y-2.5">
                     <div className="h-36 w-full overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50 relative">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={p.imageUrl} alt={p.name} className="h-full w-full object-cover" />
+                      <img src={p.imageUrl} alt={p.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       {p.isSubsidyEligible && (
                         <span className="absolute top-2 left-2 bg-emerald-700 text-white text-[10px] font-medium px-2 py-0.5 rounded shadow-xs">
                           Govt Subsidized
@@ -277,7 +277,7 @@ export function MarketScreen() {
                           Delivery {p.deliveryDays}d
                         </span>
                       </div>
-                      <h4 className="font-semibold text-xs text-zinc-900 line-clamp-1 mt-0.5">
+                      <h4 className="font-semibold text-xs text-zinc-900 group-hover:text-emerald-900 transition-colors line-clamp-1 mt-0.5">
                         {p.name}
                       </h4>
                       <p className="text-[11px] text-zinc-500 line-clamp-2 mt-0.5">{p.description}</p>
@@ -299,14 +299,14 @@ export function MarketScreen() {
                       <div className="flex items-center gap-2 rounded-lg bg-zinc-100 px-2 py-1 text-xs font-semibold text-zinc-800">
                         <button
                           onClick={() => updateCartQty(p.id, qtyInCart - 1)}
-                          className="h-4 w-4 rounded hover:bg-zinc-200 flex items-center justify-center"
+                          className="h-4 w-4 rounded hover:bg-zinc-200 flex items-center justify-center active:scale-90 transition-transform"
                         >
                           -
                         </button>
                         <span>{qtyInCart}</span>
                         <button
                           onClick={() => updateCartQty(p.id, qtyInCart + 1)}
-                          className="h-4 w-4 rounded hover:bg-zinc-200 flex items-center justify-center"
+                          className="h-4 w-4 rounded hover:bg-zinc-200 flex items-center justify-center active:scale-90 transition-transform"
                         >
                           +
                         </button>
@@ -314,7 +314,7 @@ export function MarketScreen() {
                     ) : (
                       <button
                         onClick={() => addToCart(p.id, 1)}
-                        className="rounded-lg bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 text-xs font-medium text-white transition-colors"
+                        className="rounded-lg bg-emerald-600 hover:bg-emerald-700 hover:scale-105 active:scale-95 px-3 py-1.5 text-xs font-medium text-white transition-all duration-150 cursor-pointer shadow-xs"
                       >
                         Add to Cart
                       </button>

@@ -117,7 +117,7 @@ export const AnimalDetailScreen: React.FC = () => {
 
         <button
           onClick={() => navigateToSubScreen('livestock_list')}
-          className="rounded-lg border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 shadow-xs transition-colors"
+          className="rounded-xl border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 hover:-translate-y-0.5 active:scale-95 shadow-xs transition-all duration-200 cursor-pointer"
         >
           ← Back to Herd
         </button>

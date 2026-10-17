@@ -26,20 +26,22 @@ export function BottomNavBar() {
             <button
               key={tab.id}
               onClick={() => setTab(tab.id)}
-              className={`flex flex-col items-center justify-center gap-1 rounded-lg px-3 py-1 transition-colors ${
+              className={`flex flex-col items-center justify-center gap-1 rounded-xl px-3 py-1 transition-all duration-200 active:scale-90 cursor-pointer ${
                 isActive
                   ? 'text-emerald-800 font-semibold'
-                  : 'text-zinc-400 hover:text-zinc-800'
+                  : 'text-zinc-400 hover:text-zinc-800 hover:-translate-y-0.5'
               }`}
             >
               <div
-                className={`flex h-7 w-10 items-center justify-center rounded-lg transition-colors ${
-                  isActive ? 'bg-emerald-50 text-emerald-800' : ''
+                className={`flex h-7 w-10 items-center justify-center rounded-lg transition-all duration-200 ${
+                  isActive ? 'bg-emerald-50 text-emerald-800 shadow-2xs scale-105' : 'hover:bg-zinc-100/60'
                 }`}
               >
-                <Icon className={`h-4 w-4 ${isActive ? 'stroke-[2.2]' : 'stroke-[1.7]'}`} />
+                <Icon className={`h-4 w-4 transition-transform duration-200 ${isActive ? 'stroke-[2.3] scale-110' : 'stroke-[1.7]'}`} />
               </div>
-              <span className="text-[10px] tracking-tight">{tab.label}</span>
+              <span className={`text-[10px] tracking-tight transition-all duration-200 ${isActive ? 'font-semibold text-emerald-900' : ''}`}>
+                {tab.label}
+              </span>
             </button>
           );
         })}

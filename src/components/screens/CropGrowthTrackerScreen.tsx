@@ -102,7 +102,7 @@ export const CropGrowthTrackerScreen: React.FC = () => {
 
   // New crop state
   const [newCropName, setNewCropName] = useState('Wheat');
-  const [newVariety, setNewVariety] = useState('HD-3086 Sharbati');
+  const [newVariety, setNewVariety] = useState('Pusa Gautami');
   const [newPlotArea, setNewPlotArea] = useState('4.5');
   const [newExpectedYield, setNewExpectedYield] = useState('22 Quintals / Acre');
 
@@ -130,7 +130,7 @@ export const CropGrowthTrackerScreen: React.FC = () => {
     id: 'crop_1',
     farmId: 'farm_1',
     cropName: 'Wheat (Kanak)',
-    variety: 'HD-3086 Sharbati',
+    variety: 'Pusa Gautami',
     growthStage: 'Tillering & Booting',
     daysElapsed: 48,
     daysRemaining: 72,
@@ -194,7 +194,7 @@ export const CropGrowthTrackerScreen: React.FC = () => {
 
         <button
           onClick={() => setShowAddCropModal(true)}
-          className="flex items-center gap-2 rounded-lg bg-emerald-700 px-3.5 py-2 text-xs font-medium text-white hover:bg-emerald-800 transition-colors shadow-xs"
+          className="flex items-center gap-2 rounded-lg bg-emerald-700 px-3.5 py-2 text-xs font-medium text-white hover:bg-emerald-800 hover:scale-105 active:scale-95 transition-all shadow-xs"
         >
           <Plus className="h-4 w-4" />
           <span>Add Crop Cycle</span>
@@ -203,31 +203,36 @@ export const CropGrowthTrackerScreen: React.FC = () => {
 
       {/* 2. Crop Switcher Tabs */}
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-        {crops.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => setSelectedCropId(c.id)}
-            className={`shrink-0 rounded-lg px-3.5 py-2 text-xs font-medium transition-colors flex items-center gap-2 ${
-              activeCrop.id === c.id
-                ? 'bg-zinc-900 text-white shadow-xs'
-                : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
-            }`}
-          >
-            <span>{c.cropName}</span>
-            <span className="text-zinc-400 text-[11px]">({c.variety})</span>
-          </button>
-        ))}
+        {crops.map((c) => {
+          const cleanVariety = c.variety ? c.variety.replace(/HD-?\d+\s*/gi, '').replace(/^\(|\)$/g, '').trim() : '';
+          return (
+            <button
+              key={c.id}
+              onClick={() => setSelectedCropId(c.id)}
+              className={`shrink-0 rounded-lg px-3.5 py-2 text-xs font-medium transition-all duration-200 flex items-center gap-2 hover:-translate-y-0.5 active:scale-95 ${
+                activeCrop.id === c.id
+                  ? 'bg-zinc-900 text-white shadow-xs'
+                  : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300'
+              }`}
+            >
+              <span>{c.cropName}</span>
+              {cleanVariety && (
+                <span className="text-zinc-400 text-[11px]">({cleanVariety})</span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* 3. Selected Crop Overview Banner */}
-      <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-sm transition-all duration-200">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5">
               <h2 className="text-lg font-semibold text-zinc-900">
-                {activeCrop.cropName} — {activeCrop.variety}
+                {activeCrop.cropName} — {activeCrop.variety ? activeCrop.variety.replace(/HD-?\d+\s*/gi, '').replace(/^\(|\)$/g, '').trim() : ''}
               </h2>
-              <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/60">
+              <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/60 hover:scale-105 transition-transform duration-200">
                 Health {activeCrop.healthScore}%
               </span>
             </div>
@@ -237,11 +242,11 @@ export const CropGrowthTrackerScreen: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3 text-xs">
-            <div className="rounded-lg bg-zinc-50 border border-zinc-100 p-2.5 px-3.5 text-center">
+            <div className="rounded-lg bg-zinc-50 border border-zinc-100 p-2.5 px-3.5 text-center hover:scale-105 hover:bg-zinc-100/60 transition-all duration-200 shadow-2xs">
               <span className="text-[11px] text-zinc-400 font-medium block">Days to Harvest</span>
               <p className="text-base font-semibold text-zinc-900 mt-0.5">{activeCrop.daysRemaining || 72} Days</p>
             </div>
-            <div className="rounded-lg bg-zinc-50 border border-zinc-100 p-2.5 px-3.5 text-center">
+            <div className="rounded-lg bg-zinc-50 border border-zinc-100 p-2.5 px-3.5 text-center hover:scale-105 hover:bg-zinc-100/60 transition-all duration-200 shadow-2xs">
               <span className="text-[11px] text-zinc-400 font-medium block">Target Yield</span>
               <p className="text-base font-semibold text-zinc-900 mt-0.5">{activeCrop.expectedYield}</p>
             </div>
@@ -259,12 +264,12 @@ export const CropGrowthTrackerScreen: React.FC = () => {
           {WHEAT_STAGES.map((st) => (
             <Card
               key={st.stageNumber}
-              className={`p-3.5 border transition-all space-y-2 flex flex-col justify-between ${
+              className={`p-3.5 border transition-all duration-200 space-y-2 flex flex-col justify-between hover:-translate-y-1 hover:shadow-md cursor-pointer ${
                 st.isCurrent
                   ? 'border-emerald-600 bg-white ring-1 ring-emerald-600 shadow-xs'
                   : st.isCompleted
-                  ? 'border-zinc-200 bg-zinc-50/70'
-                  : 'border-zinc-200/80 bg-white opacity-60'
+                  ? 'border-zinc-200 bg-zinc-50/70 hover:border-emerald-300'
+                  : 'border-zinc-200/80 bg-white opacity-60 hover:opacity-100'
               }`}
             >
               <div>
@@ -346,7 +351,7 @@ export const CropGrowthTrackerScreen: React.FC = () => {
               </div>
               <button
                 onClick={() => setShowObservationModal(true)}
-                className="text-xs font-medium text-emerald-700 hover:text-emerald-800"
+                className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 hover:scale-105 active:scale-95 transition-all"
               >
                 + Add Note
               </button>
@@ -356,7 +361,7 @@ export const CropGrowthTrackerScreen: React.FC = () => {
               {observations.map((obs) => (
                 <div
                   key={obs.id}
-                  className="p-3 rounded-lg bg-zinc-50 border border-zinc-100 text-xs space-y-1"
+                  className="p-3 rounded-lg bg-zinc-50 border border-zinc-100 text-xs space-y-1 hover:bg-zinc-100/70 hover:translate-x-1 hover:border-zinc-200 transition-all duration-200"
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-zinc-900">{obs.stageName}</span>
@@ -375,15 +380,15 @@ export const CropGrowthTrackerScreen: React.FC = () => {
 
       {/* Observation Modal */}
       {showObservationModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="max-w-md w-full p-5 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
+          <div className="max-w-md w-full p-5 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl animate-scale-in">
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <h3 className="font-semibold text-sm text-zinc-900">
                 Log Field Observation
               </h3>
               <button
                 onClick={() => setShowObservationModal(false)}
-                className="text-zinc-400 hover:text-zinc-600"
+                className="text-zinc-400 hover:text-zinc-600 hover:scale-110 active:scale-90 transition-all"
               >
                 ✕
               </button>
@@ -398,7 +403,7 @@ export const CropGrowthTrackerScreen: React.FC = () => {
                   placeholder="e.g. Flag leaves emerging evenly, no weed pressure observed..."
                   value={obsNote}
                   onChange={(e) => setObsNote(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                 />
               </div>
 
@@ -407,7 +412,7 @@ export const CropGrowthTrackerScreen: React.FC = () => {
                 <select
                   value={obsTag}
                   onChange={(e) => setObsTag(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                 >
                   <option>Healthy / Vigorous</option>
                   <option>Moisture Deficit</option>
@@ -420,13 +425,13 @@ export const CropGrowthTrackerScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowObservationModal(false)}
-                  className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-800"
+                  className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-800 hover:scale-105 active:scale-95 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-emerald-700 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors"
+                  className="rounded-lg bg-emerald-700 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 hover:scale-105 active:scale-95 transition-all shadow-xs"
                 >
                   Save Note
                 </button>
@@ -438,15 +443,15 @@ export const CropGrowthTrackerScreen: React.FC = () => {
 
       {/* Add Crop Modal */}
       {showAddCropModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="max-w-md w-full p-5 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
+          <div className="max-w-md w-full p-5 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl animate-scale-in">
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <h3 className="font-semibold text-sm text-zinc-900">
                 Register New Crop Season
               </h3>
               <button
                 onClick={() => setShowAddCropModal(false)}
-                className="text-zinc-400 hover:text-zinc-600"
+                className="text-zinc-400 hover:text-zinc-600 hover:scale-110 active:scale-90 transition-all"
               >
                 ✕
               </button>
@@ -460,7 +465,7 @@ export const CropGrowthTrackerScreen: React.FC = () => {
                   required
                   value={newCropName}
                   onChange={(e) => setNewCropName(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                 />
               </div>
 
@@ -471,7 +476,7 @@ export const CropGrowthTrackerScreen: React.FC = () => {
                   required
                   value={newVariety}
                   onChange={(e) => setNewVariety(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                 />
               </div>
 
@@ -484,7 +489,7 @@ export const CropGrowthTrackerScreen: React.FC = () => {
                     required
                     value={newPlotArea}
                     onChange={(e) => setNewPlotArea(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                    className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                   />
                 </div>
                 <div>
@@ -494,7 +499,7 @@ export const CropGrowthTrackerScreen: React.FC = () => {
                     required
                     value={newExpectedYield}
                     onChange={(e) => setNewExpectedYield(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                    className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                   />
                 </div>
               </div>
@@ -503,13 +508,13 @@ export const CropGrowthTrackerScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddCropModal(false)}
-                  className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-800"
+                  className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-800 hover:scale-105 active:scale-95 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-emerald-700 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors"
+                  className="rounded-lg bg-emerald-700 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 hover:scale-105 active:scale-95 transition-all shadow-xs"
                 >
                   Save Crop Cycle
                 </button>

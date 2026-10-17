@@ -65,13 +65,13 @@ export const AddAnimalScreen: React.FC = () => {
 
         <button
           onClick={navigateBack}
-          className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 shadow-xs"
+          className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 hover:border-zinc-300 hover:scale-105 active:scale-95 transition-all shadow-xs cursor-pointer"
         >
           Cancel
         </button>
       </div>
 
-      <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-sm transition-all duration-200">
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           {/* Type Picker */}
           <div>
@@ -84,10 +84,10 @@ export const AddAnimalScreen: React.FC = () => {
                   key={t}
                   type="button"
                   onClick={() => setType(t)}
-                  className={`py-1.5 px-2.5 rounded-lg text-xs font-medium transition-colors border ${
+                  className={`py-1.5 px-2.5 rounded-lg text-xs font-medium transition-all duration-200 hover:-translate-y-0.5 active:scale-95 border cursor-pointer ${
                     type === t
                       ? 'bg-zinc-900 text-white border-zinc-900 shadow-xs'
-                      : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50'
+                      : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'
                   }`}
                 >
                   {t}
@@ -105,7 +105,7 @@ export const AddAnimalScreen: React.FC = () => {
                 placeholder="e.g. Ganga"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1"
+                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all mt-1"
               />
             </div>
 
@@ -117,7 +117,7 @@ export const AddAnimalScreen: React.FC = () => {
                 placeholder="e.g. C-05"
                 value={tagId}
                 onChange={(e) => setTagId(e.target.value)}
-                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1"
+                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all mt-1"
               />
             </div>
           </div>
@@ -131,7 +131,7 @@ export const AddAnimalScreen: React.FC = () => {
                 placeholder="e.g. Sahiwal / Murrah"
                 value={breed}
                 onChange={(e) => setBreed(e.target.value)}
-                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1"
+                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all mt-1"
               />
             </div>
 
@@ -141,7 +141,7 @@ export const AddAnimalScreen: React.FC = () => {
                 type="number"
                 value={ageYears}
                 onChange={(e) => setAgeYears(e.target.value)}
-                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1"
+                className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all mt-1"
               />
             </div>
           </div>
@@ -161,12 +161,12 @@ export const AddAnimalScreen: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setHasBleTracker(!hasBleTracker)}
-                className={`w-11 h-6 rounded-full transition-colors relative p-0.5 ${
+                className={`w-11 h-6 rounded-full transition-all duration-200 relative p-0.5 hover:scale-105 active:scale-95 cursor-pointer ${
                   hasBleTracker ? 'bg-emerald-700' : 'bg-zinc-200'
                 }`}
               >
                 <div
-                  className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                  className={`w-5 h-5 rounded-full bg-white transition-transform duration-200 ${
                     hasBleTracker ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
@@ -174,13 +174,13 @@ export const AddAnimalScreen: React.FC = () => {
             </div>
 
             {hasBleTracker && (
-              <div>
+              <div className="animate-slide-down">
                 <label className="font-medium text-zinc-700">Collar Device ID</label>
                 <input 
                   type="text"
                   value={bleDeviceName}
                   onChange={(e) => setBleDeviceName(e.target.value)}
-                  className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1"
+                  className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all mt-1"
                 />
               </div>
             )}
@@ -188,7 +188,7 @@ export const AddAnimalScreen: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors shadow-xs"
+            className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 hover:scale-102 active:scale-98 transition-all shadow-xs cursor-pointer"
           >
             Save Animal Record
           </button>

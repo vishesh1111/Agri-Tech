@@ -1,0 +1,162 @@
+[
+  {
+    "id": "t-pph-1",
+    "operation": "Paddy post-harvest handling",
+    "name": "Cutting",
+    "load": 3,
+    "skillLevel": 1,
+    "hazard": false,
+    "workShare": 0.35,
+    "throughputUnitsPerHour": 25
+  },
+  {
+    "id": "t-pph-2",
+    "operation": "Paddy post-harvest handling",
+    "name": "Bundling",
+    "load": 2,
+    "skillLevel": 0,
+    "hazard": false,
+    "workShare": 0.15,
+    "throughputUnitsPerHour": 40
+  },
+  {
+    "id": "t-pph-3",
+    "operation": "Paddy post-harvest handling",
+    "name": "Carrying and loading",
+    "load": 3,
+    "skillLevel": 0,
+    "hazard": false,
+    "workShare": 0.15,
+    "throughputUnitsPerHour": 30
+  },
+  {
+    "id": "t-pph-4",
+    "operation": "Paddy post-harvest handling",
+    "name": "Thresher feeding",
+    "load": 2,
+    "skillLevel": 2,
+    "hazard": true,
+    "workShare": 0.10,
+    "throughputUnitsPerHour": 50
+  },
+  {
+    "id": "t-pph-5",
+    "operation": "Paddy post-harvest handling",
+    "name": "Winnowing, cleaning, grading",
+    "load": 1,
+    "skillLevel": 0,
+    "hazard": false,
+    "workShare": 0.10,
+    "throughputUnitsPerHour": 45
+  },
+  {
+    "id": "t-pph-6",
+    "operation": "Paddy post-harvest handling",
+    "name": "Bagging and stitching",
+    "load": 1,
+    "skillLevel": 1,
+    "hazard": false,
+    "workShare": 0.05,
+    "throughputUnitsPerHour": 60
+  },
+  {
+    "id": "t-pph-7",
+    "operation": "Paddy post-harvest handling",
+    "name": "Drying and turning",
+    "load": 1,
+    "skillLevel": 0,
+    "hazard": false,
+    "workShare": 0.10,
+    "throughputUnitsPerHour": 80
+  },
+  {
+    "id": "t-pmh-1",
+    "operation": "Paddy manual harvest",
+    "name": "Sickle reaping",
+    "load": 3,
+    "skillLevel": 1,
+    "hazard": false,
+    "workShare": 0.50,
+    "throughputUnitsPerHour": 20
+  },
+  {
+    "id": "t-pmh-2",
+    "operation": "Paddy manual harvest",
+    "name": "Sheaf bundling",
+    "load": 2,
+    "skillLevel": 0,
+    "hazard": false,
+    "workShare": 0.25,
+    "throughputUnitsPerHour": 35
+  },
+  {
+    "id": "t-pmh-3",
+    "operation": "Paddy manual harvest",
+    "name": "Field headland stacking",
+    "load": 2,
+    "skillLevel": 0,
+    "hazard": false,
+    "workShare": 0.25,
+    "throughputUnitsPerHour": 30
+  },
+  {
+    "id": "t-wheat-1",
+    "operation": "Wheat land prep and sowing",
+    "name": "Rotavator / seed drill assistant",
+    "load": 2,
+    "skillLevel": 2,
+    "hazard": true,
+    "workShare": 0.30,
+    "throughputUnitsPerHour": 15
+  },
+  {
+    "id": "t-wheat-2",
+    "operation": "Wheat land prep and sowing",
+    "name": "Seed & fertilizer dispersal",
+    "load": 2,
+    "skillLevel": 1,
+    "hazard": false,
+    "workShare": 0.40,
+    "throughputUnitsPerHour": 25
+  },
+  {
+    "id": "t-wheat-3",
+    "operation": "Wheat land prep and sowing",
+    "name": "Furrow covering and bund making",
+    "load": 2,
+    "skillLevel": 0,
+    "hazard": false,
+    "workShare": 0.30,
+    "throughputUnitsPerHour": 30
+  },
+  {
+    "id": "t-mustard-1",
+    "operation": "Mustard sowing and thinning",
+    "name": "Line furrow preparation",
+    "load": 2,
+    "skillLevel": 0,
+    "hazard": false,
+    "workShare": 0.35,
+    "throughputUnitsPerHour": 25
+  },
+  {
+    "id": "t-mustard-2",
+    "operation": "Mustard sowing and thinning",
+    "name": "Delicate seed broadcasting",
+    "load": 1,
+    "skillLevel": 1,
+    "hazard": false,
+    "workShare": 0.35,
+    "throughputUnitsPerHour": 40
+  },
+  {
+    "id": "t-mustard-3",
+    "operation": "Mustard sowing and thinning",
+    "name": "Soil cover & light raking",
+    "load": 1,
+    "skillLevel": 0,
+    "hazard": false,
+    "workShare": 0.30,
+    "throughputUnitsPerHour": 50
+  }
+]

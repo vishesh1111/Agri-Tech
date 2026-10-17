@@ -165,22 +165,24 @@ export const WebSidebar: React.FC = () => {
                   <button
                     key={i}
                     onClick={() => handleNavigate(item.tab, item.sub)}
-                    className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-normal transition-colors ${
+                    className={`group w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs transition-all duration-200 hover:translate-x-1 active:scale-[0.98] cursor-pointer ${
                       active
-                        ? 'bg-emerald-50 text-emerald-900 font-medium'
-                        : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/70'
+                        ? 'bg-emerald-50 text-emerald-900 font-semibold shadow-2xs border-l-2 border-emerald-600'
+                        : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100/80 font-normal'
                     }`}
                   >
                     <div className="flex items-center gap-2.5 truncate">
-                      <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-emerald-700' : 'text-zinc-400'}`} />
+                      <Icon className={`w-4 h-4 shrink-0 transition-all duration-200 group-hover:scale-115 ${
+                        active ? 'text-emerald-700' : 'text-zinc-400 group-hover:text-emerald-600'
+                      }`} />
                       <span className="truncate">{item.label}</span>
                     </div>
 
                     {item.badge && (
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium transition-all duration-200 group-hover:scale-105 ${
                         active 
                           ? 'bg-emerald-100 text-emerald-800' 
-                          : 'bg-zinc-100 text-zinc-500'
+                          : 'bg-zinc-100 text-zinc-500 group-hover:bg-zinc-200/80'
                       }`}>
                         {item.badge}
                       </span>
@@ -195,8 +197,8 @@ export const WebSidebar: React.FC = () => {
 
       {/* Minimal Footer */}
       <div className="p-3 border-t border-zinc-200/80 space-y-2 bg-white">
-        {/* Language selector & Offline status */}
-        <div className="flex items-center justify-between px-1 text-[11px] text-zinc-500">
+        {/* Language selector */}
+        <div className="flex items-center px-1 text-[11px] text-zinc-500">
           <div className="flex items-center gap-1.5">
             <Globe className="w-3.5 h-3.5 text-zinc-400" />
             <select
@@ -214,24 +216,19 @@ export const WebSidebar: React.FC = () => {
               ))}
             </select>
           </div>
-
-          <span className="flex items-center gap-1 text-[11px] text-emerald-700">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            Synced
-          </span>
         </div>
 
         {/* Profile Card */}
         <button 
           onClick={() => navigateToSubScreen('farmer_profile')}
-          className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-zinc-50 border border-transparent hover:border-zinc-200 transition-colors text-left"
+          className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-zinc-50 border border-transparent hover:border-zinc-200/90 hover:shadow-xs hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200 text-left cursor-pointer group"
         >
           <div className="flex items-center gap-2 truncate">
-            <div className="w-7 h-7 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-700 font-medium text-xs flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold text-xs flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               {userProfile?.name?.split(' ').map(n => n[0]).join('') || 'RK'}
             </div>
             <div className="truncate">
-              <span className="text-xs font-medium text-zinc-800 block truncate leading-tight">
+              <span className="text-xs font-medium text-zinc-800 block truncate leading-tight group-hover:text-emerald-900 transition-colors">
                 {userProfile?.name || 'Ramesh Kumar'}
               </span>
               <span className="text-[11px] text-zinc-400 truncate block">
@@ -239,7 +236,7 @@ export const WebSidebar: React.FC = () => {
               </span>
             </div>
           </div>
-          <Settings className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+          <Settings className="w-3.5 h-3.5 text-zinc-400 shrink-0 group-hover:rotate-45 transition-transform duration-300" />
         </button>
       </div>
     </aside>

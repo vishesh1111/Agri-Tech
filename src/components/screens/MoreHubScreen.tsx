@@ -222,19 +222,19 @@ export function MoreHubScreen() {
                   <Card
                     key={tile.id}
                     onClick={() => navigateToSubScreen(tile.id as SubScreen)}
-                    className="cursor-pointer hover:border-zinc-300 transition-all flex items-center justify-between p-3.5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+                    className="cursor-pointer hover:border-emerald-300 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] hover:-translate-y-1 active:scale-[0.99] transition-all duration-200 flex items-center justify-between p-3.5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 group-hover:bg-emerald-50 text-zinc-700 group-hover:text-emerald-700 group-hover:scale-110 transition-all duration-200">
                         <Icon className="h-4 w-4" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <h4 className="text-xs font-medium text-zinc-900 truncate">
+                          <h4 className="text-xs font-semibold text-zinc-900 group-hover:text-emerald-800 transition-colors truncate">
                             {tile.title}
                           </h4>
                           {tile.badge && (
-                            <span className="rounded px-1.5 py-0.5 text-[10px] font-medium bg-zinc-100 text-zinc-700">
+                            <span className="rounded px-1.5 py-0.5 text-[10px] font-medium bg-zinc-100 group-hover:bg-emerald-100/70 text-zinc-700 group-hover:text-emerald-800 transition-colors">
                               {tile.badge}
                             </span>
                           )}
@@ -244,7 +244,7 @@ export function MoreHubScreen() {
                         </p>
                       </div>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-zinc-400 shrink-0 ml-2" />
+                    <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-emerald-700 group-hover:translate-x-1 shrink-0 ml-2 transition-transform duration-200" />
                   </Card>
                 );
               })}

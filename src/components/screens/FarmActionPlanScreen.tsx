@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { 
   CheckSquare, Plus, Trash2, Filter, 
   Droplets, Bug, Sprout, Wind, X,
-  CheckCircle2, ListTodo, ChevronDown
+  CheckCircle2, ListTodo, ChevronDown, Check
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { FarmTask } from '@/lib/types';
@@ -122,7 +122,7 @@ export const FarmActionPlanScreen: React.FC = () => {
                 <select
                   value={selectedFarmFilter}
                   onChange={(e) => setSelectedFarmFilter(e.target.value)}
-                  className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-800 shadow-xs focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-800 shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                 >
                   <option value="ALL">All Farms</option>
                   {farms.map((f) => (
@@ -137,7 +137,7 @@ export const FarmActionPlanScreen: React.FC = () => {
             {/* + Icon Button for Creating New Tasks */}
             <button
               onClick={handleOpenCreateModal}
-              className="flex items-center gap-2 rounded-lg bg-emerald-700 px-3.5 py-2 text-xs font-semibold text-white hover:bg-emerald-800 transition-colors shadow-xs shrink-0 cursor-pointer"
+              className="flex items-center gap-2 rounded-lg bg-emerald-700 px-3.5 py-2 text-xs font-semibold text-white hover:bg-emerald-800 hover:scale-105 active:scale-95 transition-all shadow-xs shrink-0 cursor-pointer"
               title="Create New Task"
             >
               <Plus className="h-4 w-4" />
@@ -162,10 +162,10 @@ export const FarmActionPlanScreen: React.FC = () => {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategoryFilter(cat.id)}
-                className={`shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                className={`shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:-translate-y-0.5 active:scale-95 cursor-pointer ${
                   isSel
                     ? 'bg-zinc-900 text-white shadow-xs'
-                    : 'bg-white text-zinc-600 border border-zinc-200/80 hover:bg-zinc-100 hover:text-zinc-900'
+                    : 'bg-white text-zinc-600 border border-zinc-200/80 hover:bg-zinc-100 hover:text-zinc-900 hover:border-zinc-300'
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
@@ -210,28 +210,36 @@ export const FarmActionPlanScreen: React.FC = () => {
               <Card
                 key={t.id}
                 onClick={() => toggleTaskExpand(t.id)}
-                className={`p-3.5 sm:p-4 border transition-all cursor-pointer shadow-[0_1px_3px_rgba(0,0,0,0.03)] ${
+                className={`p-3.5 sm:p-4 border transition-all duration-200 cursor-pointer shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:-translate-y-0.5 hover:shadow-md ${
                   isExpanded
                     ? 'border-emerald-300 bg-white ring-1 ring-emerald-500/20'
-                    : 'border-zinc-200/80 bg-white hover:border-zinc-300'
+                    : 'border-zinc-200/80 bg-white hover:border-emerald-300/80'
                 }`}
               >
                 <div className="flex items-center justify-between gap-3">
                   {/* Left: Checkbox + Title + Badges */}
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <input
-                      type="checkbox"
-                      checked={t.isCompleted}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={() => toggleTaskComplete(t.id)}
-                      className="h-4 w-4 rounded border-zinc-300 text-emerald-700 focus:ring-emerald-600 cursor-pointer shrink-0"
-                    />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleTaskComplete(t.id);
+                      }}
+                      className={`h-5 w-5 rounded-md border flex items-center justify-center transition-all duration-150 shrink-0 cursor-pointer hover:scale-110 active:scale-90 ${
+                        t.isCompleted
+                          ? 'bg-emerald-600 border-emerald-600 text-white shadow-2xs'
+                          : 'border-zinc-300 bg-white hover:border-emerald-500 hover:bg-emerald-50/40'
+                      }`}
+                      aria-label={t.isCompleted ? 'Mark incomplete' : 'Mark complete'}
+                    >
+                      {t.isCompleted && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                    </button>
                     <div className="flex items-center gap-2 flex-wrap min-w-0">
                       <h4 className="font-medium text-sm text-zinc-900">
                         {t.title}
                       </h4>
                       <span
-                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold shrink-0 ${
+                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold shrink-0 transition-transform duration-200 hover:scale-105 ${
                           t.priority === 'HIGH'
                             ? 'bg-rose-50 text-rose-700 border border-rose-200/60'
                             : t.priority === 'MEDIUM'
@@ -262,7 +270,7 @@ export const FarmActionPlanScreen: React.FC = () => {
                         e.stopPropagation();
                         toggleTaskExpand(t.id);
                       }}
-                      className="text-zinc-400 hover:text-zinc-600 p-1.5 rounded-lg hover:bg-zinc-100 transition-colors cursor-pointer"
+                      className="text-zinc-400 hover:text-zinc-600 p-1.5 rounded-lg hover:bg-zinc-100 transition-all cursor-pointer hover:scale-110 active:scale-90"
                       title={isExpanded ? 'Collapse details' : 'Show all description'}
                     >
                       <ChevronDown
@@ -277,7 +285,7 @@ export const FarmActionPlanScreen: React.FC = () => {
                         e.stopPropagation();
                         deleteTask(t.id);
                       }}
-                      className="text-zinc-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-zinc-100 transition-colors cursor-pointer"
+                      className="text-zinc-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-zinc-100 transition-all cursor-pointer hover:scale-110 active:scale-90"
                       title="Delete task"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -359,24 +367,26 @@ export const FarmActionPlanScreen: React.FC = () => {
             <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
               Completed Tasks ({completedTasks.length})
             </h4>
-            <div className="space-y-2 opacity-60">
+            <div className="space-y-2 opacity-60 hover:opacity-100 transition-opacity duration-200">
               {completedTasks.map((t) => (
                 <div
                   key={t.id}
-                  className="p-3 rounded-lg border border-zinc-200 bg-zinc-50 flex items-center justify-between text-xs"
+                  className="p-3 rounded-lg border border-zinc-200 bg-zinc-50 flex items-center justify-between text-xs hover:bg-zinc-100 hover:translate-x-0.5 transition-all duration-150"
                 >
                   <div className="flex items-center gap-2.5 line-through text-zinc-500">
-                    <input
-                      type="checkbox"
-                      checked={t.isCompleted}
-                      onChange={() => toggleTaskComplete(t.id)}
-                      className="h-4 w-4 rounded border-zinc-300 text-emerald-700 cursor-pointer"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => toggleTaskComplete(t.id)}
+                      className="h-5 w-5 rounded-md border bg-emerald-600 border-emerald-600 text-white flex items-center justify-center shrink-0 cursor-pointer shadow-2xs hover:scale-110 active:scale-90 transition-all"
+                      aria-label="Mark incomplete"
+                    >
+                      <Check className="h-3.5 w-3.5 stroke-[3]" />
+                    </button>
                     <span>{t.title}</span>
                   </div>
                   <button
                     onClick={() => deleteTask(t.id)}
-                    className="text-zinc-400 hover:text-rose-600 cursor-pointer"
+                    className="text-zinc-400 hover:text-rose-600 cursor-pointer p-1 hover:scale-110 active:scale-90 transition-all"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
@@ -389,8 +399,8 @@ export const FarmActionPlanScreen: React.FC = () => {
 
       {/* 3. Create Task Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="max-w-lg w-full p-5 sm:p-6 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
+          <div className="max-w-lg w-full p-5 sm:p-6 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl animate-scale-in">
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2">
                 <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
@@ -402,7 +412,7 @@ export const FarmActionPlanScreen: React.FC = () => {
               </div>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-zinc-400 hover:text-zinc-600 p-1 rounded-lg hover:bg-zinc-100 transition-colors cursor-pointer"
+                className="text-zinc-400 hover:text-zinc-600 p-1 rounded-lg hover:bg-zinc-100 hover:scale-110 active:scale-90 transition-all cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -506,13 +516,13 @@ export const FarmActionPlanScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50 transition-colors text-xs font-medium cursor-pointer"
+                  className="px-4 py-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:scale-105 active:scale-95 transition-all text-xs font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex items-center gap-1.5 rounded-lg bg-emerald-700 px-4 py-2 text-xs font-medium text-white hover:bg-emerald-800 transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-lg bg-emerald-700 px-4 py-2 text-xs font-medium text-white hover:bg-emerald-800 hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-xs"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Schedule Task</span>

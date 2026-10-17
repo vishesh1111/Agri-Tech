@@ -140,7 +140,7 @@ export const GovtSchemesScreen: React.FC = () => {
 
         <button
           onClick={() => navigateToSubScreen('officer_portal')}
-          className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-xs"
+          className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 hover:scale-105 active:scale-95 transition-all shadow-xs"
         >
           <ShieldCheck className="h-4 w-4 text-emerald-700" />
           <span>Officer Verification Portal</span>
@@ -149,7 +149,7 @@ export const GovtSchemesScreen: React.FC = () => {
 
       {/* 2. Success Alert */}
       {applicationSubmitted && (
-        <div className="p-3 bg-emerald-50 text-emerald-800 rounded-lg text-xs font-medium flex items-center gap-2 border border-emerald-200">
+        <div className="p-3 bg-emerald-50 text-emerald-800 rounded-lg text-xs font-medium flex items-center gap-2 border border-emerald-200 animate-slide-down">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>{applicationSubmitted}</span>
         </div>
@@ -164,7 +164,7 @@ export const GovtSchemesScreen: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search schemes, solar pumps, loans..."
-            className="w-full bg-white text-zinc-900 text-xs rounded-lg pl-8 pr-3 py-1.5 border border-zinc-200 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+            className="w-full bg-white text-zinc-900 text-xs rounded-lg pl-8 pr-3 py-1.5 border border-zinc-200 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
           />
         </div>
 
@@ -173,10 +173,10 @@ export const GovtSchemesScreen: React.FC = () => {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 active:scale-95 ${
                 selectedCategory === cat 
-                  ? 'bg-zinc-900 text-white'
-                  : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50'
+                  ? 'bg-zinc-900 text-white shadow-xs'
+                  : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'
               }`}
             >
               {cat}
@@ -199,11 +199,11 @@ export const GovtSchemesScreen: React.FC = () => {
             {filteredSchemes.map((scheme) => (
               <Card
                 key={scheme.id}
-                className="p-5 border border-zinc-200/80 bg-white hover:border-zinc-300 transition-all flex flex-col justify-between space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+                className="p-5 border border-zinc-200/80 bg-white hover:border-emerald-300 hover:-translate-y-1 hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
               >
                 <div className="space-y-2.5">
                   <div className="flex items-start justify-between gap-2">
-                    <span className="text-[10px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded transition-transform duration-200 hover:scale-105">
                       {scheme.category}
                     </span>
                     <span className="text-xs font-semibold text-zinc-900">
@@ -224,13 +224,13 @@ export const GovtSchemesScreen: React.FC = () => {
                 <div className="pt-3 border-t border-zinc-100 flex items-center justify-between">
                   <button
                     onClick={() => setSelectedScheme(scheme)}
-                    className="text-xs font-medium text-emerald-700 hover:text-emerald-800"
+                    className="text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:translate-x-0.5 transition-all"
                   >
                     Guidelines →
                   </button>
                   <button
                     onClick={() => setApplyModalScheme(scheme)}
-                    className="rounded-lg bg-emerald-700 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors shadow-xs"
+                    className="rounded-lg bg-emerald-700 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 hover:scale-105 active:scale-95 transition-all shadow-xs"
                   >
                     Fast Apply
                   </button>
@@ -243,7 +243,7 @@ export const GovtSchemesScreen: React.FC = () => {
         {/* Right Column (4 Cols): Live News & Directives */}
         <div className="lg:col-span-4 space-y-6">
           {/* Live News Bulletins */}
-          <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+          <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-sm transition-all duration-200">
             <div className="flex items-center gap-2">
               <Newspaper className="w-4 h-4 text-emerald-700" />
               <h3 className="font-semibold text-sm text-zinc-900">
@@ -255,7 +255,7 @@ export const GovtSchemesScreen: React.FC = () => {
               {news.map((item) => (
                 <div 
                   key={item.id}
-                  className="bg-zinc-50 border border-zinc-100 rounded-lg p-3 text-xs space-y-1"
+                  className="bg-zinc-50 border border-zinc-100 rounded-lg p-3 text-xs space-y-1 hover:bg-zinc-100/70 hover:translate-x-0.5 hover:border-zinc-200 transition-all duration-150"
                 >
                   <div className="flex items-center justify-between text-zinc-500 text-[10px] mb-0.5">
                     <span className="font-medium text-zinc-700">{item.category}</span>
@@ -271,10 +271,10 @@ export const GovtSchemesScreen: React.FC = () => {
           {/* PMFBY Crop Damage Claim fast-track */}
           <Card
             onClick={() => navigateToSubScreen('officer_portal')}
-            className="p-5 border border-zinc-200/80 bg-white cursor-pointer hover:border-zinc-300 transition-all space-y-2 shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+            className="p-5 border border-zinc-200/80 bg-white cursor-pointer hover:border-emerald-300 hover:-translate-y-1 hover:shadow-md transition-all duration-200 space-y-2 shadow-[0_1px_3px_rgba(0,0,0,0.03)] group"
           >
             <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-emerald-700" />
+              <ShieldCheck className="h-4 w-4 text-emerald-700 transition-transform duration-200 group-hover:scale-110" />
               <h4 className="font-semibold text-sm text-zinc-900">
                 Crop Damage Verification
               </h4>
@@ -282,7 +282,7 @@ export const GovtSchemesScreen: React.FC = () => {
             <p className="text-xs text-zinc-500 leading-relaxed">
               Prepare and submit geotagged crop damage evidence within 72 hours of adverse weather for compensation review.
             </p>
-            <span className="text-xs font-medium text-emerald-700 hover:underline inline-block pt-1">
+            <span className="text-xs font-semibold text-emerald-700 group-hover:underline group-hover:translate-x-1 inline-flex items-center gap-1 pt-1 transition-all">
               Open Evidence Desk →
             </span>
           </Card>
@@ -291,8 +291,8 @@ export const GovtSchemesScreen: React.FC = () => {
 
       {/* Scheme Details Modal */}
       {selectedScheme && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="max-w-lg w-full p-5 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
+          <div className="max-w-lg w-full p-5 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl animate-scale-in">
             <div className="flex items-start justify-between border-b border-zinc-100 pb-3">
               <div>
                 <span className="text-[10px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">
@@ -305,7 +305,7 @@ export const GovtSchemesScreen: React.FC = () => {
               </div>
               <button
                 onClick={() => setSelectedScheme(null)}
-                className="text-zinc-400 hover:text-zinc-600"
+                className="text-zinc-400 hover:text-zinc-600 hover:scale-110 active:scale-90 transition-all p-1"
               >
                 ✕
               </button>
@@ -335,7 +335,7 @@ export const GovtSchemesScreen: React.FC = () => {
             <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100">
               <button
                 onClick={() => setSelectedScheme(null)}
-                className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-800"
+                className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-800 hover:scale-105 active:scale-95 transition-all"
               >
                 Close
               </button>
@@ -345,7 +345,7 @@ export const GovtSchemesScreen: React.FC = () => {
                   setSelectedScheme(null);
                   setApplyModalScheme(s);
                 }}
-                className="rounded-lg bg-emerald-700 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors shadow-xs"
+                className="rounded-lg bg-emerald-700 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 hover:scale-105 active:scale-95 transition-all shadow-xs"
               >
                 Apply for this Scheme
               </button>
@@ -356,8 +356,8 @@ export const GovtSchemesScreen: React.FC = () => {
 
       {/* Apply Modal */}
       {applyModalScheme && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="max-w-md w-full p-5 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
+          <div className="max-w-md w-full p-5 space-y-4 bg-white rounded-xl border border-zinc-200 shadow-xl animate-scale-in">
             <div className="flex items-start justify-between border-b border-zinc-100 pb-3">
               <div>
                 <h3 className="font-semibold text-sm text-zinc-900">
@@ -367,7 +367,7 @@ export const GovtSchemesScreen: React.FC = () => {
               </div>
               <button
                 onClick={() => setApplyModalScheme(null)}
-                className="text-zinc-400 hover:text-zinc-600"
+                className="text-zinc-400 hover:text-zinc-600 hover:scale-110 active:scale-90 transition-all p-1"
               >
                 ✕
               </button>
@@ -380,7 +380,7 @@ export const GovtSchemesScreen: React.FC = () => {
                   type="text"
                   defaultValue="Ramesh Kumar"
                   required
-                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                 />
               </div>
 
@@ -390,7 +390,7 @@ export const GovtSchemesScreen: React.FC = () => {
                   type="tel"
                   defaultValue="+91 98765 43210"
                   required
-                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                 />
               </div>
 
@@ -400,7 +400,7 @@ export const GovtSchemesScreen: React.FC = () => {
                   type="text"
                   defaultValue="Khasra 402/1A (5.0 Acres, Ludhiana)"
                   required
-                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  className="mt-1 w-full rounded-lg border border-zinc-200 p-2 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                 />
               </div>
 
@@ -408,13 +408,13 @@ export const GovtSchemesScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setApplyModalScheme(null)}
-                  className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-800"
+                  className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-800 hover:scale-105 active:scale-95 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-emerald-700 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors shadow-xs"
+                  className="rounded-lg bg-emerald-700 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-800 hover:scale-105 active:scale-95 transition-all shadow-xs"
                 >
                   Submit Application
                 </button>

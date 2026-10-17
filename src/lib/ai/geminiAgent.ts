@@ -236,7 +236,7 @@ export const GeminiFarmAgent = {
   async analyzeCropGrowth(cropHint = 'Wheat'): Promise<CropGrowthVisionAnalysis> {
     return {
       cropType: cropHint,
-      variety: 'HD-3086 Sharbati Gold',
+      variety: 'Pusa Gautami Sharbati',
       growthStage: 'Tillering & Vegetative Stage (Crown Root Development)',
       growthPercentage: 48,
       daysGrown: 52,

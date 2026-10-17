@@ -42,10 +42,10 @@ export const SettingsScreen: React.FC = () => {
       {/* 2. Profile Card shortcut */}
       <Card 
         onClick={() => navigateToSubScreen('farmer_profile')}
-        className="p-5 cursor-pointer hover:border-zinc-300 transition-all flex items-center justify-between border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+        className="p-5 cursor-pointer hover:border-emerald-300 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 flex items-center justify-between border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] group"
       >
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-zinc-100 text-zinc-800 font-semibold text-base flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-zinc-100 text-zinc-800 font-semibold text-base flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform duration-200">
             {userProfile?.name?.split(' ').map(n => n[0]).join('') || 'RK'}
           </div>
           <div>
@@ -60,13 +60,13 @@ export const SettingsScreen: React.FC = () => {
             </span>
           </div>
         </div>
-        <span className="text-xs font-medium text-emerald-700 hover:underline">
+        <span className="text-xs font-medium text-emerald-700 group-hover:translate-x-1 group-hover:underline transition-all">
           View Profile →
         </span>
       </Card>
 
       {/* 3. Language Selection (2-Column Grid) */}
-      <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-sm transition-all duration-200">
         <div>
           <h3 className="font-semibold text-sm text-zinc-900 flex items-center gap-2">
             <Globe className="w-4 h-4 text-emerald-700" />
@@ -84,10 +84,10 @@ export const SettingsScreen: React.FC = () => {
               <button
                 key={lang.code}
                 onClick={() => setLanguage(lang)}
-                className={`flex items-center justify-between p-3.5 rounded-lg text-xs font-medium transition-colors border ${
+                className={`flex items-center justify-between p-3.5 rounded-lg text-xs font-medium transition-all duration-200 hover:-translate-y-0.5 active:scale-95 border ${
                   isSelected 
                     ? 'bg-zinc-900 text-white border-zinc-900 shadow-xs' 
-                    : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50'
+                    : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -102,7 +102,7 @@ export const SettingsScreen: React.FC = () => {
       </Card>
 
       {/* 4. Database & Offline Storage Telemetry */}
-      <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <Card className="p-5 border border-zinc-200/80 bg-white space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-sm transition-all duration-200">
         <div>
           <h3 className="font-semibold text-sm text-zinc-900 flex items-center gap-2">
             <Database className="w-4 h-4 text-emerald-700" />
@@ -114,18 +114,18 @@ export const SettingsScreen: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg">
+          <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg hover:bg-zinc-100/70 hover:scale-102 transition-all duration-200 cursor-default">
             <span className="text-zinc-400 block text-[10px] uppercase font-medium">Database Layer</span>
             <span className="text-zinc-800 text-sm mt-0.5 block font-semibold">Dexie.js (IndexedDB)</span>
           </div>
-          <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg">
+          <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg hover:bg-zinc-100/70 hover:scale-102 transition-all duration-200 cursor-default">
             <span className="text-zinc-400 block text-[10px] uppercase font-medium">Sync State</span>
             <span className="text-emerald-700 text-sm mt-0.5 block font-semibold flex items-center gap-1">
               <CheckCircle2 className="h-4 w-4" />
               <span>Locally Cached</span>
             </span>
           </div>
-          <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg">
+          <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg hover:bg-zinc-100/70 hover:scale-102 transition-all duration-200 cursor-default">
             <span className="text-zinc-400 block text-[10px] uppercase font-medium">Offline Operations</span>
             <span className="text-zinc-800 text-sm mt-0.5 block font-semibold">Fully Functional</span>
           </div>

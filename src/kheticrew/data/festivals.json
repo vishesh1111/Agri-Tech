@@ -1,0 +1,56 @@
+[
+  {
+    "id": "fest-dussehra",
+    "name": "Dussehra (Vijayadashami)",
+    "date": "2026-10-20",
+    "leadDays": 2,
+    "stayDays": 3,
+    "verified": false,
+    "note": "Dates approximate, verify before use"
+  },
+  {
+    "id": "fest-diwali",
+    "name": "Diwali (Deepavali)",
+    "date": "2026-11-08",
+    "leadDays": 4,
+    "stayDays": 6,
+    "verified": false,
+    "note": "Dates approximate, verify before use"
+  },
+  {
+    "id": "fest-chhath",
+    "name": "Chhath Puja",
+    "date": "2026-11-15",
+    "leadDays": 3,
+    "stayDays": 5,
+    "verified": false,
+    "note": "Dates approximate, verify before use"
+  },
+  {
+    "id": "fest-sankranti",
+    "name": "Makar Sankranti",
+    "date": "2027-01-14",
+    "leadDays": 2,
+    "stayDays": 3,
+    "verified": false,
+    "note": "Dates approximate, verify before use"
+  },
+  {
+    "id": "fest-holi",
+    "name": "Holi",
+    "date": "2027-03-23",
+    "leadDays": 3,
+    "stayDays": 4,
+    "verified": false,
+    "note": "Dates approximate, verify before use"
+  },
+  {
+    "id": "fest-baisakhi",
+    "name": "Baisakhi",
+    "date": "2027-04-14",
+    "leadDays": 2,
+    "stayDays": 3,
+    "verified": false,
+    "note": "Dates approximate, verify before use"
+  }
+]

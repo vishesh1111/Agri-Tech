@@ -92,18 +92,18 @@ export const CropWaterVisualizerScreen: React.FC = () => {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       {/* 1. Header Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-sm transition-all duration-200">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigateBack()}
-            className="p-2 rounded-lg border border-zinc-200 hover:bg-zinc-50 text-zinc-600 transition"
+            className="p-2 rounded-lg border border-zinc-200 hover:bg-zinc-100 hover:scale-105 active:scale-95 text-zinc-600 transition-all shadow-2xs"
             title="Go back"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <div className="flex items-center gap-2">
-              <span className="p-1.5 rounded-lg bg-blue-50 text-blue-700">
+              <span className="p-1.5 rounded-lg bg-blue-50 text-blue-700 transition-transform duration-200 group-hover:scale-110">
                 <Waves className="h-5 w-5" />
               </span>
               <h1 className="text-xl font-bold text-zinc-900">
@@ -223,7 +223,7 @@ export const CropWaterVisualizerScreen: React.FC = () => {
           </span>
           <button
             onClick={() => setIsPlayingCycle(!isPlayingCycle)}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 transition shadow-xs"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:scale-105 active:scale-95 transition-all shadow-xs"
           >
             {isPlayingCycle ? (
               <>
@@ -247,10 +247,10 @@ export const CropWaterVisualizerScreen: React.FC = () => {
                 setIsPlayingCycle(false);
                 setSelectedStageIdx(i);
               }}
-              className={`p-3 rounded-xl text-left border transition-all flex flex-col justify-between ${
+              className={`p-3 rounded-xl text-left border transition-all duration-200 flex flex-col justify-between hover:-translate-y-0.5 active:scale-[0.98] ${
                 selectedStageIdx === i
                   ? 'border-emerald-600 bg-emerald-50/70 text-emerald-950 font-semibold shadow-xs ring-1 ring-emerald-600'
-                  : 'border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50'
+                  : 'border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 hover:border-zinc-300 hover:shadow-xs'
               }`}
             >
               <div>
@@ -306,7 +306,7 @@ export const CropWaterVisualizerScreen: React.FC = () => {
           <div className="flex items-center gap-2 text-xs">
             <button
               onClick={() => setSimulatedWaterCm(minRequiredCm)}
-              className="px-3.5 py-1.5 rounded-lg bg-emerald-700 text-white font-medium hover:bg-emerald-800 transition flex items-center gap-1.5 shadow-xs"
+              className="px-3.5 py-1.5 rounded-lg bg-emerald-700 text-white font-medium hover:bg-emerald-800 hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5 shadow-xs"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Snap to Minimum ({minRequiredCm} cm)</span>
@@ -523,19 +523,19 @@ export const CropWaterVisualizerScreen: React.FC = () => {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setSimulatedWaterCm(Number((minRequiredCm * 0.4).toFixed(1)))}
-                className="px-2.5 py-1 rounded bg-amber-100 text-amber-900 text-[10px] font-medium hover:bg-amber-200 transition"
+                className="px-2.5 py-1 rounded bg-amber-100 text-amber-900 text-[10px] font-medium hover:bg-amber-200 hover:scale-105 active:scale-95 transition-all shadow-2xs"
               >
                 Test Drought
               </button>
               <button
                 onClick={() => setSimulatedWaterCm(minRequiredCm)}
-                className="px-2.5 py-1 rounded bg-emerald-100 text-emerald-900 text-[10px] font-bold hover:bg-emerald-200 transition"
+                className="px-2.5 py-1 rounded bg-emerald-100 text-emerald-900 text-[10px] font-bold hover:bg-emerald-200 hover:scale-105 active:scale-95 transition-all shadow-2xs"
               >
                 Exact Target
               </button>
               <button
                 onClick={() => setSimulatedWaterCm(isPaddy ? 9.5 : 8.5)}
-                className="px-2.5 py-1 rounded bg-rose-100 text-rose-900 text-[10px] font-medium hover:bg-rose-200 transition"
+                className="px-2.5 py-1 rounded bg-rose-100 text-rose-900 text-[10px] font-medium hover:bg-rose-200 hover:scale-105 active:scale-95 transition-all shadow-2xs"
               >
                 Test Flood
               </button>
@@ -549,7 +549,7 @@ export const CropWaterVisualizerScreen: React.FC = () => {
             step="0.5"
             value={simulatedWaterCm}
             onChange={(e) => setSimulatedWaterCm(parseFloat(e.target.value))}
-            className="w-full accent-emerald-600 h-2 bg-zinc-200 rounded-lg cursor-pointer"
+            className="w-full accent-emerald-600 h-2 bg-zinc-200 rounded-lg cursor-pointer transition-all hover:bg-zinc-300"
           />
 
           <div className="flex justify-between text-[10px] font-medium text-zinc-500 px-1">
@@ -564,10 +564,10 @@ export const CropWaterVisualizerScreen: React.FC = () => {
         {/* 5. Plain-English Action Cards for Farmer */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
           {/* Dose Liters */}
-          <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200/80 space-y-1">
+          <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200/80 space-y-1 hover:-translate-y-1 hover:shadow-md hover:border-blue-300 transition-all duration-200 group cursor-default">
             <div className="flex items-center justify-between text-blue-700">
               <span className="text-[11px] font-bold uppercase tracking-wider">Water Dose</span>
-              <Droplets className="w-4 h-4" />
+              <Droplets className="w-4 h-4 transition-transform duration-200 group-hover:scale-120" />
             </div>
             <div className="text-2xl font-black text-blue-950">
               {result.singleIrrigationLiters.toLocaleString()} <span className="text-xs font-normal text-zinc-500">Liters</span>
@@ -578,10 +578,10 @@ export const CropWaterVisualizerScreen: React.FC = () => {
           </div>
 
           {/* Pump Hours */}
-          <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-1">
+          <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-1 hover:-translate-y-1 hover:shadow-md hover:border-amber-300 transition-all duration-200 group cursor-default">
             <div className="flex items-center justify-between text-amber-700">
               <span className="text-[11px] font-bold uppercase tracking-wider">Tubewell Run</span>
-              <Clock className="w-4 h-4" />
+              <Clock className="w-4 h-4 transition-transform duration-200 group-hover:scale-120" />
             </div>
             <div className="text-2xl font-black text-amber-950">
               {result.pumpRuntimeFormatted}
@@ -592,10 +592,10 @@ export const CropWaterVisualizerScreen: React.FC = () => {
           </div>
 
           {/* Frequency */}
-          <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80 space-y-1">
+          <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80 space-y-1 hover:-translate-y-1 hover:shadow-md hover:border-emerald-300 transition-all duration-200 group cursor-default">
             <div className="flex items-center justify-between text-emerald-700">
               <span className="text-[11px] font-bold uppercase tracking-wider">Interval</span>
-              <Zap className="w-4 h-4" />
+              <Zap className="w-4 h-4 transition-transform duration-200 group-hover:scale-120" />
             </div>
             <div className="text-2xl font-black text-emerald-950">
               Every {result.wateringFrequencyDays} <span className="text-xs font-normal text-zinc-500">Days</span>
@@ -606,10 +606,10 @@ export const CropWaterVisualizerScreen: React.FC = () => {
           </div>
 
           {/* Water Savings */}
-          <div className="p-4 rounded-xl bg-purple-50/70 border border-purple-200/80 space-y-1">
+          <div className="p-4 rounded-xl bg-purple-50/70 border border-purple-200/80 space-y-1 hover:-translate-y-1 hover:shadow-md hover:border-purple-300 transition-all duration-200 group cursor-default">
             <div className="flex items-center justify-between text-purple-700">
               <span className="text-[11px] font-bold uppercase tracking-wider">Savings vs Flood</span>
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4 h-4 transition-transform duration-200 group-hover:scale-120" />
             </div>
             <div className="text-2xl font-black text-purple-950">
               {result.efficiencySavingsVsFloodPercent}% <span className="text-xs font-normal text-zinc-500">saved</span>

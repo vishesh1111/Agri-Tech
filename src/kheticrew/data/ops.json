@@ -1,0 +1,46 @@
+[
+  {
+    "cropId": "paddy",
+    "operation": "Paddy manual harvest",
+    "startOffsetDays": 120,
+    "durationDays": 6,
+    "personDaysPerAcre": 10,
+    "skill": 1,
+    "shape": "peak",
+    "weatherSensitive": true,
+    "source": "PLACEHOLDER: State Ag Dept / ICAR benchmark"
+  },
+  {
+    "cropId": "paddy",
+    "operation": "Paddy post-harvest handling",
+    "startOffsetDays": 126,
+    "durationDays": 4,
+    "personDaysPerAcre": 6,
+    "skill": 1,
+    "shape": "uniform",
+    "weatherSensitive": true,
+    "source": "PLACEHOLDER: State Ag Dept / ICAR benchmark"
+  },
+  {
+    "cropId": "wheat",
+    "operation": "Wheat land prep and sowing",
+    "startOffsetDays": 0,
+    "durationDays": 5,
+    "personDaysPerAcre": 5,
+    "skill": 1,
+    "shape": "peak",
+    "weatherSensitive": false,
+    "source": "PLACEHOLDER: ICAR Package of Practices"
+  },
+  {
+    "cropId": "mustard",
+    "operation": "Mustard sowing and thinning",
+    "startOffsetDays": 0,
+    "durationDays": 4,
+    "personDaysPerAcre": 4,
+    "skill": 0,
+    "shape": "uniform",
+    "weatherSensitive": false,
+    "source": "PLACEHOLDER: ICAR Package of Practices"
+  }
+]

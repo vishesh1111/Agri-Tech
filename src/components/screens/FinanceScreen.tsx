@@ -99,7 +99,7 @@ export function FinanceScreen() {
 
         <button
           onClick={() => alert('Exporting financial ledger as CSV...')}
-          className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-xs"
+          className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 hover:scale-105 active:scale-95 transition-all shadow-xs"
         >
           <FileSpreadsheet className="h-4 w-4 text-emerald-700" />
           <span>Export Ledger</span>
@@ -108,7 +108,7 @@ export function FinanceScreen() {
 
       {/* 2. Top Financial KPI Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-md hover:border-emerald-200 transition-all duration-200 group cursor-default">
           <div className="flex items-start justify-between">
             <div>
               <span className="text-xs font-medium text-zinc-500">
@@ -121,13 +121,13 @@ export function FinanceScreen() {
                 Mandi sales, dairy & procurement
               </span>
             </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 group-hover:scale-110 group-hover:bg-emerald-100 transition-all duration-200">
               <ArrowDownLeft className="h-5 w-5" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-md hover:border-zinc-300 transition-all duration-200 group cursor-default">
           <div className="flex items-start justify-between">
             <div>
               <span className="text-xs font-medium text-zinc-500">
@@ -140,13 +140,13 @@ export function FinanceScreen() {
                 Inputs, labor, diesel & seeds
               </span>
             </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700 group-hover:scale-110 group-hover:bg-zinc-200 transition-all duration-200">
               <ArrowUpRight className="h-5 w-5" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:shadow-md hover:border-emerald-200 transition-all duration-200 group cursor-default">
           <div className="flex items-start justify-between">
             <div>
               <span className="text-xs font-medium text-zinc-500">
@@ -163,7 +163,7 @@ export function FinanceScreen() {
                 Season net surplus
               </span>
             </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700 group-hover:scale-110 group-hover:bg-zinc-200 transition-all duration-200">
               <TrendingUp className="h-5 w-5" />
             </div>
           </div>
@@ -182,7 +182,7 @@ export function FinanceScreen() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search transactions..."
-                className="w-full rounded-lg border border-zinc-200 bg-white pl-8 pr-3 py-1.5 text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                className="w-full rounded-lg border border-zinc-200 bg-white pl-8 pr-3 py-1.5 text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
               />
             </div>
 
@@ -191,10 +191,10 @@ export function FinanceScreen() {
                 <button
                   key={cat}
                   onClick={() => setSelectedFilterCategory(cat)}
-                  className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
+                  className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-all duration-200 hover:-translate-y-0.5 active:scale-95 ${
                     selectedFilterCategory === cat
-                      ? 'bg-zinc-900 text-white'
-                      : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50'
+                      ? 'bg-zinc-900 text-white shadow-xs'
+                      : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'
                   }`}
                 >
                   {cat}
@@ -219,12 +219,12 @@ export function FinanceScreen() {
                   {filteredTransactions.map((tx) => (
                     <tr
                       key={tx.id}
-                      className="hover:bg-zinc-50 transition-colors"
+                      className="hover:bg-emerald-50/40 hover:translate-x-0.5 transition-all duration-150 group"
                     >
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2.5">
                           <div
-                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${
+                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-transform duration-200 group-hover:scale-110 ${
                               tx.isIncome
                                 ? 'bg-emerald-50 text-emerald-700'
                                 : 'bg-zinc-100 text-zinc-600'
@@ -259,7 +259,7 @@ export function FinanceScreen() {
                       <td className="py-3 px-4 text-center">
                         <button
                           onClick={() => deleteFinancialTransaction(tx)}
-                          className="text-zinc-400 hover:text-rose-600 p-1 transition-colors"
+                          className="text-zinc-400 hover:text-rose-600 p-1 hover:scale-120 active:scale-90 transition-all rounded"
                           title="Delete entry"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -295,9 +295,9 @@ export function FinanceScreen() {
                 <button
                   type="button"
                   onClick={() => setIsIncome(false)}
-                  className={`w-1/2 py-2 rounded-lg font-medium text-xs transition-colors ${
+                  className={`w-1/2 py-2 rounded-lg font-medium text-xs transition-all duration-200 hover:scale-102 active:scale-98 ${
                     !isIncome
-                      ? 'bg-zinc-900 text-white'
+                      ? 'bg-zinc-900 text-white shadow-xs'
                       : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
                   }`}
                 >
@@ -306,9 +306,9 @@ export function FinanceScreen() {
                 <button
                   type="button"
                   onClick={() => setIsIncome(true)}
-                  className={`w-1/2 py-2 rounded-lg font-medium text-xs transition-colors ${
+                  className={`w-1/2 py-2 rounded-lg font-medium text-xs transition-all duration-200 hover:scale-102 active:scale-98 ${
                     isIncome
-                      ? 'bg-emerald-700 text-white'
+                      ? 'bg-emerald-700 text-white shadow-xs'
                       : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
                   }`}
                 >
@@ -324,7 +324,7 @@ export function FinanceScreen() {
                   placeholder="e.g. 2 Bags DAP Fertilizer"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                 />
               </div>
 
@@ -337,7 +337,7 @@ export function FinanceScreen() {
                     placeholder="2700"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                    className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                   />
                 </div>
                 <div>
@@ -345,7 +345,7 @@ export function FinanceScreen() {
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                    className="mt-1 w-full rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
                   >
                     {categories.map((c) => (
                       <option key={c} value={c}>
@@ -358,7 +358,7 @@ export function FinanceScreen() {
 
               <button
                 type="submit"
-                className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors mt-2"
+                className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 hover:scale-102 active:scale-98 transition-all shadow-xs mt-2"
               >
                 Save Transaction
               </button>

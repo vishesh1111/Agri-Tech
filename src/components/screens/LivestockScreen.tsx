@@ -136,12 +136,12 @@ export const LivestockScreen: React.FC = () => {
               <Card 
                 key={animal.id} 
                 onClick={() => handleOpenAnimal(animal.id)}
-                className="p-4 cursor-pointer hover:border-zinc-300 transition-all border border-zinc-200/80 bg-white space-y-3 shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+                className="p-4 cursor-pointer hover:border-emerald-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.99] transition-all duration-200 border border-zinc-200/80 bg-white space-y-3 shadow-[0_1px_3px_rgba(0,0,0,0.03)] group"
               >
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-sm text-zinc-900">
+                      <h3 className="font-semibold text-sm text-zinc-900 group-hover:text-emerald-900 transition-colors">
                         {animal.name}
                       </h3>
                       <span className="text-[10px] font-medium bg-zinc-100 text-zinc-700 px-1.5 py-0.5 rounded">
@@ -155,19 +155,19 @@ export const LivestockScreen: React.FC = () => {
                   </div>
 
                   {animal.isInsideFence ? (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded transition-transform group-hover:scale-105">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
                       Inside Perimeter
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-rose-800 bg-rose-50 border border-rose-200/60 px-2 py-0.5 rounded">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-rose-800 bg-rose-50 border border-rose-200/60 px-2 py-0.5 rounded animate-bounce">
                       <AlertTriangle className="w-3 h-3 text-rose-600" />
                       Outside Perimeter
                     </span>
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-center text-xs bg-zinc-50 p-2 rounded-lg border border-zinc-100">
+                <div className="grid grid-cols-2 gap-2 text-center text-xs bg-zinc-50 p-2 rounded-lg border border-zinc-100 group-hover:bg-emerald-50/30 transition-colors">
                   <div>
                     <span className="text-[10px] text-zinc-400">Daily Milk</span>
                     <p className="font-semibold text-zinc-900 text-sm">{animal.dailyMilkYield} L</p>
@@ -183,7 +183,7 @@ export const LivestockScreen: React.FC = () => {
                     <Battery className="w-3.5 h-3.5 text-zinc-500" />
                     <span>Battery: {animal.trackerBatteryPercent || 92}%</span>
                   </div>
-                  <span className="text-emerald-700 font-medium hover:underline">View Profile →</span>
+                  <span className="text-emerald-700 font-medium group-hover:translate-x-0.5 transition-transform">View Profile →</span>
                 </div>
               </Card>
             ))}
@@ -200,7 +200,7 @@ export const LivestockScreen: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {poultryBatches.map((batch) => (
-              <Card key={batch.id} className="p-4 border border-zinc-200/80 bg-white space-y-3 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+              <Card key={batch.id} className="p-4 border border-zinc-200/80 bg-white space-y-3 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-amber-300 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold text-sm text-zinc-900">
@@ -230,27 +230,27 @@ export const LivestockScreen: React.FC = () => {
       <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <button
           onClick={() => navigateToSubScreen('cctv_monitor')}
-          className="p-4 bg-white border border-zinc-200/80 rounded-xl text-left hover:border-zinc-300 transition-all flex items-start gap-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+          className="p-4 bg-white border border-zinc-200/80 rounded-xl text-left hover:border-emerald-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.99] transition-all duration-200 flex items-start gap-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] cursor-pointer group"
         >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 group-hover:bg-emerald-50 text-zinc-700 group-hover:text-emerald-700 group-hover:scale-110 transition-all duration-200">
             <Video className="h-5 w-5" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-zinc-900">Virtual Fencing AI (CCTV Camera)</h4>
+            <h4 className="text-sm font-semibold text-zinc-900 group-hover:text-emerald-900 transition-colors">Virtual Fencing AI (CCTV Camera)</h4>
             <p className="text-xs text-zinc-500 mt-0.5 leading-relaxed">Live pasture video monitoring, interactive boundary lines, and instant perimeter breach alarms</p>
           </div>
         </button>
 
         <button
           onClick={() => navigateToSubScreen('mastitis_scanner')}
-          className="p-4 bg-white border border-zinc-200/80 rounded-xl text-left hover:border-zinc-300 transition-all flex items-start gap-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+          className="p-4 bg-white border border-zinc-200/80 rounded-xl text-left hover:border-emerald-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.99] transition-all duration-200 flex items-start gap-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] cursor-pointer group"
         >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 group-hover:bg-emerald-50 text-zinc-700 group-hover:text-emerald-700 group-hover:scale-110 transition-all duration-200">
             <Stethoscope className="h-5 w-5" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-zinc-900">Mastitis Udder Health Scanner</h4>
-            <p className="text-xs text-zinc-500 mt-0.5 leading-relaxed">Bovine udder photo analysis, somatic cell count triage, and treatment advice</p>
+            <h4 className="text-sm font-semibold text-zinc-900 group-hover:text-emerald-900 transition-colors">Mastitis Udder Health Scan</h4>
+            <p className="text-xs text-zinc-500 mt-0.5 leading-relaxed">Early subclinical infection detection with on-device ONNX vision models</p>
           </div>
         </button>
       </div>

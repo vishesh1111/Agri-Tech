@@ -35,7 +35,7 @@ const INITIAL_CLAIMS: CompensationClaim[] = [
     farmerName: 'Ramesh Kumar',
     farmerId: 'PB-LDH-8841',
     phone: '+91 98765 43210',
-    cropName: 'Wheat (HD-3086)',
+    cropName: 'Wheat (Pusa Gautami)',
     damageReason: 'Unseasonal Hailstorm & Waterlogging (72h submersion)',
     affectedAcres: 3.5,
     estimatedLossRs: 78500,
@@ -80,7 +80,7 @@ export const OfficerPortalScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Farmer submission form
-  const [claimCrop, setClaimCrop] = useState('Wheat (HD-3086)');
+  const [claimCrop, setClaimCrop] = useState('Wheat (Pusa Gautami)');
   const [claimReason, setClaimReason] = useState('Hailstorm & Inundation');
   const [claimAcres, setClaimAcres] = useState('3.5');
   const [claimLoss, setClaimLoss] = useState('75000');
@@ -156,20 +156,20 @@ export const OfficerPortalScreen: React.FC = () => {
         <div className="flex gap-1.5">
           <button
             onClick={() => setActiveTab('OFFICER_PORTAL')}
-            className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+            className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 hover:-translate-y-0.5 active:scale-95 ${
               activeTab === 'OFFICER_PORTAL'
-                ? 'bg-zinc-900 text-white'
-                : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-50'
+                ? 'bg-zinc-900 text-white shadow-xs'
+                : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'
             }`}
           >
             Officer Review Desk
           </button>
           <button
             onClick={() => setActiveTab('FARMER_SUBMIT')}
-            className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+            className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 hover:-translate-y-0.5 active:scale-95 ${
               activeTab === 'FARMER_SUBMIT'
-                ? 'bg-zinc-900 text-white'
-                : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-50'
+                ? 'bg-zinc-900 text-white shadow-xs'
+                : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'
             }`}
           >
             Submit Damage Claim
@@ -206,7 +206,7 @@ export const OfficerPortalScreen: React.FC = () => {
                     onChange={(e) => setClaimCrop(e.target.value)}
                     className="w-full text-xs p-2 rounded-lg border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 mt-1"
                   >
-                    <option value="Wheat (HD-3086)">Wheat (HD-3086)</option>
+                    <option value="Wheat (Pusa Gautami)">Wheat (Pusa Gautami)</option>
                     <option value="Paddy / Basmati">Paddy / Basmati</option>
                     <option value="Mustard (Pusa Bold)">Mustard (Pusa Bold)</option>
                     <option value="Cotton (Bt)">Cotton (Bt)</option>
@@ -267,7 +267,7 @@ export const OfficerPortalScreen: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-2.5 rounded-lg text-xs transition-colors shadow-xs"
+                className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-2.5 rounded-lg text-xs hover:scale-102 active:scale-98 transition-all shadow-xs"
               >
                 Submit PMFBY Claim
               </button>
@@ -286,7 +286,7 @@ export const OfficerPortalScreen: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search claim ID or farmer..."
-                className="w-full text-xs bg-white p-2 pl-8 rounded-lg border border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                className="w-full text-xs bg-white p-2 pl-8 rounded-lg border border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
               />
             </div>
 
@@ -295,15 +295,15 @@ export const OfficerPortalScreen: React.FC = () => {
                 <div
                   key={claim.id}
                   onClick={() => setSelectedClaim(claim)}
-                  className={`p-3.5 rounded-lg border cursor-pointer transition-colors ${
+                  className={`p-3.5 rounded-lg border cursor-pointer transition-all duration-200 hover:translate-x-1 ${
                     selectedClaim?.id === claim.id
-                      ? 'bg-zinc-50 border-zinc-900 shadow-xs'
-                      : 'bg-white border-zinc-200/80 hover:bg-zinc-50'
+                      ? 'bg-zinc-50 border-emerald-600 ring-1 ring-emerald-600/30 shadow-xs'
+                      : 'bg-white border-zinc-200/80 hover:bg-zinc-50 hover:border-zinc-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-mono text-[10px] text-zinc-400">{claim.id}</span>
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${
+                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded transition-transform duration-200 hover:scale-105 ${
                       claim.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/60' :
                       claim.status === 'REJECTED' ? 'bg-rose-50 text-rose-800 border border-rose-200/60' :
                       claim.status === 'VERIFIED' ? 'bg-zinc-100 text-zinc-700' :
@@ -330,7 +330,7 @@ export const OfficerPortalScreen: React.FC = () => {
           {/* Claim Details & Evidence Review Pane (7 Cols) */}
           {selectedClaim && (
             <div className="lg:col-span-7 space-y-4">
-              <Card className="p-5 space-y-4 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+              <Card className="p-5 space-y-4 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-sm transition-all duration-200">
                 <div className="flex items-start justify-between border-b border-zinc-100 pb-3">
                   <div>
                     <span className="text-[10px] font-mono text-zinc-400 block">{selectedClaim.id}</span>
@@ -383,7 +383,7 @@ export const OfficerPortalScreen: React.FC = () => {
                   </h4>
                   <div className="space-y-1.5">
                     {selectedClaim.evidenceFiles.map((file, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-zinc-50 text-xs border border-zinc-100">
+                      <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-zinc-50 text-xs border border-zinc-100 hover:bg-zinc-100 hover:translate-x-0.5 transition-all duration-150">
                         <span className="flex items-center gap-2 font-mono text-[11px] text-zinc-700">
                           <FileText className="w-3.5 h-3.5 text-zinc-500" />
                           {file.name}
@@ -400,14 +400,14 @@ export const OfficerPortalScreen: React.FC = () => {
                 <div className="pt-3 border-t border-zinc-100 flex gap-2">
                   <button
                     onClick={() => handleUpdateStatus(selectedClaim.id, 'APPROVED')}
-                    className="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+                    className="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 hover:scale-102 active:scale-98 transition-all shadow-xs"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>Approve Claim</span>
                   </button>
                   <button
                     onClick={() => handleUpdateStatus(selectedClaim.id, 'REJECTED')}
-                    className="flex-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-medium py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors"
+                    className="flex-1 bg-zinc-100 hover:bg-rose-50 hover:text-rose-700 text-zinc-700 font-medium py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 hover:scale-102 active:scale-98 transition-all"
                   >
                     <XCircle className="w-3.5 h-3.5" />
                     <span>Reject Claim</span>

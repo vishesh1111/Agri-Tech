@@ -608,10 +608,10 @@ export const CctvMonitorScreen: React.FC = () => {
               <button
                 key={cam.id}
                 onClick={() => handleSelectCam(cam.id)}
-                className={`flex items-center gap-1.5 py-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex items-center gap-1.5 py-1.5 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:-translate-y-0.5 active:scale-95 cursor-pointer whitespace-nowrap ${
                   isSelected
                     ? 'bg-zinc-900 text-white shadow-xs'
-                    : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-50'
+                    : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'
                 }`}
               >
                 <Video className="w-3 h-3" />

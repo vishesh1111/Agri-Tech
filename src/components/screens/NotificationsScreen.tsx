@@ -67,7 +67,7 @@ export const NotificationsScreen: React.FC = () => {
         {unreadCount > 0 && (
           <button
             onClick={markAllNotificationsRead}
-            className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-xs"
+            className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 hover:scale-105 active:scale-95 transition-all shadow-xs"
           >
             <CheckCheck className="w-4 h-4 text-emerald-700" />
             <span>Mark All as Read</span>
@@ -76,15 +76,15 @@ export const NotificationsScreen: React.FC = () => {
       </div>
 
       {/* 2. Severity Filters */}
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
         {['ALL', 'CRITICAL', 'WARNING', 'INFO'].map(sev => (
           <button
             key={sev}
             onClick={() => setFilterSeverity(sev)}
-            className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 hover:-translate-y-0.5 active:scale-95 ${
               filterSeverity === sev
-                ? 'bg-zinc-900 text-white'
-                : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50'
+                ? 'bg-zinc-900 text-white shadow-xs'
+                : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'
             }`}
           >
             {sev === 'ALL' ? 'All Alerts' : sev.charAt(0) + sev.slice(1).toLowerCase()}
@@ -111,15 +111,15 @@ export const NotificationsScreen: React.FC = () => {
               <Card 
                 key={notif.id}
                 onClick={() => !notif.isRead && markNotificationRead(notif.id)}
-                className={`p-4 transition-all border ${
+                className={`p-4 transition-all duration-200 border group ${
                   notif.isRead 
-                    ? 'bg-zinc-50/50 border-zinc-200/60' 
-                    : 'bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] cursor-pointer'
+                    ? 'bg-zinc-50/50 border-zinc-200/60 hover:bg-zinc-100/60 hover:translate-x-0.5' 
+                    : 'bg-white border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] cursor-pointer hover:-translate-y-0.5 hover:shadow-md hover:border-emerald-300'
                 }`}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3">
-                    <div className={`p-2 rounded-lg ${badge.classes} shrink-0 mt-0.5`}>
+                    <div className={`p-2 rounded-lg ${badge.classes} shrink-0 mt-0.5 transition-transform duration-200 group-hover:scale-110`}>
                       <Icon className="w-4 h-4" />
                     </div>
 
@@ -129,7 +129,7 @@ export const NotificationsScreen: React.FC = () => {
                           {notif.title}
                         </h4>
                         {!notif.isRead && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
                         )}
                         <span className="text-[11px] text-zinc-400">
                           {notif.timeFormatted}
@@ -147,7 +147,7 @@ export const NotificationsScreen: React.FC = () => {
                       e.stopPropagation();
                       deleteNotification(notif.id);
                     }}
-                    className="p-1 text-zinc-400 hover:text-rose-600 transition-colors"
+                    className="p-1 text-zinc-400 hover:text-rose-600 hover:scale-115 active:scale-90 transition-all rounded"
                     title="Delete alert"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

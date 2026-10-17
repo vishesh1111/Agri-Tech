@@ -213,12 +213,12 @@ export const PoultryScannerScreen: React.FC = () => {
               <button
                 onClick={isRecording ? handleStopRecording : handleStartRecording}
                 disabled={isAnalyzing}
-                className={`w-28 h-28 rounded-full mx-auto flex flex-col items-center justify-center transition-all shadow-md active:scale-95 ${
+                className={`w-28 h-28 rounded-full mx-auto flex flex-col items-center justify-center transition-all duration-300 shadow-md hover:scale-105 active:scale-90 cursor-pointer ${
                   isRecording
                     ? 'bg-rose-700 text-white animate-pulse ring-4 ring-rose-200'
                     : isAnalyzing
                     ? 'bg-zinc-800 text-white animate-pulse'
-                    : 'bg-emerald-700 text-white hover:bg-emerald-800 ring-4 ring-emerald-100'
+                    : 'bg-emerald-700 text-white hover:bg-emerald-800 ring-4 ring-emerald-100 hover:ring-emerald-200'
                 }`}
               >
                 {isRecording ? (
@@ -254,7 +254,7 @@ export const PoultryScannerScreen: React.FC = () => {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="px-3 py-1.5 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-700 hover:bg-zinc-50 flex items-center gap-1.5"
+                className="px-3.5 py-1.5 rounded-lg border border-zinc-200 text-xs font-medium text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 flex items-center gap-1.5 cursor-pointer shadow-2xs"
               >
                 <Upload className="w-3.5 h-3.5 text-zinc-400" />
                 <span>Upload Audio File</span>

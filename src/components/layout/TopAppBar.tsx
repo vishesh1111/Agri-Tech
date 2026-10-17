@@ -33,15 +33,15 @@ export function TopAppBar({ title, showBackButton, onBackClick }: TopAppBarProps
         {showBackButton ? (
           <button
             onClick={onBackClick}
-            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-zinc-100 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-zinc-100 hover:scale-105 active:scale-95 transition-all text-zinc-600"
             aria-label="Back"
           >
-            <ArrowLeft className="h-4 w-4 text-zinc-600" />
+            <ArrowLeft className="h-4 w-4" />
           </button>
         ) : (
           <button
             onClick={() => navigateToSubScreen('user_profile')}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 font-semibold text-xs text-zinc-800 hover:bg-zinc-200 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 font-semibold text-xs text-zinc-800 hover:bg-zinc-200 hover:scale-105 active:scale-95 transition-all shadow-2xs"
             aria-label="Profile"
           >
             {initials}
@@ -63,12 +63,12 @@ export function TopAppBar({ title, showBackButton, onBackClick }: TopAppBarProps
       <div className="flex items-center gap-2">
         <button
           onClick={() => navigateToSubScreen('notifications')}
-          className="relative flex h-8 w-8 items-center justify-center rounded-lg hover:bg-zinc-100 text-zinc-600 transition-colors"
+          className="relative flex h-8 w-8 items-center justify-center rounded-lg hover:bg-zinc-100 hover:scale-105 active:scale-95 text-zinc-600 transition-all"
           aria-label="Notifications"
         >
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-emerald-600"></span>
+            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-emerald-600 animate-pulse"></span>
           )}
         </button>
       </div>

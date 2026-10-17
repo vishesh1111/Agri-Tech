@@ -77,10 +77,10 @@ export const SoilReportScreen: React.FC = () => {
             <button
               key={p.id}
               onClick={() => setSelectedParcelId(p.id)}
-              className={`px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-2 ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 active:scale-95 cursor-pointer flex items-center gap-2 ${
                 selectedParcel.id === p.id
                   ? 'bg-zinc-900 text-white shadow-xs'
-                  : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-50'
+                  : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'
               }`}
             >
               <span>{p.name}</span>

@@ -235,7 +235,7 @@ export function AIAgentScreen() {
         </div>
 
         {/* Horizontal Quick Suggestion Chips */}
-        <div className="px-4 py-2 bg-zinc-50/70 border-t border-zinc-100 flex items-center gap-2 overflow-x-auto scrollbar-none">
+        <div className="px-4 py-2.5 bg-zinc-50/70 border-t border-zinc-100 flex items-center gap-2 overflow-x-auto scrollbar-none">
           <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider shrink-0 hidden sm:inline">
             Suggestions:
           </span>
@@ -243,10 +243,10 @@ export function AIAgentScreen() {
             <button
               key={i}
               onClick={() => sendChatMessage(prompt)}
-              className="shrink-0 text-xs bg-white hover:bg-zinc-100 px-3 py-1.5 rounded-full border border-zinc-200/90 text-zinc-700 hover:text-zinc-900 transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer"
+              className="shrink-0 text-xs bg-white hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-900 px-3 py-1.5 rounded-full border border-zinc-200/90 text-zinc-700 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 flex items-center gap-1.5 shadow-2xs cursor-pointer group"
             >
               <span>{prompt}</span>
-              <ArrowUpRight className="h-3 w-3 text-zinc-400" />
+              <ArrowUpRight className="h-3 w-3 text-zinc-400 group-hover:text-emerald-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </button>
           ))}
         </div>
@@ -257,10 +257,10 @@ export function AIAgentScreen() {
             <button
               type="button"
               onClick={toggleSpeechRecognition}
-              className={`p-2 rounded-lg border transition-colors cursor-pointer ${
+              className={`p-2 rounded-lg border transition-all duration-200 hover:scale-105 active:scale-90 cursor-pointer ${
                 isRecording
-                  ? 'bg-rose-50 text-rose-600 border-rose-200'
-                  : 'bg-zinc-50 text-zinc-600 border-zinc-200 hover:bg-zinc-100'
+                  ? 'bg-rose-50 text-rose-600 border-rose-200 animate-pulse'
+                  : 'bg-zinc-50 text-zinc-600 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-900'
               }`}
               title="Voice Input"
             >
@@ -272,13 +272,13 @@ export function AIAgentScreen() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={`Ask in ${currentLanguage.displayName} (e.g. fertilizer dose, yellow leaves, mandi prices)...`}
-              className="flex-1 rounded-lg border border-zinc-200 bg-zinc-50/50 px-3.5 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-zinc-300 outline-none transition-colors"
+              className="flex-1 rounded-lg border border-zinc-200 bg-zinc-50/50 px-3.5 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 outline-none transition-all duration-200"
             />
 
             <button
               type="submit"
               disabled={!input.trim() || isAgentThinking}
-              className="rounded-lg bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-700 disabled:opacity-40 transition-colors cursor-pointer"
+              className="rounded-lg bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-700 hover:scale-105 active:scale-90 disabled:opacity-40 disabled:hover:scale-100 transition-all duration-200 cursor-pointer shadow-xs"
             >
               <Send className="h-4 w-4" />
             </button>

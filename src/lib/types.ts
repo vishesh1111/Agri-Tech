@@ -571,7 +571,8 @@ export type SubScreen =
   | 'officer_portal'
   | 'farms_manager'
   | 'market_soil_testing'
-  | 'crop_water_advisor';
+  | 'crop_water_advisor'
+  | 'kheticrew_labour';
 
 
 // ── Language ──

@@ -68,10 +68,10 @@ export function CropDoctorScreen() {
                   <button
                     key={c}
                     onClick={() => setSelectedCrop(c)}
-                    className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                    className={`shrink-0 rounded-xl px-3 py-1.5 text-xs font-medium transition-all duration-200 hover:-translate-y-0.5 active:scale-95 cursor-pointer ${
                       selectedCrop === c
-                        ? 'bg-zinc-900 text-white font-semibold'
-                        : 'border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50'
+                        ? 'bg-zinc-900 text-white font-semibold shadow-2xs'
+                        : 'border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 hover:border-zinc-300'
                     }`}
                   >
                     {c}
@@ -86,28 +86,28 @@ export function CropDoctorScreen() {
                 2. Capture or Upload Leaf Photo
               </span>
 
-              <div className="flex flex-col items-center justify-center border border-dashed border-zinc-300 rounded-xl p-6 text-center bg-zinc-50/50">
+              <div className="flex flex-col items-center justify-center border border-dashed border-zinc-300 hover:border-emerald-400 hover:bg-emerald-50/15 rounded-xl p-6 text-center bg-zinc-50/50 transition-all duration-250">
                 {previewImage ? (
                   <div className="space-y-3 w-full">
-                    <div className="relative mx-auto h-48 w-full max-w-xs overflow-hidden rounded-lg border border-zinc-200">
+                    <div className="relative mx-auto h-48 w-full max-w-xs overflow-hidden rounded-xl border border-zinc-200 shadow-xs">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={previewImage}
                         alt="Selected Leaf"
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                       />
                     </div>
                     <button
                       onClick={() => setPreviewImage(null)}
-                      className="text-xs text-rose-600 hover:underline"
+                      className="text-xs text-rose-600 hover:text-rose-700 hover:underline cursor-pointer transition-colors"
                     >
                       Remove image
                     </button>
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500">
-                      <Leaf className="h-5 w-5" />
+                    <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100 text-zinc-500 transition-transform duration-200 hover:scale-110">
+                      <Leaf className="h-5 w-5 text-emerald-600" />
                     </div>
                     <div>
                       <p className="text-xs font-medium text-zinc-800">
@@ -119,7 +119,7 @@ export function CropDoctorScreen() {
                     </div>
 
                     <div className="flex flex-wrap gap-2 justify-center pt-1">
-                      <label className="flex items-center gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 px-3.5 py-1.5 text-xs font-medium text-white cursor-pointer transition-colors">
+                      <label className="flex items-center gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 hover:scale-105 active:scale-95 px-3.5 py-1.5 text-xs font-medium text-white cursor-pointer transition-all duration-200 shadow-xs">
                         <Camera className="h-3.5 w-3.5" />
                         <span>Camera</span>
                         <input
@@ -131,7 +131,7 @@ export function CropDoctorScreen() {
                         />
                       </label>
 
-                      <label className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 px-3.5 py-1.5 text-xs font-medium text-zinc-700 cursor-pointer transition-colors">
+                      <label className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 hover:border-zinc-300 hover:scale-105 active:scale-95 px-3.5 py-1.5 text-xs font-medium text-zinc-700 cursor-pointer transition-all duration-200 shadow-2xs">
                         <Upload className="h-3.5 w-3.5 text-zinc-400" />
                         <span>Browse File</span>
                         <input
@@ -145,7 +145,7 @@ export function CropDoctorScreen() {
                       <button
                         type="button"
                         onClick={() => setPreviewImage('/images/img_leaf_disease.jpg')}
-                        className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-1.5 text-xs font-semibold text-emerald-800 transition-colors"
+                        className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 hover:scale-105 active:scale-95 px-3.5 py-1.5 text-xs font-semibold text-emerald-800 transition-all duration-200 cursor-pointer shadow-2xs"
                       >
                         <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
                         <span>Test Sample Leaf</span>
@@ -160,7 +160,7 @@ export function CropDoctorScreen() {
             <button
               onClick={handleScan}
               disabled={isDoctorAnalyzing}
-              className="w-full flex items-center justify-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 py-2.5 text-xs font-medium text-white disabled:opacity-50 transition-colors"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 hover:scale-[1.01] active:scale-95 py-2.5 text-xs font-medium text-white disabled:opacity-50 transition-all duration-200 shadow-xs cursor-pointer"
             >
               {isDoctorAnalyzing ? (
                 <>

@@ -52,7 +52,7 @@ export const FarmerProfileScreen: React.FC = () => {
 
         <button
           onClick={() => setIsEditing(!isEditing)}
-          className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-xs"
+          className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 hover:scale-105 active:scale-95 transition-all shadow-xs"
         >
           <Edit3 className="w-3.5 h-3.5 text-zinc-500" />
           <span>{isEditing ? 'Cancel Edit' : 'Edit Information'}</span>
@@ -60,22 +60,22 @@ export const FarmerProfileScreen: React.FC = () => {
       </div>
 
       {savedSuccess && (
-        <div className="p-3 bg-emerald-50 text-emerald-800 rounded-lg text-xs font-medium flex items-center gap-2 border border-emerald-200">
+        <div className="p-3 bg-emerald-50 text-emerald-800 rounded-lg text-xs font-medium flex items-center gap-2 border border-emerald-200 animate-slide-down">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>Profile details saved successfully!</span>
         </div>
       )}
 
       {/* 2. Profile Avatar Banner */}
-      <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-sm transition-all duration-200">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
-          <div className="w-16 h-16 rounded-xl bg-zinc-100 text-zinc-800 font-semibold text-xl flex items-center justify-center border border-zinc-200">
+          <div className="w-16 h-16 rounded-xl bg-zinc-100 text-zinc-800 font-semibold text-xl flex items-center justify-center border border-zinc-200 shadow-2xs hover:scale-105 transition-transform duration-200">
             {name.split(' ').map(n => n[0]).join('')}
           </div>
           <div className="space-y-1">
             <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
               <h2 className="text-lg font-semibold text-zinc-900">{name}</h2>
-              <span className="bg-emerald-50 text-emerald-800 text-[11px] font-medium px-2 py-0.5 rounded border border-emerald-200/60">
+              <span className="bg-emerald-50 text-emerald-800 text-[11px] font-medium px-2 py-0.5 rounded border border-emerald-200/60 hover:scale-105 transition-transform duration-200">
                 Verified Landowner
               </span>
             </div>
@@ -194,7 +194,7 @@ export const FarmerProfileScreen: React.FC = () => {
           {isEditing && (
             <button
               type="submit"
-              className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors shadow-xs mt-2"
+              className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 hover:scale-102 active:scale-98 transition-all shadow-xs mt-2"
             >
               Save Profile Changes
             </button>

@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { PanelLeftOpen } from 'lucide-react';
 import { useKisanStore } from '@/stores/useKisanStore';
 import { WebSidebar } from '@/components/layout/WebSidebar';
 import { WebHeader } from '@/components/layout/WebHeader';
@@ -36,6 +37,7 @@ const PoultryScannerScreen = dynamic(() => import('@/components/screens/PoultryS
 const MastitisScannerScreen = dynamic(() => import('@/components/screens/MastitisScannerScreen'), { ssr: false });
 const OfficerPortalScreen = dynamic(() => import('@/components/screens/OfficerPortalScreen'), { ssr: false });
 const CropWaterVisualizerScreen = dynamic(() => import('@/components/screens/CropWaterVisualizerScreen'), { ssr: false });
+const KhetiCrewScreen = dynamic(() => import('@/kheticrew/App'), { ssr: false });
 
 export default function App() {
   const {
@@ -45,6 +47,7 @@ export default function App() {
     navigateBack,
     initialize,
     sidebarOpen,
+    toggleSidebar,
   } = useKisanStore();
 
   useEffect(() => {
@@ -111,6 +114,8 @@ export default function App() {
           return <MarketScreen />;
         case 'crop_water_advisor':
           return <CropWaterVisualizerScreen />;
+        case 'kheticrew_labour':
+          return <KhetiCrewScreen />;
         default:
           return <HomeScreen />;
       }
@@ -133,6 +138,7 @@ export default function App() {
     }
   };
 
+  const isHomepage = currentTab === 'home' && currentSubScreen === 'none';
   const isSubScreenActive = currentSubScreen !== 'none';
 
   return (
@@ -140,19 +146,39 @@ export default function App() {
       {/* Desktop Left Navigation Sidebar (Hidden on mobile) */}
       <WebSidebar />
 
+      {/* Floating Re-open Sidebar Button (Desktop when collapsed & header hidden) */}
+      {!sidebarOpen && (
+        <button
+          onClick={toggleSidebar}
+          className="hidden md:flex fixed top-4 left-4 z-40 p-2 rounded-xl bg-white/95 border border-zinc-200/90 shadow-md hover:bg-zinc-50 hover:border-emerald-300 transition-all items-center gap-2 text-xs font-semibold text-zinc-700 cursor-pointer"
+          title="Open sidebar"
+          aria-label="Open sidebar"
+        >
+          <PanelLeftOpen className="w-4 h-4 text-emerald-700" />
+          <span>Menu</span>
+        </button>
+      )}
+
       {/* Main Content Area (Offset by sidebar width on desktop when open) */}
       <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out ${
         sidebarOpen ? 'md:pl-64' : 'md:pl-0'
       }`}>
-        {/* Sticky Web Header */}
-        <WebHeader
-          showBackButton={isSubScreenActive}
-          onBackClick={navigateBack}
-        />
+        {/* Sticky Web Header - only on homepage or when sub-screen needs a back button */}
+        {(isHomepage || isSubScreenActive) && (
+          <WebHeader
+            showBackButton={isSubScreenActive}
+            onBackClick={navigateBack}
+          />
+        )}
 
         {/* Content Body - Expanded for Web & Responsive Screens */}
         <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-12">
-          {renderContent()}
+          <div
+            key={currentSubScreen !== 'none' ? currentSubScreen : currentTab}
+            className="animate-page-enter"
+          >
+            {renderContent()}
+          </div>
         </main>
 
         {/* Mobile Bottom Navigation Bar (Hidden on md+ desktop) */}

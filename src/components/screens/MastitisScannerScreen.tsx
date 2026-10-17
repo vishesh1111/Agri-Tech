@@ -222,21 +222,21 @@ export const MastitisScannerScreen: React.FC = () => {
                   <div className="flex flex-wrap gap-2 justify-center pt-1">
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="rounded-lg bg-zinc-900 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-zinc-800 transition-colors shadow-xs"
+                      className="rounded-lg bg-zinc-900 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-zinc-800 hover:scale-105 active:scale-95 transition-all duration-200 shadow-xs cursor-pointer"
                     >
                       Choose Photo
                     </button>
 
                     <button
                       onClick={loadHealthySample}
-                      className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-800 hover:bg-emerald-100 transition-colors"
+                      className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer shadow-2xs"
                     >
                       Sample: Healthy
                     </button>
 
                     <button
                       onClick={loadMastitisSample}
-                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-800 hover:bg-rose-100 transition-colors"
+                      className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-800 hover:bg-rose-100 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer shadow-2xs"
                     >
                       Sample: Mastitis
                     </button>
@@ -249,7 +249,7 @@ export const MastitisScannerScreen: React.FC = () => {
             <button
               onClick={handleRunScan}
               disabled={!imagePreview || isScanning}
-              className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 disabled:opacity-50 transition-colors shadow-xs"
+              className="w-full rounded-xl bg-emerald-700 py-2.5 text-xs font-semibold text-white hover:bg-emerald-800 hover:scale-[1.01] active:scale-95 disabled:opacity-50 transition-all duration-200 shadow-xs cursor-pointer"
             >
               {isScanning ? `Analyzing Udder (${progress}%)...` : 'Run Health Scan'}
             </button>

@@ -68,21 +68,21 @@ export const SetScheduleScreen: React.FC = () => {
 
         <button
           onClick={navigateBack}
-          className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 shadow-xs"
+          className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 hover:border-zinc-300 hover:scale-105 active:scale-95 transition-all shadow-xs cursor-pointer"
         >
           Cancel
         </button>
       </div>
 
       {savedNotification && (
-        <div className="p-3 bg-emerald-50 text-emerald-800 rounded-lg flex items-center gap-2 text-xs font-medium border border-emerald-200">
+        <div className="p-3 bg-emerald-50 text-emerald-800 rounded-lg flex items-center gap-2 text-xs font-medium border border-emerald-200 animate-slide-down">
           <Check className="w-4 h-4 text-emerald-700" />
           <span>Irrigation schedule saved successfully!</span>
         </div>
       )}
 
       {/* 2. Smart Toggle */}
-      <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-sm transition-all duration-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
@@ -101,12 +101,12 @@ export const SetScheduleScreen: React.FC = () => {
           <button
             type="button"
             onClick={() => setSmartScheduling(!smartScheduling)}
-            className={`w-11 h-6 rounded-full transition-colors relative p-0.5 ${
+            className={`w-11 h-6 rounded-full transition-all duration-200 relative p-0.5 hover:scale-105 active:scale-95 cursor-pointer ${
               smartScheduling ? 'bg-emerald-700' : 'bg-zinc-200'
             }`}
           >
             <div
-              className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform ${
+              className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform duration-200 ${
                 smartScheduling ? 'translate-x-5' : 'translate-x-0'
               }`}
             />
@@ -115,7 +115,7 @@ export const SetScheduleScreen: React.FC = () => {
       </Card>
 
       {/* 3. Schedule Form */}
-      <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <Card className="p-5 border border-zinc-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-sm transition-all duration-200">
         <form onSubmit={handleSave} className="space-y-5 text-xs">
           {/* Start Time */}
           <div>
@@ -126,7 +126,7 @@ export const SetScheduleScreen: React.FC = () => {
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+              className="rounded-lg border border-zinc-200 bg-white p-2 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all"
             />
             <span className="text-zinc-400 text-[11px] block mt-1">
               Early morning watering minimizes evaporation loss
@@ -146,7 +146,7 @@ export const SetScheduleScreen: React.FC = () => {
               step={5}
               value={duration}
               onChange={(e) => setDuration(parseInt(e.target.value))}
-              className="w-full h-1.5 bg-zinc-200 rounded-lg appearance-none cursor-pointer accent-emerald-700"
+              className="w-full h-1.5 bg-zinc-200 rounded-lg appearance-none cursor-pointer accent-emerald-700 hover:bg-zinc-300 transition-all"
             />
             <div className="flex justify-between text-[11px] text-zinc-400 mt-1">
               <span>15 min</span>
@@ -168,9 +168,9 @@ export const SetScheduleScreen: React.FC = () => {
                     key={day.id}
                     type="button"
                     onClick={() => toggleDay(day.id)}
-                    className={`flex-1 py-2 rounded-lg text-xs font-medium transition-colors ${
+                    className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all duration-200 hover:-translate-y-0.5 active:scale-95 cursor-pointer ${
                       isSelected
-                        ? 'bg-zinc-900 text-white'
+                        ? 'bg-zinc-900 text-white shadow-xs'
                         : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
                     }`}
                   >
@@ -184,7 +184,7 @@ export const SetScheduleScreen: React.FC = () => {
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 transition-colors shadow-xs"
+              className="w-full rounded-lg bg-emerald-700 py-2.5 text-xs font-medium text-white hover:bg-emerald-800 hover:scale-102 active:scale-98 transition-all shadow-xs cursor-pointer"
             >
               Save Schedule
             </button>

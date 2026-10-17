@@ -354,14 +354,29 @@ export const useKisanStore = create<KisanStoreState>((set, get) => ({
         db.cropTasks.toArray(),
       ]);
 
+      const sanitizedCrops = crops.map((c) => {
+        const cleanedVariety = c.variety ? c.variety.replace(/HD-?\d+\s*/gi, '').replace(/^\(|\)$/g, '').trim() : '';
+        const cleanedName = c.cropName ? c.cropName.replace(/\s*\(HD-?\d+\)/gi, '') : '';
+        return {
+          ...c,
+          cropName: cleanedName || c.cropName,
+          variety: cleanedVariety || c.variety,
+        };
+      });
+
+      const sanitizedParcels = parcels.map((p) => ({
+        ...p,
+        currentCrop: p.currentCrop ? p.currentCrop.replace(/\s*\(HD-?\d+\)/gi, ' (Pusa Gautami)').replace(/HD-?\d+\s*/gi, '') : p.currentCrop,
+      }));
+
       const initialFarm = farms[0] || initialFarms[0];
 
       set({
         userProfile: profile,
         farms,
-        parcels,
-        landParcels: parcels,
-        crops,
+        parcels: sanitizedParcels,
+        landParcels: sanitizedParcels,
+        crops: sanitizedCrops,
         irrigationZones: zones,
         livestock,
         poultryBatches: poultry,
@@ -658,23 +673,45 @@ export const useKisanStore = create<KisanStoreState>((set, get) => ({
     try {
       await db.farmTasks.put(task);
     } catch {}
-    set((state) => ({ tasks: [task, ...state.tasks] }));
+    set((state) => ({
+      tasks: [task, ...state.tasks],
+      farmTasks: [task, ...(state.farmTasks || [])],
+    }));
   },
 
   toggleTaskComplete: async (taskId) => {
+    let updatedTask: FarmTask | undefined;
     set((state) => {
-      const updated = state.tasks.map((t) =>
-        t.id === taskId ? { ...t, isCompleted: !t.isCompleted } : t
-      );
-      return { tasks: updated };
+      const updatedTasks = state.tasks.map((t) => {
+        if (t.id === taskId) {
+          updatedTask = { ...t, isCompleted: !t.isCompleted };
+          return updatedTask;
+        }
+        return t;
+      });
+      const updatedFarmTasks = (state.farmTasks || []).map((t) => {
+        if (t.id === taskId) {
+          return { ...t, isCompleted: !t.isCompleted };
+        }
+        return t;
+      });
+      return { tasks: updatedTasks, farmTasks: updatedFarmTasks };
     });
+    if (updatedTask) {
+      try {
+        await db.farmTasks.put(updatedTask);
+      } catch {}
+    }
   },
 
   deleteTask: async (taskId) => {
     try {
       await db.farmTasks.delete(taskId);
     } catch {}
-    set((state) => ({ tasks: state.tasks.filter((t) => t.id !== taskId) }));
+    set((state) => ({
+      tasks: state.tasks.filter((t) => t.id !== taskId),
+      farmTasks: (state.farmTasks || []).filter((t) => t.id !== taskId),
+    }));
   },
 
   addFinancialTransaction: async (title, category, amount, isIncome) => {

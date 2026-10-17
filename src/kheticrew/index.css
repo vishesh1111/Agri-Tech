@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-slate-900 bg-slate-50 min-h-screen text-base;
+  }
+
+  /* Accessible focus indicators */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2;
+  }
+
+  /* Minimum 44px touch targets on interactive controls */
+  button, a, input, select, textarea {
+    @apply min-h-[44px] touch-manipulation;
+  }
+}
+
+/* Diagonal hatch pattern for weather risk, travel days, etc. (colourblind-safe) */
+.pattern-hatch-travel {
+  background: repeating-linear-gradient(
+    45deg,
+    #cbd5e1,
+    #cbd5e1 6px,
+    #94a3b8 6px,
+    #94a3b8 12px
+  );
+}
+
+.pattern-hatch-heat {
+  background: repeating-linear-gradient(
+    -45deg,
+    #fed7aa,
+    #fed7aa 6px,
+    #f97316 6px,
+    #f97316 12px
+  );
+}
+
+.pattern-hatch-rain {
+  background: repeating-linear-gradient(
+    -45deg,
+    #bae6fd,
+    #bae6fd 6px,
+    #0284c7 6px,
+    #0284c7 12px
+  );
+}

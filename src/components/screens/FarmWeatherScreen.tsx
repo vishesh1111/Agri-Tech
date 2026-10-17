@@ -142,12 +142,12 @@ export function FarmWeatherScreen() {
                 {farmWeather.hourlyForecast.map((h, i) => (
                   <Card
                     key={i}
-                    className="p-3 text-center border border-zinc-200/80 bg-white shadow-xs space-y-1"
+                    className="p-3 text-center border border-zinc-200/80 bg-white shadow-xs space-y-1 hover:-translate-y-1 hover:border-amber-300 hover:shadow-md active:scale-95 transition-all duration-200 cursor-pointer group"
                   >
                     <span className="text-[11px] font-medium text-zinc-500 block">
                       {h.timeLabel}
                     </span>
-                    <div className="my-1 flex justify-center text-amber-500">
+                    <div className="my-1 flex justify-center text-amber-500 group-hover:scale-115 transition-transform duration-200">
                       <CloudSun className="h-5 w-5" />
                     </div>
                     <span className="text-xs font-semibold text-zinc-900 block">
@@ -188,14 +188,14 @@ export function FarmWeatherScreen() {
                       { day: 'Monday', condition: 'Clear & Bright', high: 27, low: 15, rain: '0 mm (10%)', workability: 'Favorable' },
                       { day: 'Tuesday', condition: 'Warm & Dry', high: 29, low: 16, rain: '0 mm (5%)', workability: 'Favorable' },
                     ].map((row, idx) => (
-                      <tr key={idx} className="hover:bg-zinc-50 transition-colors">
-                        <td className="py-2.5 font-medium text-zinc-900">{row.day}</td>
+                      <tr key={idx} className="hover:bg-emerald-50/50 hover:translate-x-1 transition-all duration-200 cursor-pointer group">
+                        <td className="py-2.5 font-medium text-zinc-900 group-hover:text-emerald-900 transition-colors">{row.day}</td>
                         <td className="py-2.5 text-zinc-600">{row.condition}</td>
                         <td className="py-2.5 text-right font-medium text-zinc-800">{row.high}° / {row.low}°C</td>
                         <td className="py-2.5 text-right text-zinc-600">{row.rain}</td>
                         <td className="py-2.5 text-center">
                           <span
-                            className={`inline-block px-2 py-0.5 rounded text-[11px] font-medium ${
+                            className={`inline-block px-2 py-0.5 rounded text-[11px] font-medium transition-transform group-hover:scale-105 ${
                               row.workability === 'Favorable'
                                 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
                                 : row.workability === 'Moderate'

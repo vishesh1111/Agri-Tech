@@ -118,7 +118,7 @@ export const CROP_WATER_REGISTRY: Record<string, CropWaterProfile> = {
   wheat: {
     cropKey: 'wheat',
     cropName: 'Wheat (Gehun / Kanak)',
-    varietyExample: 'HD-3086 / PBW-824',
+    varietyExample: 'Pusa Gautami / PBW-824',
     totalSeasonWaterMm: 480,
     durationDays: 125,
     optimalSoilMoisturePercent: 65,
